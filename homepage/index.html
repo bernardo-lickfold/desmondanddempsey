@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&D — V1.2</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/vendor/lenis.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Activate the loading intro before first paint (avoids a flash of the
+    // page). Safety-removes itself after 6s so the page can never be trapped
+    // if the intro script fails to run.
+    (function () {
+      var r = document.documentElement;
+      r.classList.add("intro");
+      window.setTimeout(function () {
+        r.classList.remove("intro");
+      }, 6000);
+    })();
+  </script>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <!-- Navbar — overlays the hero; transparent + cream text at top,
+           solidifies to a cream bar with dark text on scroll (--nav-p). -->
+      <nav class="navbar" aria-label="Primary">
+        <!-- MENU collapses Shop/Rest/Search on mobile; placeholder for now -->
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="#" role="button" aria-expanded="false" aria-controls="shop-menu">Shop</a>
+        <a class="nav-link nav-link--rest" href="#">Rest</a>
+        <a class="nav-logo" href="#" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- Shop mega-menu — opens on clicking "Shop", pushes the page content down
+         (desktop only). Each column's image fades in on hovering its links. -->
+    <div class="megamenu" id="shop-menu">
+      <div class="megamenu__inner">
+        <div class="megamenu__panel">
+          <nav class="megamenu__tabs" aria-label="Shop categories">
+            <a class="megamenu__tab is-active" href="#">Women</a>
+            <a class="megamenu__tab" href="#">Men</a>
+            <a class="megamenu__tab megamenu__tab--soon" href="#">Kids - Coming Soon</a>
+            <a class="megamenu__tab" href="#">Gifts</a>
+          </nav>
+          <div class="megamenu__cols">
+            <div class="megamenu__col megamenu__col--product">
+              <div class="megamenu__group">
+                <h3 class="megamenu__heading">By Product</h3>
+                <ul class="megamenu__links">
+                  <li><a class="pl pl--nighties" href="#">Nighties</a></li>
+                  <li><a class="pl pl--short" href="#">Short Pyjama Sets</a></li>
+                  <li><a class="pl pl--long" href="#">Long Pyjama Sets</a></li>
+                  <li><a class="pl pl--robes" href="#">Robes</a></li>
+                  <li><a class="pl pl--lounge" href="#">Loungewear</a></li>
+                  <li><a class="pl pl--knickers" href="#">Knickers &amp; Bras</a></li>
+                  <li><a class="pl pl--socks" href="#">Socks &amp; Slippers</a></li>
+                  <li><a class="pl pl--all" href="#">Shop All</a></li>
+                </ul>
+              </div>
+              <span class="megamenu__media">
+                <img class="megamenu__img megamenu__img--nighties" src="assets/images/Legacy.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--short" src="assets/images/Classics.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--long" src="assets/images/Essentials.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--robes" src="assets/images/Heirloom.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--lounge" src="assets/images/band-1.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--knickers" src="assets/images/band-2.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--socks" src="assets/images/feature-left.jpg" alt="" />
+                <img class="megamenu__img megamenu__img--all" src="assets/images/feature-right.jpg" alt="" />
+              </span>
+            </div>
+            <div class="megamenu__col">
+              <div class="megamenu__group">
+                <h3 class="megamenu__heading">By Collection</h3>
+                <ul class="megamenu__links">
+                  <li><a href="#">Legacy</a></li>
+                  <li><a href="#">Classics</a></li>
+                  <li><a href="#">Heirlooms</a></li>
+                  <li><a href="#">Essentials</a></li>
+                  <li><a href="#">New In</a></li>
+                  <li><a href="#">Bestsellers</a></li>
+                  <li><a href="#">Shop All</a></li>
+                </ul>
+              </div>
+              <span class="megamenu__media"><img src="assets/images/feature-right.jpg" alt="" /></span>
+            </div>
+            <div class="megamenu__col">
+              <div class="megamenu__group">
+                <h3 class="megamenu__heading">By Material</h3>
+                <ul class="megamenu__links">
+                  <li><a href="#">Jersey</a></li>
+                  <li><a href="#">Cotton</a></li>
+                  <li><a href="#">Pointelle</a></li>
+                  <li><a href="#">Prints</a></li>
+                  <li><a href="#">Shop All</a></li>
+                </ul>
+              </div>
+              <span class="megamenu__media"><img src="assets/images/band-1.jpg" alt="" /></span>
+            </div>
+            <div class="megamenu__col">
+              <div class="megamenu__group">
+                <h3 class="megamenu__heading">By Occasion</h3>
+                <ul class="megamenu__links">
+                  <li><a href="#">Gifting</a></li>
+                  <li><a href="#">Honeymoon</a></li>
+                  <li><a href="#">New Parents</a></li>
+                  <li><a href="#">Hosting</a></li>
+                </ul>
+              </div>
+              <span class="megamenu__media"><img src="assets/images/band-2.jpg" alt="" /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero — full-bleed image with a dark overlay; nav floats over the top -->
+    <section class="hero">
+      <img class="hero__img" src="assets/images/hero-v12.jpg" alt="" />
+      <span class="hero__overlay" aria-hidden="true"></span>
+      <h1 class="hero__headline">Pyjamas for the sacred<br />rite of Sunday in bed.</h1>
+    </section>
+
+    <!-- Feature grid — two columns, CTA reveals on hover -->
+    <section class="features">
+      <a class="features__cell features__cell--left feature-col" href="#">
+        <span class="feature-col__media"><img src="assets/images/feature-left.jpg" alt="" /></span>
+        <span class="feature-col__cta">Shop Women's</span>
+      </a>
+      <a class="features__cell features__cell--right feature-col" href="#">
+        <span class="feature-col__media"><img src="assets/images/feature-right.jpg" alt="" /></span>
+        <span class="feature-col__cta">Shop Men's</span>
+      </a>
+    </section>
+
+    <!-- Product card row — info + tag reveal on hover -->
+    <section class="products">
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-1-rest.jpg" alt="Women Chambray Blue" />
+            <img class="card__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Women Chambray Blue</span><span class="card__price">£95</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-2-rest.jpg" alt="Men Chambray Blue" />
+            <img class="card__media-hover" src="assets/images/card-2-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__tag">New in</span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Men Chambray Blue</span><span class="card__price">£95</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-3-rest.jpg" alt="Women Floral Navy" />
+            <img class="card__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Women Floral Navy</span><span class="card__price">£165</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-4-rest.jpg" alt="Men Gingham Check" />
+            <img class="card__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__tag">New in</span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Men Gingham Check</span><span class="card__price">£110</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+    </section>
+
+    <!-- Promo banner — full-bleed image + dark overlay, centred headline + CTA -->
+    <section class="promo">
+      <img class="promo__img" src="assets/images/promo-summer.jpg" alt="" />
+      <span class="promo__overlay" aria-hidden="true"></span>
+      <div class="promo__content">
+        <h2 class="promo__headline">The Art of<br />British Summer</h2>
+        <a class="promo__cta" href="#">The Summer Collection</a>
+      </div>
+    </section>
+
+    <!-- Collection tabs — desktop: hover swaps image + description.
+         Mobile: the .tabs-scroller gives scroll distance; the section pins and
+         a scroll-scrub (v1.2.js) advances the active collection + progress bar. -->
+    <div class="tabs-scroller">
+    <section class="tabs-section" data-active="0">
+      <div class="tabs-section__media">
+        <img class="tab-img tab-img--legacy" src="assets/images/Legacy.jpg" alt="" />
+        <img class="tab-img tab-img--classics" src="assets/images/Classics.jpg" alt="" />
+        <img class="tab-img tab-img--essentials" src="assets/images/Essentials.jpg" alt="" />
+        <img class="tab-img tab-img--heirloom" src="assets/images/Heirloom.jpg" alt="" />
+        <span class="tabs-section__overlay" aria-hidden="true"></span>
+      </div>
+
+      <!-- Invisible top line balances the column so the tabs sit centred -->
+      <p class="tabs-section__spacer" aria-hidden="true">And on the seventh day there was rest.</p>
+
+      <nav class="tabs" aria-label="Collections">
+        <a class="tabs__item tabs__item--legacy" href="#">Legacy</a>
+        <a class="tabs__item tabs__item--classics" href="#">Classics</a>
+        <a class="tabs__item tabs__item--essentials" href="#">Essentials</a>
+        <a class="tabs__item tabs__item--heirloom" href="#">Heirloom</a>
+      </nav>
+
+      <!-- Description crossfades with the hovered/active tab (defaults to Legacy) -->
+      <div class="tabs-desc">
+        <p class="tabs-desc__item tabs-desc__item--legacy">Crowd-pleasers, all-time faves, whatever you like to call it.</p>
+        <p class="tabs-desc__item tabs-desc__item--classics">A classic designed for slowing down.</p>
+        <p class="tabs-desc__item tabs-desc__item--essentials">There&rsquo;s something oh so cool about quality basics.</p>
+        <p class="tabs-desc__item tabs-desc__item--heirloom">Inspired by a 1991 vintage nightie</p>
+      </div>
+
+      <!-- Mobile-only scrub progress bar -->
+      <div class="tabs-progress" aria-hidden="true"><span class="tabs-progress__fill"></span></div>
+    </section>
+    </div>
+
+    <!-- Image grid: two large cards + two stacked cards -->
+    <section class="grid">
+      <div class="grid__left">
+        <article class="card">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/grid-1.jpg" alt="Womens 402 Long Set Chambray Blue" /></span>
+            <span class="card__info">
+              <span class="card__meta"><span class="card__name">Womens 402 Long Set Chambray Blue</span><span class="card__price">£95</span></span>
+              <span class="card__swatches">
+                <img class="card__swatch" src="assets/images/swatches/s1.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s2.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s3.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s4.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s5.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s1.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s2.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s3.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/s4.png" alt="" />
+              </span>
+            </span>
+          </a>
+        </article>
+        <article class="card">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/grid-2.jpg" alt="Mens 401 Short Set Floral Navy" /></span>
+          </a>
+        </article>
+      </div>
+      <div class="grid__right">
+        <article class="card card--contained">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/grid-3.png" alt="Chambray Blue Shirt" /></span>
+            <span class="card__info card__info--center">
+              <span class="card__meta card__meta--gap"><span class="card__name">Chambray Blue Shirt</span><span class="card__price">£35</span></span>
+            </span>
+          </a>
+        </article>
+        <article class="card card--contained">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/grid-4.png" alt="Chambray Blue Trouser" /></span>
+            <span class="card__info card__info--center">
+              <span class="card__meta card__meta--gap"><span class="card__name">Chambray Blue Trouser</span><span class="card__price">£60</span></span>
+            </span>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Full-width image band -->
+    <section class="band">
+      <img src="assets/images/band-2.jpg" alt="" />
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p class="site-footer__headline">And on the seventh day<br />there was rest.</p>
+
+      <div class="site-footer__body">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="footer-col__title">Our World</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Our story</a></li>
+              <li><a href="#">The loyalty lounge</a></li>
+              <li><a href="#">Sustainability</a></li>
+              <li><a href="#">Work with us</a></li>
+              <li><a href="#">Refer a friend</a></li>
+              <li><a href="#">Pre-loved marketplace</a></li>
+              <li><a href="#">T&amp;Cs</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Information</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Sizing</a></li>
+              <li><a href="#">Monogramming</a></li>
+              <li><a href="#">How D&amp;Ds are made</a></li>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Bespoke</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Customer Care</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Delivery &amp; returns</a></li>
+              <li><a href="#">Customer reviews</a></li>
+              <li><a href="#">Privacy</a></li>
+              <li><a href="#">Cookies</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Sign up for the latest news</h4>
+            <form class="footer-newsletter" action="#" method="post">
+              <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
+              <button class="footer-newsletter__submit" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span class="footer-bottom__copy">©2026 Desmond &amp; Dempsey. All Rights Reserved.</span>
+          <nav class="footer-social" aria-label="Social">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Loading intro overlay (cream + serif copy); cleared by script.js -->
+  <div class="loader" aria-hidden="true">
+    <p class="loader__copy">
+      <span class="loader__line" style="--line: 0">
+        <span class="loader__word" style="--i: 0">And</span>
+        <span class="loader__word" style="--i: 1">on</span>
+        <span class="loader__word" style="--i: 2">the</span>
+        <span class="loader__word" style="--i: 3">seventh</span>
+        <span class="loader__word" style="--i: 4">day</span>
+      </span>
+      <span class="loader__line" style="--line: 1">
+        <span class="loader__word" style="--i: 0">there</span>
+        <span class="loader__word" style="--i: 1">was</span>
+        <span class="loader__word" style="--i: 2">rest.</span>
+      </span>
+    </p>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

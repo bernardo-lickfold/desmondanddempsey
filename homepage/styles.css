@@ -1,0 +1,1387 @@
+/* ============================================================
+   Fonts — Gerstner Programm FSL
+   Drop the font files into assets/fonts/ and these @font-face
+   rules will pick them up. Until then the stack falls back to a
+   neo-grotesque sans (Helvetica/Arial), which is the closest
+   widely-available match.
+   ============================================================ */
+@font-face {
+  font-family: "Gerstner Programm FSL";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/GerstnerProgrammFSL-Regular.woff2") format("woff2"),
+       url("assets/fonts/GerstnerProgrammFSL-Regular.woff") format("woff");
+}
+
+/* Reckless Neue (Light) — the editorial serif used for the loading copy.
+   Drop the files into assets/fonts/; falls back to a high-contrast serif. */
+@font-face {
+  font-family: "Reckless Neue";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("assets/fonts/RecklessNeue-Light.otf") format("opentype");
+}
+
+:root {
+  --frame-width: 1440px;
+  --gutter: 2px;
+
+  --color-bg: #f5f5f2;
+  --color-ink: #000000;
+  --color-nav: #140803;
+
+  --font-serif: "Reckless Neue", Georgia, "Times New Roman", serif;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-natural: cubic-bezier(0.65, 0, 0.35, 1); /* smooth ease-in-out */
+
+  --font-base: "Gerstner Programm FSL", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-base);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ---------- Page frame ---------- */
+.page {
+  /* Fluid fill: the layout stretches to the full viewport width (no 1440 cap),
+     gutters/paddings stay fixed, so it reproduces the comp exactly at 1440 and
+     grows from there. --frame-width remains the design reference (1440). */
+  width: 100%;
+  margin: 0 auto;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  /* No gap here — header + hero are flush, as in Figma's "Frame 12".
+     The single 4px gap sits between the hero and the feature section. */
+}
+
+/* ---------- Header / nav (overlays the hero) ----------
+   --nav-p: scroll progress 0 → 1, damped per-frame by the loop in v1.2.js.
+   At 0 the bar is transparent with cream text/wordmark, sitting over the hero;
+   at 1 it has solidified into a cream bar with dark ink text (plus a subtle
+   collapse). The whole thing is fixed so it floats over the hero image. */
+.header {
+  --nav-p: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  /* transparent over the hero → cream once forced solid (scroll-in / menu open) */
+  background: color-mix(in srgb, var(--color-bg) calc(var(--nav-p) * 100%), transparent);
+  border-bottom: 0.5px solid rgba(20, 8, 3, calc(var(--nav-p) * 0.12));
+  /* shared foreground colour: cream (p=0) → dark ink (p=1) */
+  --nav-fg: color-mix(in srgb, var(--color-nav) calc(var(--nav-p) * 100%), var(--color-bg));
+  will-change: background;
+}
+
+/* Navbar — constant height; no collapse on scroll */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+
+.nav-link {
+  width: 44px; /* fixed link box, matches Figma — keeps the wordmark centered */
+  flex: 0 0 44px;
+  font-size: 11px;
+  line-height: 1; /* 100% */
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--nav-fg);
+  white-space: nowrap;
+  text-align: center; /* REST + SEARCH */
+  text-box: trim-both cap alphabetic;
+}
+
+.nav-link--start {
+  text-align: left; /* SHOP */
+}
+
+.nav-link--end {
+  text-align: right; /* CART (0) */
+}
+
+/* MENU only appears on mobile (collapses Shop/Rest/Search) */
+.nav-link--menu {
+  display: none;
+  text-align: left;
+}
+
+/* Wordmark — drawn as a recolourable mask so one asset serves both states */
+.nav-logo {
+  flex: 0 0 auto;
+  width: 196px;
+  height: 14px;
+  background-color: var(--nav-fg);
+  -webkit-mask: url("assets/wordmark.svg") no-repeat center / contain;
+          mask: url("assets/wordmark.svg") no-repeat center / contain;
+}
+
+/* ---------- Shop mega-menu (desktop) ----------
+   In normal flow as the first item after the fixed header, so when it opens it
+   pushes the hero (and the rest of the page) DOWN rather than overlaying it.
+   Height animates via the grid 0fr→1fr trick. The fixed nav floats over its
+   top, so the panel pads its top by the nav height. */
+.megamenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 1s var(--ease-natural); /* smooth ease-in-out */
+  background: var(--color-bg);
+  position: relative;
+  z-index: 90; /* below the nav (100) */
+}
+.megamenu__inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0; /* content gently fades in as the panel expands */
+  visibility: hidden; /* keep links out of the tab order while closed */
+  transition: opacity 0.8s var(--ease-natural), visibility 1s;
+}
+.megamenu.is-open {
+  grid-template-rows: 1fr;
+}
+.megamenu.is-open .megamenu__inner {
+  opacity: 1;
+  visibility: visible;
+}
+.megamenu__panel {
+  padding: 54px 0 0; /* top clears the fixed nav bar; image's own 4px is the base */
+}
+
+/* Category tabs (Women / Men / Kids / Gifts) */
+.megamenu__tabs {
+  display: flex;
+  gap: 20px;
+  margin-top: 40px;
+  padding: 0 40px 36px;
+}
+.megamenu__tab {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.4);
+  transition: color 0.3s var(--ease-expo);
+}
+.megamenu__tab.is-active,
+.megamenu__tab:hover {
+  color: var(--color-nav);
+}
+.megamenu__tab--soon {
+  pointer-events: none; /* "coming soon" — not yet a link */
+}
+
+/* Four columns; each reserves space for an image at its foot */
+.megamenu__cols {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.megamenu__col {
+  display: flex;
+  flex-direction: column;
+}
+.megamenu__group {
+  padding-left: 40px;
+}
+.megamenu__heading {
+  margin: 0 0 20px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.4);
+}
+.megamenu__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  /* match the link's type so the <li> strut is 11px, not the inherited 16px —
+     gives an 11 + 7 = 18px row pitch (Figma) */
+  font-size: 11px;
+  line-height: 1;
+}
+.megamenu__links a {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  transition: opacity 0.2s var(--ease-expo);
+}
+.megamenu__links a:hover {
+  opacity: 0.55;
+}
+
+/* Featured image — bottom-aligned in every column (40px inset), so all four
+   share the same baseline; fades in on hovering its column's links */
+.megamenu__media {
+  margin: auto 40px 40px; /* auto top pushes to the column foot; 40px inset (Figma) */
+  aspect-ratio: 352 / 195;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-natural);
+}
+/* By Product (the longest column): fixed 80px gap above its image — this sets
+   the menu height, and the other columns' auto-top images align to its baseline */
+.megamenu__col:first-child .megamenu__media {
+  margin-top: 80px;
+}
+.megamenu__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.megamenu__col:has(.megamenu__links a:hover) .megamenu__media {
+  opacity: 1;
+}
+
+/* By Product: a distinct image per link, stacked in the media box and
+   crossfaded so hovering each link swaps the featured image. */
+.megamenu__col--product .megamenu__media {
+  position: relative;
+  opacity: 1; /* the stacked images control what's shown */
+}
+.megamenu__col--product .megamenu__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-natural);
+}
+.megamenu__col--product:has(.pl--nighties:hover) .megamenu__img--nighties,
+.megamenu__col--product:has(.pl--short:hover) .megamenu__img--short,
+.megamenu__col--product:has(.pl--long:hover) .megamenu__img--long,
+.megamenu__col--product:has(.pl--robes:hover) .megamenu__img--robes,
+.megamenu__col--product:has(.pl--lounge:hover) .megamenu__img--lounge,
+.megamenu__col--product:has(.pl--knickers:hover) .megamenu__img--knickers,
+.megamenu__col--product:has(.pl--socks:hover) .megamenu__img--socks,
+.megamenu__col--product:has(.pl--all:hover) .megamenu__img--all {
+  opacity: 1;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* full viewport, desktop + mobile */
+  overflow: hidden;
+}
+
+.hero__img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  /* Oversized top/bottom so the parallax (±60px) + velocity stretch never reveal
+     an edge. Transform is set per-frame in script.js. */
+  top: -100px;
+  height: calc(100% + 200px);
+  object-fit: cover;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Dark wash over the hero so the cream nav stays legible (Figma rgba(20,8,3,.3)) */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(20, 8, 3, 0.3);
+  pointer-events: none;
+}
+
+/* Serif headline, centred at the foot of the hero (over the overlay) */
+.hero__headline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  z-index: 2;
+  margin: 0;
+  padding: 0 40px;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 1;
+  text-align: center;
+  color: var(--color-bg);
+}
+
+/* ---------- Feature grid (bottom "Navbar / 3 /") ---------- */
+.features {
+  display: flex;
+  align-items: flex-start; /* let each cell take its aspect-ratio height, not stretch */
+  gap: var(--gutter); /* only the 4px gutter between the two images — no outer padding */
+  width: 100%;
+  margin-top: var(--gutter); /* 4px gap between hero and feature section (top-level Figma gap) */
+}
+
+.features__cell {
+  height: 100vh; /* the feature section fills the full viewport height */
+  overflow: hidden;
+}
+
+/* Equal halves at any width: (100% - 4px gutter) / 2 — exactly 718px at 1440. */
+.features__cell--left,
+.features__cell--right {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.features__cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Section 2 columns — parallax media + CTA button reveal on hover */
+.feature-col {
+  display: block;
+  position: relative;
+}
+/* Parallax target: oversized so the ±60px travel never reveals an edge.
+   Transform (translate) is set per-frame in script.js. */
+.feature-col__media {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: -100px;
+  height: calc(100% + 200px);
+  will-change: transform;
+}
+.feature-col__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.feature-col:hover .feature-col__media img {
+  transform: scale(1.018); /* subtle zoom, consistent with the product cards */
+}
+.feature-col__cta {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% + 6px));
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 4px 16px;
+  background: var(--color-bg);
+  color: var(--color-nav);
+  font-size: 11px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-expo), transform 0.4s var(--ease-expo);
+}
+.feature-col:hover .feature-col__cta,
+.feature-col:focus-visible .feature-col__cta {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+/* ---------- Product cards (info + tag reveal on hover) ---------- */
+.products {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gutter);
+  width: 100%;
+  margin-top: var(--gutter);
+}
+.products .card {
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 357 / 501;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+.card__link {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.card__media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.card:hover .card__media img {
+  transform: scale(1.018); /* subtle zoom on hover */
+}
+
+/* Image-swap: the detail photo crossfades in over the resting photo on hover */
+.card__media-hover {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-expo),
+              transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.card:hover .card__media-hover,
+.card:focus-within .card__media-hover {
+  opacity: 1;
+}
+
+/* "New in" tag — top-left, dark blurred chip */
+.card__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  height: 22px;
+  padding: 6px 8px;
+  background: var(--color-nav);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  color: var(--color-bg);
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-expo);
+}
+
+/* product info panel — bottom, cream */
+.card__info {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: var(--color-bg);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-expo), transform 0.4s var(--ease-expo);
+}
+.card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.card__meta--gap {
+  gap: 40px;
+}
+.card__name,
+.card__price {
+  white-space: nowrap; /* keep the product name on one line; the chip grows to fit */
+}
+.card__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+}
+.card__swatch {
+  width: 20px;
+  height: 4px;
+  display: block;
+  object-fit: cover;
+}
+/* Product row + image grid: print options are 11px squares (matches mobile) */
+.products .card__swatch,
+.grid .card__swatch {
+  width: 11px;
+  height: 11px;
+}
+
+/* reveal on hover / keyboard focus */
+.card:hover .card__tag,
+.card:focus-within .card__tag,
+.card:hover .card__info,
+.card:focus-within .card__info {
+  opacity: 1;
+}
+.card:hover .card__info:not(.card__info--center),
+.card:focus-within .card__info:not(.card__info--center) {
+  transform: translateY(0);
+}
+
+/* centered white info chip (small grid cards) */
+.card__info--center {
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  top: 50%;
+  flex-direction: row;
+  width: auto;
+  background: #ffffff;
+  transform: translate(-50%, calc(-50% + 8px));
+}
+.card:hover .card__info--center,
+.card:focus-within .card__info--center {
+  transform: translate(-50%, -50%);
+}
+
+/* small grid cards: image contained, cream margins. Wider side inset keeps the
+   2:3 product shot smaller inside the (landscape) card. Mobile resets the insets. */
+.card--contained .card__media {
+  left: 22%;
+  right: 22%;
+  top: 6%;
+  bottom: 6%;
+}
+
+/* ---------- Full-width image band ---------- */
+.band {
+  position: relative;
+  margin-top: var(--gutter);
+  width: 100%;
+  aspect-ratio: 1440 / 800;
+  overflow: hidden;
+}
+/* Oversized so the ±60px parallax (set per-frame in v1.2.js) never reveals an edge */
+.band img {
+  position: absolute;
+  left: 0;
+  top: -100px;
+  width: 100%;
+  height: calc(100% + 200px);
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+}
+
+/* ---------- Promo banner (image + overlay + headline/CTA) — band dimensions ---------- */
+.promo {
+  position: relative;
+  margin-top: var(--gutter);
+  width: 100%;
+  aspect-ratio: 1440 / 800;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+/* Oversized so the ±60px parallax (set per-frame in v1.2.js) never reveals an edge */
+.promo__img {
+  position: absolute;
+  left: 0;
+  top: -100px;
+  width: 100%;
+  height: calc(100% + 200px);
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+}
+.promo__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 8, 3, 0.4);
+  pointer-events: none;
+}
+.promo__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 349px;
+  max-width: 100%;
+  text-align: center;
+}
+.promo__headline {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--color-bg);
+}
+.promo__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 4px 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-bg);
+  color: var(--color-nav);
+  font-size: 11px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- Collection tabs (section 4) — hover a label to swap image + copy ----------
+   Column layout: an invisible top line + the tabs + the description are spaced
+   apart (space-between) inside an 80px-padded band, so the tabs sit centred and
+   the description sits at the bottom. */
+.tabs-section {
+  position: relative;
+  width: 100%;
+  margin-top: var(--gutter);
+  aspect-ratio: 1440 / 800;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 0;
+}
+.tabs-section__media {
+  position: absolute;
+  inset: 0;
+}
+/* Oversized so the ±60px parallax (set per-frame in v1.2.js) never reveals an edge */
+.tab-img {
+  position: absolute;
+  left: 0;
+  top: -100px;
+  width: 100%;
+  height: calc(100% + 200px);
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-expo);
+  will-change: transform;
+}
+.tabs-section__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 8, 3, 0.4);
+}
+
+/* Invisible balancer (matches the description's footprint at the top) */
+.tabs-section__spacer {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: #f5f5f2;
+  visibility: hidden;
+}
+
+.tabs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+}
+.tabs__item {
+  font-family: var(--font-base);
+  font-size: 24px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(245, 245, 242, 0.4);
+  white-space: nowrap;
+  transition: color 0.3s var(--ease-expo);
+}
+.tabs__item:hover {
+  color: #f5f5f2;
+}
+
+/* Description — items stacked in one grid cell, crossfaded on hover */
+.tabs-desc {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 392px;
+}
+.tabs-desc__item {
+  grid-area: 1 / 1;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: center;
+  color: #f5f5f2;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-expo);
+}
+
+/* Scrub progress bar — mobile only (see the mobile media query) */
+.tabs-progress {
+  display: none;
+}
+
+/* Desktop only: hover drives the swap. Scoped so it never fights the mobile
+   scroll-scrub (which drives the same images/labels/desc via [data-active]). */
+@media (min-width: 769px) {
+  /* Default state: "Legacy" active + its image, until another tab is hovered */
+  .tabs:not(:has(.tabs__item:hover)) .tabs__item--legacy {
+    color: #f5f5f2;
+  }
+  .tabs-section:not(:has(.tabs__item:hover)) .tab-img--legacy {
+    opacity: 1;
+  }
+  /* Hovered tab → its image */
+  .tabs-section:has(.tabs__item--legacy:hover) .tab-img--legacy {
+    opacity: 1;
+  }
+  .tabs-section:has(.tabs__item--classics:hover) .tab-img--classics {
+    opacity: 1;
+  }
+  .tabs-section:has(.tabs__item--essentials:hover) .tab-img--essentials {
+    opacity: 1;
+  }
+  .tabs-section:has(.tabs__item--heirloom:hover) .tab-img--heirloom {
+    opacity: 1;
+  }
+
+  /* Default state: Legacy description shown until another tab is hovered */
+  .tabs-section:not(:has(.tabs__item:hover)) .tabs-desc__item--legacy {
+    opacity: 1;
+  }
+  /* Hovered tab → its description */
+  .tabs-section:has(.tabs__item--legacy:hover) .tabs-desc__item--legacy {
+    opacity: 1;
+  }
+  .tabs-section:has(.tabs__item--classics:hover) .tabs-desc__item--classics {
+    opacity: 1;
+  }
+  .tabs-section:has(.tabs__item--essentials:hover) .tabs-desc__item--essentials {
+    opacity: 1;
+  }
+  .tabs-section:has(.tabs__item--heirloom:hover) .tabs-desc__item--heirloom {
+    opacity: 1;
+  }
+}
+
+/* ---------- Image grid (9-col block + 3-col stack) ---------- */
+.grid {
+  display: flex;
+  gap: var(--gutter);
+  width: 100%;
+  margin-top: var(--gutter);
+  aspect-ratio: 1440 / 800;
+}
+/* Three equal columns: grid__left spans two of them (+ the gutter between),
+   grid__right is the third. */
+.grid__left {
+  flex: 0 0 calc((100% - 2 * var(--gutter)) / 3 * 2 + var(--gutter));
+  min-width: 0;
+  display: flex;
+  gap: var(--gutter);
+}
+.grid__right {
+  flex: 0 0 calc((100% - 2 * var(--gutter)) / 3);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+.grid__left .card {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.grid__right .card {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  margin-top: var(--gutter);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* content sits at the bottom of the 100vh band */
+  background: var(--color-bg);
+  padding: 40px 40px 20px;
+}
+.site-footer__headline {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 1.18;
+  color: var(--color-nav);
+}
+.site-footer__body {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+  margin-top: 200px;
+}
+.footer-cols {
+  display: flex;
+  gap: var(--gutter);
+}
+.footer-col {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.footer-col__title {
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid rgba(20, 8, 3, 0.2);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.footer-col__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.footer-col__links a {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.footer-newsletter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid rgba(20, 8, 3, 0.2);
+}
+.footer-newsletter__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.footer-newsletter__input::placeholder {
+  color: rgba(20, 8, 3, 0.4);
+}
+.footer-newsletter__input:focus {
+  outline: none;
+}
+.footer-newsletter__submit {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  white-space: nowrap;
+}
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.footer-bottom__copy {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.footer-social {
+  display: flex;
+  gap: 10px;
+}
+.footer-social a {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+
+/* ============================================================
+   Mobile (≤768px) — the v1.2-homepage-mobile comp (375px).
+   Every hover-reveal becomes always-visible (no hover on touch).
+   ============================================================ */
+@media (max-width: 768px) {
+  /* ---- Nav: MENU · wordmark · CART (0) ---- */
+  .navbar {
+    padding: calc(20px - 8px * var(--nav-p)) 10px;
+  }
+  .nav-link--shop,
+  .nav-link--rest,
+  .nav-link--search {
+    display: none; /* folded into MENU */
+  }
+  .nav-link--menu {
+    display: block;
+  }
+  /* MENU + CART take equal space so the wordmark stays centred */
+  .nav-link--menu,
+  .nav-link--cart {
+    flex: 1 1 0;
+    width: auto;
+  }
+  .nav-logo {
+    flex: 0 0 auto;
+    width: 168px;
+    height: 12px;
+  }
+
+  /* Shop mega-menu is desktop-only; mobile uses the MENU button instead */
+  .megamenu {
+    display: none;
+  }
+
+  /* ---- Hero: full viewport (100vh inherited from the base rule) ---- */
+  .hero__headline {
+    font-size: 24px;
+    padding: 0 20px;
+  }
+
+  /* ---- Feature columns: stacked, CTA always visible ---- */
+  .features {
+    flex-direction: column;
+  }
+  .features__cell--left,
+  .features__cell--right {
+    width: 100%;
+    flex: 0 0 auto;
+    height: auto;
+    aspect-ratio: 375 / 418;
+  }
+  .feature-col__cta {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ---- Product cards: horizontal-scroll carousel ---- */
+  .products {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 10px;
+  }
+  .products::-webkit-scrollbar {
+    display: none;
+  }
+  .products .card {
+    flex: 0 0 275px;
+    width: 275px;
+    scroll-snap-align: start;
+    aspect-ratio: auto; /* image holds the ratio; card grows to fit the info below */
+  }
+  /* Last card snaps to the end so the carousel rests flush at the right edge
+     (mandatory snap otherwise can't reach the last card's start point → cream gap) */
+  .products .card:last-child {
+    scroll-snap-align: end;
+  }
+
+  /* Product card (mobile only): info sits in a cream block BELOW the image */
+  .products .card__link {
+    position: static;
+    display: flex;
+    flex-direction: column;
+  }
+  .products .card__media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 357 / 501;
+  }
+  .products .card__info {
+    position: static;
+    inset: auto;
+    transform: none;
+  }
+
+  /* Card info / tag always visible on touch (no hover) */
+  .card__info {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .card__tag {
+    opacity: 1;
+  }
+
+  /* ---- Image grid: large card + a scroll-row of two contained cards, each
+     with its info in a cream block BELOW the image (mirrors the products
+     redesign). All scoped to mobile so the desktop hover-overlay grid stays. ---- */
+  .grid {
+    flex-direction: column;
+    aspect-ratio: auto;
+    height: auto;
+    gap: var(--gutter);
+  }
+
+  /* Shared: image on top, info below */
+  .grid .card {
+    flex: none; /* reset desktop flex-basis:0 so cards size to content */
+    aspect-ratio: auto;
+  }
+  .grid .card__link {
+    position: static;
+    display: flex;
+    flex-direction: column;
+  }
+  .grid .card__media {
+    position: relative;
+    inset: auto;
+    width: 100%;
+  }
+  .grid .card__info {
+    position: static;
+    inset: auto;
+    transform: none;
+    width: 100%;
+    flex-direction: column;
+    background: var(--color-bg);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Large card (Womens 402): full-bleed image + info with a bottom rule */
+  .grid__left {
+    flex: none; /* reset desktop flex-basis:0 so it sizes to content in the column */
+    flex-direction: column;
+  }
+  .grid__left .card:nth-of-type(2) {
+    display: none; /* drop the second large image on mobile (per comp) */
+  }
+  .grid__left .card__media {
+    aspect-ratio: 375 / 526;
+  }
+  .grid__left .card__info {
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Two contained cards: horizontal-scroll row of 275px cards, name+price below */
+  .grid__right {
+    flex: none; /* reset desktop flex-basis:0 so it sizes to content in the column */
+    flex-direction: row;
+    align-items: flex-start; /* size cards to content, not stretch-to-collapse */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: var(--gutter);
+  }
+  .grid__right::-webkit-scrollbar {
+    display: none;
+  }
+  .grid__right .card {
+    flex: 0 0 275px;
+    width: 275px;
+    scroll-snap-align: start;
+  }
+  .grid__right .card__media {
+    aspect-ratio: 275 / 308;
+  }
+  /* Contained image: centred with cream margins (74.36% wide) */
+  .grid__right .card__media img {
+    left: 12.82%;
+    right: auto;
+    width: 74.36%;
+  }
+  /* Name + price row (override the desktop centred white chip) */
+  .grid__right .card__meta {
+    flex-direction: row;
+    width: 100%;
+    gap: 12px;
+  }
+
+  /* ---- Band: portrait crop ---- */
+  .band {
+    aspect-ratio: 375 / 526;
+  }
+
+  /* ---- Promo banner: portrait crop, smaller headline ---- */
+  .promo {
+    aspect-ratio: 375 / 526;
+  }
+  .promo__headline {
+    font-size: 24px;
+  }
+
+  /* ---- Collection tabs: pinned scroll-scrub sequence ----
+     The scroller gives the scroll distance; the section pins (sticky) and
+     v1.2.js advances [data-active] 0→3 + --tab-progress as you scroll through. */
+  .tabs-scroller {
+    position: relative;
+    height: 400vh; /* pin lasts ~300vh → ~75vh per collection */
+  }
+  .tabs-section {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    aspect-ratio: auto;
+    margin-top: 0;
+    justify-content: center; /* the active label sits centred */
+    padding: 0;
+  }
+  .tabs-section__spacer {
+    display: none;
+  }
+
+  /* Only the active collection's image is shown (crossfaded by [data-active]).
+     Longer, ease-in-out crossfade so the swap feels smoother on mobile. */
+  .tab-img {
+    transition: opacity 1.1s var(--ease-natural);
+  }
+  .tabs-section[data-active="0"] .tab-img--legacy,
+  .tabs-section[data-active="1"] .tab-img--classics,
+  .tabs-section[data-active="2"] .tab-img--essentials,
+  .tabs-section[data-active="3"] .tab-img--heirloom {
+    opacity: 1;
+  }
+
+  /* Labels: stacked in one cell, only the active one fades in (larger on mobile) */
+  .tabs {
+    display: grid;
+    place-items: center;
+    gap: 0;
+  }
+  .tabs__item {
+    grid-area: 1 / 1;
+    font-size: 24px;
+    color: #f5f5f2;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-expo);
+  }
+  .tabs-section[data-active="0"] .tabs__item--legacy,
+  .tabs-section[data-active="1"] .tabs__item--classics,
+  .tabs-section[data-active="2"] .tabs__item--essentials,
+  .tabs-section[data-active="3"] .tabs__item--heirloom {
+    opacity: 1;
+  }
+
+  /* Description + progress pinned to the bottom of the screen */
+  .tabs-desc {
+    position: absolute;
+    left: 50%;
+    bottom: 62px; /* 40px above the progress bar's top edge (22px) */
+    transform: translateX(-50%);
+    width: 215px;
+  }
+  .tabs-section[data-active="0"] .tabs-desc__item--legacy,
+  .tabs-section[data-active="1"] .tabs-desc__item--classics,
+  .tabs-section[data-active="2"] .tabs-desc__item--essentials,
+  .tabs-section[data-active="3"] .tabs-desc__item--heirloom {
+    opacity: 1;
+  }
+
+  .tabs-progress {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: 20px; /* 20px below the progress bar */
+    transform: translateX(-50%);
+    width: 160px;
+    height: 2px;
+    background: rgba(245, 245, 242, 0.3);
+    overflow: hidden;
+  }
+  .tabs-progress__fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: #f5f5f2;
+    transform: scaleX(var(--tab-progress, 0));
+    transform-origin: left center;
+  }
+
+  /* ---- Footer: single column ---- */
+  .site-footer {
+    min-height: auto;
+    padding: 40px 10px 20px;
+  }
+  .site-footer__headline {
+    font-size: 24px;
+  }
+  .site-footer__body {
+    margin-top: 80px;
+    gap: 60px;
+  }
+  .footer-cols {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .footer-bottom {
+    flex-direction: column-reverse; /* social above copyright */
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  /* ---- Loading intro copy ---- */
+  /* Higher specificity than the base .loader__copy, which is defined later in
+     the file and would otherwise win on source order at equal specificity. */
+  .loader .loader__copy {
+    font-size: 24px;
+  }
+}
+
+/* ============================================================
+   Loading intro
+   Phases are driven by classes added to <html> in script.js:
+   intro → phase-copy → phase-reveal → intro-done.
+   The overlay only exists while .intro is present (set pre-paint by the
+   inline head script), so with JS off the page renders normally.
+
+   Registered custom properties animate reliably (a raw clip-path/mask
+   transition can stick mid-interpolation), so the reveals are driven by
+   typed percentages that the masks recompute from each frame.
+   ============================================================ */
+@property --mask-out {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.loader {
+  display: none;
+}
+
+/* The cream loading background. It masks OUT upward (bottom → top) to expose
+   the page beneath — driven by --mask-out (0% = full, 100% = cleared). */
+.intro .loader {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--color-bg);
+  overflow: hidden;
+  clip-path: inset(0 0 var(--mask-out) 0);
+  transition: --mask-out 1.5s var(--ease-natural);
+}
+.intro.phase-reveal .loader {
+  --mask-out: 100%;
+  pointer-events: none;
+}
+
+.loader__copy {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--color-nav);
+}
+
+/* Premium left-to-right reveal, per word: each word settles up from a slight
+   blur + rise + fade, staggered L→R. The second sentence (--line:1) trails the
+   first. Uses opacity/transform (GPU-composited) so it stays smooth. */
+.loader__line {
+  display: block;
+}
+.loader__word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(0.32em);
+  will-change: opacity, transform, filter;
+  transition: opacity 1.25s var(--ease-expo),
+              filter 1.25s var(--ease-expo),
+              transform 1.25s var(--ease-expo);
+  transition-delay: calc(var(--line, 0) * 0.42s + var(--i, 0) * 0.085s);
+}
+
+.intro.phase-copy .loader__word {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* Nav elements fade in (staggered) once the reveal has reached them:
+   wordmark → links. */
+.intro .nav-logo,
+.intro .nav-link {
+  opacity: 0;
+}
+.intro.intro-done .nav-logo,
+.intro.intro-done .nav-link {
+  opacity: 1;
+  transition: opacity 1.2s var(--ease-natural);
+}
+.intro.intro-done .nav-logo {
+  transition-delay: 0s;
+}
+.intro.intro-done .nav-link {
+  transition-delay: 0.1s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No intro animation — handled by script.js removing .intro immediately. */
+  .intro .loader {
+    display: none;
+  }
+  .intro .nav-logo,
+  .intro .nav-link {
+    opacity: 1;
+  }
+}
