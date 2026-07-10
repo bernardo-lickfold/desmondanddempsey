@@ -125,12 +125,13 @@ if (shopTrigger && megamenu) {
 }
 
 // ---- UGC carousel -------------------------------------------------------
-// Infinite auto-scrolling marquee of community shots. The CSS animates
-// .ugc__track leftward by --ugc-shift (one copy's exact width) and wraps; here
-// we clone enough WHOLE card-sets that there's always ≥ a viewport of cards past
-// the wrap point, so the loop is seamless no matter the card count or width.
-// Speed is constant (data-speed = px/sec). Pausing on hover is pure CSS; JS
-// handles per-card video playback + mute.
+// Desktop: infinite auto-scrolling marquee. The CSS animates .ugc__track leftward
+// by --ugc-shift (one copy's exact width) and wraps; here we clone enough WHOLE
+// card-sets that there's always ≥ a viewport of cards past the wrap point, so the
+// loop is seamless. Speed is constant (data-speed = px/sec); pausing on hover is
+// pure CSS; videos play on hover with a mute toggle.
+// Mobile: no marquee — a manual scroll-snap slider (CSS), where each card's video
+// autoplays once the card is (almost) fully in view (IntersectionObserver below).
 function initUgc() {
   const ugc = document.querySelector(".ugc");
   const track = ugc && ugc.querySelector(".ugc__track");
@@ -149,12 +150,23 @@ function initUgc() {
   // (Re)build the loop: strip old clones, measure one copy, clone whole sets
   // until the track covers viewport + one copy, then publish shift + duration.
   const build = () => {
+    // Reset to just the originals.
     Array.from(track.children).forEach((c) => {
       if (!c.dataset.ugcOriginal) track.removeChild(c);
     });
 
-    // One copy's advance = span of the original set + the gap bridging to the
-    // next copy → the exact distance that lands clone-N where original-N began.
+    // Mobile: manual horizontal slider — no clones, no marquee (CSS disables the
+    // animation and adds scroll-snap). Videos autoplay via the observer below.
+    if (mobileMQ.matches) {
+      ugc.style.removeProperty("--ugc-shift");
+      ugc.style.removeProperty("--ugc-duration");
+      wireVideos();
+      return;
+    }
+
+    // Desktop marquee. One copy's advance = span of the original set + the gap
+    // bridging to the next copy → the exact distance that lands clone-N where
+    // original-N began.
     const first = originals[0];
     const last = originals[originals.length - 1];
     const copyW = last.offsetLeft + last.offsetWidth - first.offsetLeft + gapOf();
@@ -215,6 +227,46 @@ function initUgc() {
   };
 
   build();
+
+  // Mobile only: autoplay a card's video once the card is (almost) fully in view,
+  // and pause it otherwise. Guarded to mobile so desktop hover-playback is left
+  // untouched. (Videos start muted, so autoplay is allowed.)
+  if ("IntersectionObserver" in window) {
+    // Play only while the card is (almost) fully in view. preload="none" means the
+    // first play() can be rejected mid-load, so retry once the clip is ready — but
+    // only if the card is still the active one (dataset.ugcActive).
+    const playWhenReady = (video) => {
+      const p = video.play();
+      if (p && p.catch) {
+        p.catch(() => {
+          video.addEventListener(
+            "canplay",
+            () => {
+              if (video.dataset.ugcActive === "1") video.play().catch(() => {});
+            },
+            { once: true }
+          );
+        });
+      }
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!mobileMQ.matches) return;
+        entries.forEach((e) => {
+          const video = e.target.querySelector(".ugc-card__video");
+          if (!video) return;
+          const visible = e.isIntersecting && e.intersectionRatio >= 0.9;
+          video.dataset.ugcActive = visible ? "1" : "0";
+          if (visible) playWhenReady(video);
+          else video.pause();
+        });
+      },
+      { threshold: [0, 0.9, 1] }
+    );
+    originals.forEach((card) => {
+      if (card.matches('.ugc-card[data-media="video"]')) io.observe(card);
+    });
+  }
 
   // Card width is vw-based on mobile → re-measure & re-clone on resize (debounced).
   let resizeTimer;
