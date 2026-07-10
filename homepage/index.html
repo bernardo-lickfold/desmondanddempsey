@@ -221,42 +221,6 @@
       </div>
     </section>
 
-    <!-- Collection tabs — desktop: hover swaps image + description.
-         Mobile: the .tabs-scroller gives scroll distance; the section pins and
-         a scroll-scrub (v1.2.js) advances the active collection + progress bar. -->
-    <div class="tabs-scroller">
-    <section class="tabs-section" data-active="0">
-      <div class="tabs-section__media">
-        <img class="tab-img tab-img--legacy" src="assets/images/Legacy.jpg" alt="" />
-        <img class="tab-img tab-img--classics" src="assets/images/Classics.jpg" alt="" />
-        <img class="tab-img tab-img--essentials" src="assets/images/Essentials.jpg" alt="" />
-        <img class="tab-img tab-img--heirloom" src="assets/images/Heirloom.jpg" alt="" />
-        <span class="tabs-section__overlay" aria-hidden="true"></span>
-      </div>
-
-      <!-- Invisible top line balances the column so the tabs sit centred -->
-      <p class="tabs-section__spacer" aria-hidden="true">And on the seventh day there was rest.</p>
-
-      <nav class="tabs" aria-label="Collections">
-        <a class="tabs__item tabs__item--legacy" href="#">Legacy</a>
-        <a class="tabs__item tabs__item--classics" href="#">Classics</a>
-        <a class="tabs__item tabs__item--essentials" href="#">Essentials</a>
-        <a class="tabs__item tabs__item--heirloom" href="#">Heirloom</a>
-      </nav>
-
-      <!-- Description crossfades with the hovered/active tab (defaults to Legacy) -->
-      <div class="tabs-desc">
-        <p class="tabs-desc__item tabs-desc__item--legacy">Crowd-pleasers, all-time faves, whatever you like to call it.</p>
-        <p class="tabs-desc__item tabs-desc__item--classics">A classic designed for slowing down.</p>
-        <p class="tabs-desc__item tabs-desc__item--essentials">There&rsquo;s something oh so cool about quality basics.</p>
-        <p class="tabs-desc__item tabs-desc__item--heirloom">Inspired by a 1991 vintage nightie</p>
-      </div>
-
-      <!-- Mobile-only scrub progress bar -->
-      <div class="tabs-progress" aria-hidden="true"><span class="tabs-progress__fill"></span></div>
-    </section>
-    </div>
-
     <!-- Image grid: two large cards + two stacked cards -->
     <section class="grid">
       <div class="grid__left">
@@ -305,9 +269,157 @@
       </div>
     </section>
 
-    <!-- Full-width image band -->
-    <section class="band">
-      <img src="assets/images/band-2.jpg" alt="" />
+    <!-- Collection tabs — desktop: hover swaps image + description.
+         Mobile: the .tabs-scroller gives scroll distance; the section pins and
+         a scroll-scrub (v1.2.js) advances the active collection + progress bar. -->
+    <div class="tabs-scroller">
+    <section class="tabs-section" data-active="0">
+      <div class="tabs-section__media">
+        <img class="tab-img tab-img--legacy" src="assets/images/Legacy.jpg" alt="" />
+        <img class="tab-img tab-img--classics" src="assets/images/Classics.jpg" alt="" />
+        <img class="tab-img tab-img--essentials" src="assets/images/Essentials.jpg" alt="" />
+        <img class="tab-img tab-img--heirloom" src="assets/images/Heirloom.jpg" alt="" />
+        <span class="tabs-section__overlay" aria-hidden="true"></span>
+      </div>
+
+      <!-- Invisible top line balances the column so the tabs sit centred -->
+      <p class="tabs-section__spacer" aria-hidden="true">And on the seventh day there was rest.</p>
+
+      <nav class="tabs" aria-label="Collections">
+        <a class="tabs__item tabs__item--legacy" href="#">Legacy</a>
+        <a class="tabs__item tabs__item--classics" href="#">Classics</a>
+        <a class="tabs__item tabs__item--essentials" href="#">Essentials</a>
+        <a class="tabs__item tabs__item--heirloom" href="#">Heirloom</a>
+      </nav>
+
+      <!-- Description crossfades with the hovered/active tab (defaults to Legacy) -->
+      <div class="tabs-desc">
+        <p class="tabs-desc__item tabs-desc__item--legacy">Crowd-pleasers, all-time faves, whatever you like to call it.</p>
+        <p class="tabs-desc__item tabs-desc__item--classics">A classic designed for slowing down.</p>
+        <p class="tabs-desc__item tabs-desc__item--essentials">There&rsquo;s something oh so cool about quality basics.</p>
+        <p class="tabs-desc__item tabs-desc__item--heirloom">Inspired by a 1991 vintage nightie</p>
+      </div>
+
+      <!-- Mobile-only scrub progress bar -->
+      <div class="tabs-progress" aria-hidden="true"><span class="tabs-progress__fill"></span></div>
+    </section>
+    </div>
+
+    <!-- UGC carousel — auto-scrolling community shots. The .ugc__track is
+         duplicated in script.js so the marquee loops seamlessly; it pauses while
+         the section is hovered. Each card reveals its social tag + product info
+         on hover. Video cards (data-media="video") play on hover and expose a
+         mute toggle. Swap/extend content by editing the cards below and dropping
+         files in assets/ugc/ (see assets/ugc/README.txt). -->
+    <section class="ugc" aria-label="From the D&amp;D community" data-speed="28">
+      <div class="ugc__viewport">
+        <div class="ugc__track">
+
+          <!-- Video card — plays on hover, mute toggle -->
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Women Pima Long Set — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-1.mp4" poster="assets/ugc/ugc-1.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@sunday.stories</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Women Pima Long Set</span><span class="ugc-card__price">£120</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s1.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s2.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s3.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s4.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s5.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+
+          <!-- Video card — plays on hover, mute toggle -->
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Men Chambray Blue — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-2.mp4" poster="assets/ugc/ugc-2.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@bedhead.club</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Men Chambray Blue</span><span class="ugc-card__price">£95</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s1.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s2.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s3.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s4.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s5.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+
+          <!-- Video card — plays on hover, mute toggle -->
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Leopard Short Set — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-3.mp4" poster="assets/ugc/ugc-3.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@slow.mornings</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Leopard Short Set</span><span class="ugc-card__price">£110</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s1.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s2.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s3.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+
+          <!-- Video card — plays on hover, mute toggle -->
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Men Gingham Check — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-4.mp4" poster="assets/ugc/ugc-4.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@still.in.bed</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Men Gingham Check</span><span class="ugc-card__price">£110</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s1.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s2.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/s4.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Press — full-bleed image + dark overlay. An auto-advancing pull-quote
+         tied to the active press logo; each quote's words reveal L→R (same
+         treatment as the loading intro). Hovering a logo selects its quote and
+         pauses the auto-advance. Logic in script.js (initPress). -->
+    <section class="press" aria-label="Press">
+      <img class="press__bg" src="assets/press/bg.jpg" alt="" />
+      <span class="press__overlay" aria-hidden="true"></span>
+      <div class="press__inner">
+        <div class="press__quotes" aria-live="polite">
+          <blockquote class="press__quote is-active" data-index="0">“Pyjamas that add opulence to your night-time routine.”</blockquote>
+          <blockquote class="press__quote" data-index="1">“The dreamiest sleepwear to live, lounge and linger in.”</blockquote>
+          <blockquote class="press__quote" data-index="2">“Effortlessly cool pyjamas made for slow Sunday mornings.”</blockquote>
+          <blockquote class="press__quote" data-index="3">“Beautifully crafted loungewear worth staying in bed for.”</blockquote>
+        </div>
+        <div class="press__logos" aria-label="Featured in">
+          <button class="press__logo is-active" type="button" aria-pressed="true" data-index="0" aria-label="Vogue"><img src="assets/press/vogue.svg" alt="Vogue" /></button>
+          <button class="press__logo" type="button" aria-pressed="false" data-index="1" aria-label="Tatler"><img src="assets/press/tatler.svg" alt="Tatler" /></button>
+          <button class="press__logo" type="button" aria-pressed="false" data-index="2" aria-label="The Telegraph"><img src="assets/press/telegraph.svg" alt="The Telegraph" /></button>
+          <button class="press__logo" type="button" aria-pressed="false" data-index="3" aria-label="Harper's Bazaar"><img src="assets/press/bazaar.svg" alt="Harper's Bazaar" /></button>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
@@ -332,7 +444,7 @@
             <h4 class="footer-col__title">Information</h4>
             <ul class="footer-col__links">
               <li><a href="#">Sizing</a></li>
-              <li><a href="#">Monogramming</a></li>
+              <li><a href="#">Personalisation</a></li>
               <li><a href="#">How D&amp;Ds are made</a></li>
               <li><a href="#">Wholesale</a></li>
               <li><a href="#">Bespoke</a></li>
@@ -345,12 +457,13 @@
               <li><a href="#">Contact</a></li>
               <li><a href="#">Delivery &amp; returns</a></li>
               <li><a href="#">Customer reviews</a></li>
-              <li><a href="#">Privacy</a></li>
-              <li><a href="#">Cookies</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Cookie Consent</a></li>
+              <li><a href="#">SMS</a></li>
             </ul>
           </div>
           <div class="footer-col">
-            <h4 class="footer-col__title">Sign up for the latest news</h4>
+            <h4 class="footer-col__title">Get £15/$20 Off when you sign up for our Sunday Club</h4>
             <form class="footer-newsletter" action="#" method="post">
               <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
               <button class="footer-newsletter__submit" type="submit">Subscribe</button>

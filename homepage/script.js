@@ -124,6 +124,182 @@ if (shopTrigger && megamenu) {
   window.addEventListener("touchmove", () => menuOpen && setMenu(false), { passive: true });
 }
 
+// ---- UGC carousel -------------------------------------------------------
+// Infinite auto-scrolling marquee of community shots. The CSS animates
+// .ugc__track leftward by --ugc-shift (one copy's exact width) and wraps; here
+// we clone enough WHOLE card-sets that there's always ≥ a viewport of cards past
+// the wrap point, so the loop is seamless no matter the card count or width.
+// Speed is constant (data-speed = px/sec). Pausing on hover is pure CSS; JS
+// handles per-card video playback + mute.
+function initUgc() {
+  const ugc = document.querySelector(".ugc");
+  const track = ugc && ugc.querySelector(".ugc__track");
+  if (!track) return;
+
+  const originals = Array.from(track.children);
+  if (!originals.length) return;
+  originals.forEach((n) => (n.dataset.ugcOriginal = "1"));
+
+  const speed = Number(ugc.dataset.speed) || 40; // px per second
+  const gapOf = () => {
+    const s = getComputedStyle(track);
+    return parseFloat(s.columnGap || s.gap) || 0;
+  };
+
+  // (Re)build the loop: strip old clones, measure one copy, clone whole sets
+  // until the track covers viewport + one copy, then publish shift + duration.
+  const build = () => {
+    Array.from(track.children).forEach((c) => {
+      if (!c.dataset.ugcOriginal) track.removeChild(c);
+    });
+
+    // One copy's advance = span of the original set + the gap bridging to the
+    // next copy → the exact distance that lands clone-N where original-N began.
+    const first = originals[0];
+    const last = originals[originals.length - 1];
+    const copyW = last.offsetLeft + last.offsetWidth - first.offsetLeft + gapOf();
+    if (copyW <= 0) return;
+
+    const target = window.innerWidth + copyW;
+    let guard = 0;
+    while (track.scrollWidth < target && guard < 20) {
+      originals.forEach((node) => {
+        const clone = node.cloneNode(true);
+        delete clone.dataset.ugcOriginal;
+        clone.setAttribute("aria-hidden", "true");
+        clone.querySelectorAll("a, button").forEach((el) => (el.tabIndex = -1));
+        track.appendChild(clone);
+      });
+      guard++;
+    }
+
+    ugc.style.setProperty("--ugc-shift", copyW.toFixed(2) + "px");
+    ugc.style.setProperty("--ugc-duration", (copyW / speed).toFixed(2) + "s");
+
+    wireVideos();
+  };
+
+  // Video cards (originals + clones): play on hover, reset on leave, mute toggle.
+  // Guarded so rebuilds don't double-bind the originals.
+  const wireVideos = () => {
+    track.querySelectorAll('.ugc-card[data-media="video"]').forEach((card) => {
+      if (card.dataset.ugcWired) return;
+      card.dataset.ugcWired = "1";
+
+      const video = card.querySelector(".ugc-card__video");
+      if (!video) return;
+
+      card.addEventListener("mouseenter", () => {
+        const p = video.play();
+        if (p && p.catch) p.catch(() => {}); // ignore autoplay/missing-source rejections
+      });
+      card.addEventListener("mouseleave", () => video.pause());
+
+      const btn = card.querySelector(".ugc-card__mute");
+      if (btn) {
+        const sync = () => {
+          btn.textContent = video.muted ? "Unmute" : "Mute";
+          btn.setAttribute("aria-label", video.muted ? "Unmute video" : "Mute video");
+          btn.setAttribute("aria-pressed", String(!video.muted));
+        };
+        sync(); // videos start muted so hover-playback is allowed → shows "Unmute"
+        btn.addEventListener("click", (e) => {
+          // Don't follow the card's product link when toggling sound.
+          e.preventDefault();
+          e.stopPropagation();
+          video.muted = !video.muted;
+          sync();
+        });
+      }
+    });
+  };
+
+  build();
+
+  // Card width is vw-based on mobile → re-measure & re-clone on resize (debounced).
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(build, 200);
+  });
+}
+initUgc();
+
+// ---- Press slider -------------------------------------------------------
+// Auto-advancing pull-quotes tied to the press logos. Each quote's words reveal
+// L→R (the loading-intro treatment); the active logo drives the quote. It
+// advances on its own; hovering a logo selects that quote and pauses the
+// auto-advance (which resumes when the pointer leaves the logos).
+function initPress() {
+  const press = document.querySelector(".press");
+  if (!press) return;
+  const quotes = Array.from(press.querySelectorAll(".press__quote"));
+  const logos = Array.from(press.querySelectorAll(".press__logo"));
+  if (!quotes.length || !logos.length) return;
+
+  // Start from a clean slate, then split each quote into per-word spans so they
+  // can stagger in. (Remove is-active first so the split words start hidden.)
+  quotes.forEach((q) => q.classList.remove("is-active"));
+  logos.forEach((l) => l.classList.remove("is-active"));
+  quotes.forEach((q) => {
+    const words = q.textContent.trim().split(/\s+/);
+    q.textContent = "";
+    // Words live in an inner block: the quote itself is a flex box (to center),
+    // and flex would drop the whitespace text nodes between the word spans — the
+    // inner block keeps them in a normal text flow so the spaces render.
+    const inner = document.createElement("span");
+    inner.className = "press__quote-inner";
+    words.forEach((w, i) => {
+      const span = document.createElement("span");
+      span.className = "press__word";
+      span.style.setProperty("--i", i);
+      span.textContent = w;
+      inner.appendChild(span);
+      if (i < words.length - 1) inner.appendChild(document.createTextNode(" "));
+    });
+    q.appendChild(inner);
+  });
+
+  let index = 0;
+  const activate = (next) => {
+    const target = ((next % quotes.length) + quotes.length) % quotes.length;
+    quotes.forEach((q, i) => q.classList.toggle("is-active", i === target));
+    logos.forEach((l, i) => {
+      l.classList.toggle("is-active", i === target);
+      l.setAttribute("aria-pressed", String(i === target));
+    });
+    index = target;
+  };
+
+  const INTERVAL = 4500;
+  let timer = null;
+  const start = () => {
+    if (!prefersReducedMotion && timer == null) {
+      timer = window.setInterval(() => activate(index + 1), INTERVAL);
+    }
+  };
+  const stop = () => {
+    if (timer != null) {
+      window.clearInterval(timer);
+      timer = null;
+    }
+  };
+
+  // Hover / focus a logo → select its quote and pause; resume when leaving.
+  logos.forEach((logo, i) => {
+    logo.addEventListener("mouseenter", () => { stop(); activate(i); });
+    logo.addEventListener("focus", () => { stop(); activate(i); });
+    logo.addEventListener("click", (e) => { e.preventDefault(); activate(i); });
+  });
+  const logosWrap = press.querySelector(".press__logos");
+  if (logosWrap) logosWrap.addEventListener("mouseleave", start);
+
+  // Show the first quote, then begin auto-advancing (reduced motion → static).
+  activate(0);
+  start();
+}
+initPress();
+
 // ---- Loading intro ------------------------------------------------------
 // Choreographs the phases set up in styles.css. Scroll is locked for the
 // duration so the reveal plays from the top, then handed back to Lenis.
@@ -190,11 +366,7 @@ if (prefersReducedMotion) {
       parallax.push({ host: tabsSection, target: img, stretch: false, cur: 0, tabIndex: i })
     );
 
-  // Full-width band image.
-  const band = document.querySelector(".band");
-  addParallax(band, band && band.querySelector("img"), false);
-
-  // Promo banner image (same treatment as the band).
+  // Promo banner image (parallax on the full-bleed image).
   const promo = document.querySelector(".promo");
   addParallax(promo, promo && promo.querySelector(".promo__img"), false);
 
