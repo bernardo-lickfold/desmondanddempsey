@@ -90,11 +90,11 @@ function closeFilter() {
   filterPanel.classList.remove("is-open");
   filterBackdrop.classList.remove("is-open");
   lenis?.start();
-  // Hide the backdrop again once its fade-out has finished (matches the 0.5s
+  // Hide the backdrop again once its fade-out has finished (matches the 0.6s
   // drawer transition).
   window.setTimeout(() => {
     if (!filterBackdrop.classList.contains("is-open")) filterBackdrop.hidden = true;
-  }, 520);
+  }, 640);
 }
 
 if (filterOpenBtn && filterPanel) {

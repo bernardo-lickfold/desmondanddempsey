@@ -127,7 +127,7 @@
   background: var(--color-bg);
   transform: translateX(100%);
   visibility: hidden;
-  transition: transform 0.5s var(--ease-drawer), visibility 0.5s linear;
+  transition: transform 0.6s var(--ease-drawer), visibility 0.6s linear;
 }
 .filter-panel.is-open {
   transform: translateX(0);
@@ -140,7 +140,7 @@
   background: rgba(20, 8, 3, 0.4);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s var(--ease-drawer), visibility 0.5s linear;
+  transition: opacity 0.6s var(--ease-drawer), visibility 0.6s linear;
 }
 .filter-backdrop.is-open {
   opacity: 1;
@@ -644,6 +644,11 @@
   /* ...and the panel's category section appears (hidden on desktop). */
   .filter-acc--category {
     display: block;
+  }
+  /* Full-width drawer on mobile. */
+  .filter-panel {
+    width: 100%;
+    max-width: none;
   }
   .toolbar__controls {
     grid-column: auto;
