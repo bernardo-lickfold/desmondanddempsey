@@ -3,25 +3,842 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Collections — Desmond &amp; Dempsey</title>
-  <style>
-    :root { --bg:#f5f5f2; --ink:#140803; }
-    * { box-sizing:border-box; margin:0; }
-    html,body { height:100%; }
-    body {
-      background:var(--bg); color:var(--ink);
-      font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-height:100vh; text-align:center; padding:40px; gap:20px;
-    }
-    h1 { font-family:Georgia,"Times New Roman",serif; font-weight:300; font-size:32px; line-height:1.15; }
-    p { font-size:11px; letter-spacing:.04em; text-transform:uppercase; opacity:.5; }
-    a { color:inherit; font-size:11px; letter-spacing:.04em; text-transform:uppercase; text-decoration:none; border-bottom:0.5px solid rgba(20,8,3,.3); padding-bottom:2px; }
-  </style>
+  <title>D&amp;D — Women's Nightwear</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/vendor/lenis.css" />
+  <!-- Shared design system: tokens, navbar, footer, card base, loader. -->
+  <link rel="stylesheet" href="v1.2.css" />
+  <!-- Collection-specific: solid nav, page header, filter toolbar, product grid. -->
+  <link rel="stylesheet" href="collection.css" />
 </head>
 <body>
-  <h1>Collections</h1>
-  <p>Coming soon</p>
-  <a href="../homepage/">← Home</a>
+  <main class="page page--collection">
+    <header class="header header--collection">
+      <!-- Same navbar as the homepage, but locked to the solid state (no hero
+           sits behind it on the collection page). -->
+      <nav class="navbar" aria-label="Primary">
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="#">Shop</a>
+        <a class="nav-link nav-link--rest" href="#">Rest</a>
+        <a class="nav-logo" href="../homepage/" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- Shop region: the sticky toolbar's containing block. Because the footer
+         sits OUTSIDE this wrapper, the toolbar stops sticking at the end of the
+         product grid and never overlaps the footer. -->
+    <div class="shop">
+
+    <!-- Filter / sort toolbar -->
+    <div class="toolbar">
+      <nav class="toolbar__cats" aria-label="Categories">
+        <a class="toolbar__cat is-active" href="#">All</a>
+        <a class="toolbar__cat" href="#">Sets</a>
+        <a class="toolbar__cat" href="#">Robes</a>
+        <a class="toolbar__cat" href="#">Nighties</a>
+        <a class="toolbar__cat" href="#">Shirts</a>
+        <a class="toolbar__cat" href="#">Trousers</a>
+        <a class="toolbar__cat" href="#">Tops</a>
+        <a class="toolbar__cat" href="#">Shorts</a>
+        <a class="toolbar__cat" href="#">Accessories</a>
+        <a class="toolbar__cat" href="#">Underwear</a>
+        <a class="toolbar__cat" href="#">Socks</a>
+        <a class="toolbar__cat" href="#">Slippers</a>
+      </nav>
+      <div class="toolbar__controls">
+        <div class="toolbar__group">
+          <button class="toolbar__btn" type="button" data-grid-toggle aria-pressed="false">Grid Size</button>
+          <button class="toolbar__btn" type="button" data-view-toggle aria-pressed="false">View</button>
+        </div>
+        <button class="toolbar__btn toolbar__btn--filter" type="button" data-filter-open aria-haspopup="dialog" aria-controls="filter-panel">Filter &amp; Sort</button>
+      </div>
+    </div>
+
+    <!-- Filter & Sort drawer — opened by the toolbar's "Filter & Sort" button on
+         both desktop and mobile. Accordion sections + reset/apply footer.
+         (Figma: Desmond & Dempsey, node 911:5704.) -->
+    <div class="filter-backdrop" data-filter-close hidden></div>
+    <aside class="filter-panel" id="filter-panel" role="dialog" aria-modal="true" aria-label="Filter &amp; sort" data-lenis-prevent>
+      <div class="filter-panel__header">
+        <span class="filter-panel__title">Filter &amp; Sort</span>
+        <button class="filter-panel__close" type="button" data-filter-close>Close</button>
+      </div>
+
+      <div class="filter-panel__body">
+        <!-- By category (mobile only — desktop keeps the inline category bar) -->
+        <section class="filter-acc filter-acc--category is-open" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="true">
+            <span class="filter-acc__title">By category</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body">
+            <nav class="filter-cats" aria-label="Categories">
+              <a class="filter-cat is-active" href="#">All</a>
+              <a class="filter-cat" href="#">Sets</a>
+              <a class="filter-cat" href="#">Robes</a>
+              <a class="filter-cat" href="#">Nighties</a>
+              <a class="filter-cat" href="#">Shirts</a>
+              <a class="filter-cat" href="#">Trousers</a>
+              <a class="filter-cat" href="#">Tops</a>
+              <a class="filter-cat" href="#">Shorts</a>
+              <a class="filter-cat" href="#">Accessories</a>
+              <a class="filter-cat" href="#">Underwear</a>
+              <a class="filter-cat" href="#">Socks</a>
+              <a class="filter-cat" href="#">Slippers</a>
+            </nav>
+          </div>
+        </section>
+
+        <!-- By print & color -->
+        <section class="filter-acc is-open" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="true">
+            <span class="filter-acc__title">By print &amp; color</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body">
+            <div class="filter-group">
+              <span class="filter-group__label">Prints:</span>
+              <div class="filter-swatches" data-prints aria-label="Prints"></div>
+            </div>
+            <div class="filter-group">
+              <span class="filter-group__label">Colors:</span>
+              <div class="filter-swatches" data-colors aria-label="Colours"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- By fabric -->
+        <section class="filter-acc is-open" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="true">
+            <span class="filter-acc__title">By fabric</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body">
+            <ul class="filter-checklist">
+              <li><label class="fcheck"><span class="fcheck__label">100% Cotton Jersey</span><input class="fcheck__input" type="checkbox" checked /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Broderie Anglaise</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Cotton Pointelle</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Cotton Poplin</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Cotton Stretch</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Cotton Voile</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Linen</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Lyocell Jersey</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Towelling</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+              <li><label class="fcheck"><span class="fcheck__label">Washable Silk</span><input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span></label></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Collapsed sections (headers only for now) -->
+        <section class="filter-acc" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="false">
+            <span class="filter-acc__title">By colour</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body"></div>
+        </section>
+        <section class="filter-acc" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="false">
+            <span class="filter-acc__title">By shape</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body"></div>
+        </section>
+        <section class="filter-acc" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="false">
+            <span class="filter-acc__title">By price</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body"></div>
+        </section>
+        <section class="filter-acc" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="false">
+            <span class="filter-acc__title">By size</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body"></div>
+        </section>
+        <section class="filter-acc" data-acc>
+          <button class="filter-acc__head" type="button" data-acc-toggle aria-expanded="false">
+            <span class="filter-acc__title">Sort by</span>
+            <span class="filter-acc__icon" aria-hidden="true"></span>
+          </button>
+          <div class="filter-acc__body"></div>
+        </section>
+      </div>
+
+      <div class="filter-panel__footer">
+        <label class="fcheck fcheck--wide">
+          <span class="fcheck__label">Only show products that are in stock</span>
+          <input class="fcheck__input" type="checkbox" /><span class="fcheck__box" aria-hidden="true"></span>
+        </label>
+        <div class="filter-actions">
+          <button class="filter-btn filter-btn--reset" type="button" data-filter-reset>Reset</button>
+          <button class="filter-btn filter-btn--apply" type="button" data-filter-close>Apply Filters</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Product grid — 4 columns. Name + price sit below the image; hover swaps
+         to the detail photo and reveals the swatch row. -->
+    <section class="col-grid">
+      <!-- The grid cycles through the four catalogue products across 4 rows. -->
+
+      <!-- Row 1 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Row 2 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Row 3 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Row 4 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <!-- Row 5 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Row 6 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Row 7 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Row 8 -->
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-1-rest.png" alt="Womens 402 Long Set Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-1-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Womens 402 Long Set Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-2-rest.png" alt="Men Chambray Blue" />
+            <img class="pcard__media-hover" src="assets/images/card-2-hover.png" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Chambray Blue</span><span class="pcard__price">£95</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-3-rest.png" alt="Women Floral Navy" />
+            <img class="pcard__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Women Floral Navy</span><span class="pcard__price">£165</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="pcard">
+        <a class="pcard__link" href="#">
+          <span class="pcard__media">
+            <img src="assets/images/card-4-rest.png" alt="Men Gingham Check" />
+            <img class="pcard__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="pcard__tag">New in</span>
+          <span class="pcard__info">
+            <span class="pcard__meta"><span class="pcard__name">Men Gingham Check</span><span class="pcard__price">£110</span></span>
+            <span class="pcard__swatches">
+              <img class="pcard__swatch" src="assets/images/swatches/s1.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s2.png" alt="" />
+              <img class="pcard__swatch" src="assets/images/swatches/s4.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+    </section>
+    </div><!-- /.shop -->
+
+    <!-- Footer (shared with the homepage) -->
+    <footer class="site-footer">
+      <p class="site-footer__headline">And on the seventh day<br />there was rest.</p>
+
+      <div class="site-footer__body">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="footer-col__title">Our World</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Our story</a></li>
+              <li><a href="#">The loyalty lounge</a></li>
+              <li><a href="#">Sustainability</a></li>
+              <li><a href="#">Work with us</a></li>
+              <li><a href="#">Refer a friend</a></li>
+              <li><a href="#">Pre-loved marketplace</a></li>
+              <li><a href="#">T&amp;Cs</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Information</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Sizing</a></li>
+              <li><a href="#">Monogramming</a></li>
+              <li><a href="#">How D&amp;Ds are made</a></li>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Bespoke</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Customer Care</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Delivery &amp; returns</a></li>
+              <li><a href="#">Customer reviews</a></li>
+              <li><a href="#">Privacy</a></li>
+              <li><a href="#">Cookies</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Sign up for the latest news</h4>
+            <form class="footer-newsletter" action="#" method="post">
+              <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
+              <button class="footer-newsletter__submit" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span class="footer-bottom__copy">©2026 Desmond &amp; Dempsey. All Rights Reserved.</span>
+          <nav class="footer-social" aria-label="Social">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="collection.js"></script>
 </body>
 </html>
