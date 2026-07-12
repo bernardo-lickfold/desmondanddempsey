@@ -108,7 +108,7 @@ a {
 .navbar {
   display: flex;
   align-items: center;
-  gap: 20px; /* matches the shop mega-menu tab spacing */
+  justify-content: space-between; /* Shop · Rest · wordmark · Search · Cart, evenly spread */
   padding: 20px 40px;
 }
 
@@ -123,6 +123,10 @@ a {
   white-space: nowrap;
   text-align: center; /* REST + SEARCH */
   text-box: trim-both cap alphabetic;
+  transition: opacity 0.2s var(--ease-expo); /* same fade as the mega-menu links */
+}
+.nav-link:hover {
+  opacity: 0.55;
 }
 
 .nav-link--start {
@@ -133,16 +137,10 @@ a {
   text-align: right; /* CART (0) */
 }
 
-/* Group the links either side of the centred wordmark: Shop+Rest sit together
-   at the left, Search+Cart at the right. Auto margins after Rest and before
-   Search absorb the free space, keeping the wordmark centred. (On mobile Rest +
-   Search are hidden, so these have no effect there.) */
-.nav-link--rest {
-  margin-right: auto;
-}
-.nav-link--search {
-  margin-left: auto;
-}
+/* The navbar spreads its five items evenly (space-between): Shop and Rest at the
+   left, the wordmark centred, Search and Cart at the right — matching Figma's
+   equal 247px gaps. (On mobile Rest + Search are hidden; MENU/CART use flex:1 to
+   keep the wordmark centred instead.) */
 
 /* MENU only appears on mobile (collapses Shop/Rest/Search) */
 .nav-link--menu {
@@ -188,7 +186,9 @@ a {
   visibility: visible;
 }
 .megamenu__panel {
-  padding: 54px 0 0; /* top clears the fixed nav bar; image's own 4px is the base */
+  min-height: 540px; /* fixed panel height per Figma; content sits in the top band */
+  padding: 54px 0 40px; /* top clears the fixed nav bar; 40px foot below the links */
+  border-bottom: 0.5px solid rgba(20, 8, 3, 0.1); /* hairline under the menu */
 }
 
 /* Category tabs (Women / Men / Kids / Gifts) */
@@ -196,13 +196,13 @@ a {
   display: flex;
   gap: 20px;
   margin-top: 40px;
-  padding: 0 40px 36px;
+  padding: 0 40px 40px;
 }
 .megamenu__tab {
   font-size: 11px;
   line-height: 1;
   text-transform: uppercase;
-  color: rgba(20, 8, 3, 0.4);
+  color: rgba(20, 8, 3, 0.2);
   transition: color 0.3s var(--ease-expo);
 }
 .megamenu__tab.is-active,
@@ -212,11 +212,16 @@ a {
 .megamenu__tab--soon {
   pointer-events: none; /* "coming soon" — not yet a link */
 }
+/* Search row + the Rest tab only exist in the mobile overlay */
+.megamenu__search,
+.megamenu__tab--rest {
+  display: none;
+}
 
-/* Four columns; each reserves space for an image at its foot */
+/* Five columns: a fixed 200px quick-links rail, then four equal categories */
 .megamenu__cols {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 200px repeat(4, 1fr);
 }
 .megamenu__col {
   display: flex;
@@ -256,54 +261,241 @@ a {
   opacity: 0.55;
 }
 
-/* Featured image — bottom-aligned in every column (40px inset), so all four
-   share the same baseline; fades in on hovering its column's links */
-.megamenu__media {
-  margin: auto 40px 40px; /* auto top pushes to the column foot; 40px inset (Figma) */
-  aspect-ratio: 352 / 195;
+/* ---------- Rest dropdown ----------
+   Reuses the mega-menu's open/close (grid 0fr→1fr) mechanism via .megamenu, but
+   swaps the tabbed columns for a row of four editorial image cards. */
+.megamenu--rest .megamenu__panel {
+  min-height: 0; /* height is driven by the images, not the shop panel's 540px */
+}
+.restgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 40px 40px 0; /* below the nav clearance; 40px page inset, 4px between */
+}
+.restcard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* image → label */
+}
+.restcard__media {
+  display: block;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
-  opacity: 0;
-  transition: opacity 0.45s var(--ease-natural);
 }
-/* By Product (the longest column): fixed 80px gap above its image — this sets
-   the menu height, and the other columns' auto-top images align to its baseline */
-.megamenu__col:first-child .megamenu__media {
-  margin-top: 80px;
-}
-.megamenu__media img {
+.restcard__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.6s var(--ease-natural);
 }
-.megamenu__col:has(.megamenu__links a:hover) .megamenu__media {
-  opacity: 1;
+.restcard:hover .restcard__media img {
+  transform: scale(1.03); /* gentle zoom, echoing the feature grid */
+}
+.restcard__label {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  transition: opacity 0.2s var(--ease-expo);
+}
+.restcard:hover .restcard__label {
+  opacity: 0.55;
 }
 
-/* By Product: a distinct image per link, stacked in the media box and
-   crossfaded so hovering each link swaps the featured image. */
-.megamenu__col--product .megamenu__media {
-  position: relative;
-  opacity: 1; /* the stacked images control what's shown */
+/* Mobile Rest panel lives inside the #shop-menu overlay; hidden by default and
+   shown in place of the shop columns when the Rest tab is active (see mobile). */
+.megamenu__rest {
+  display: none;
 }
-.megamenu__col--product .megamenu__img {
-  position: absolute;
-  inset: 0;
+
+/* ---------- Search dropdown ----------
+   Reuses the mega-menu open/close mechanism. A search bar (input + Close) sits at
+   the top; below it JS shows one of: featured searches, a results grid, or an
+   empty message. */
+.search__back {
+  display: none; /* mobile only */
+}
+.search__bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 40px 20px; /* 40px above (matches the mega-menu tabs); hairline below */
+  border-bottom: 0.5px solid rgba(20, 8, 3, 0.1);
+}
+.search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.search__input::placeholder {
+  color: rgba(20, 8, 3, 0.4);
+  opacity: 1;
+}
+.search__input:focus {
+  outline: none;
+}
+/* Drop the browser's native search clear (×) and decoration */
+.search__input::-webkit-search-cancel-button,
+.search__input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+.search__close {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  cursor: pointer;
+  transition: opacity 0.2s var(--ease-expo);
+}
+.search__close:hover {
+  opacity: 0.55;
+}
+.search__body {
+  padding: 40px 40px 0;
+}
+.search__heading {
+  margin: 0 0 20px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.4);
+}
+.search__suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  /* match the button's type so the <li> strut is 11px (18px row pitch), not 16px */
+  font-size: 11px;
+  line-height: 1;
+}
+.search__suggestion {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  cursor: pointer;
+  transition: opacity 0.2s var(--ease-expo);
+}
+.search__suggestion:hover {
+  opacity: 0.55;
+}
+.search__count,
+.search__empty {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--color-nav);
+}
+.search__empty {
+  margin-bottom: 0;
+}
+
+/* Results grid — a single full-bleed row of product cards (six across) */
+.search__grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px; /* Figma: 6 × 238.33 across 1440 → 2px gutters */
+  margin: 0 -40px; /* cancel the search body's 40px inset → edge-to-edge row */
+}
+.search__grid > .searchcard:nth-child(n + 7) {
+  display: none; /* keep it to one row on desktop */
+}
+.searchcard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* let 1fr columns stay equal; the name ellipsises instead of forcing width */
+}
+.searchcard__media {
+  position: relative;
+  aspect-ratio: 238.33 / 332.6; /* Figma product-card image */
+  overflow: hidden;
+}
+.searchcard__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.45s var(--ease-natural);
+  display: block;
+  transition: transform 0.6s var(--ease-natural);
 }
-.megamenu__col--product:has(.pl--nighties:hover) .megamenu__img--nighties,
-.megamenu__col--product:has(.pl--short:hover) .megamenu__img--short,
-.megamenu__col--product:has(.pl--long:hover) .megamenu__img--long,
-.megamenu__col--product:has(.pl--robes:hover) .megamenu__img--robes,
-.megamenu__col--product:has(.pl--lounge:hover) .megamenu__img--lounge,
-.megamenu__col--product:has(.pl--knickers:hover) .megamenu__img--knickers,
-.megamenu__col--product:has(.pl--socks:hover) .megamenu__img--socks,
-.megamenu__col--product:has(.pl--all:hover) .megamenu__img--all {
-  opacity: 1;
+.searchcard:hover .searchcard__media img {
+  transform: scale(1.03);
+}
+.searchcard__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  height: 22px;
+  padding: 6px 8px;
+  background: var(--color-nav);
+  color: var(--color-bg);
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.searchcard__info {
+  margin-top: 10px; /* Figma: 10px below the image */
+  padding: 0 10px; /* Figma: 10px inset so the name clears the card edge */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.searchcard__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0; /* allow the name to ellipsis rather than widen the card */
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.searchcard__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.searchcard__price {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.searchcard__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+}
+.searchcard__swatch {
+  width: 11px;
+  height: 11px;
+  object-fit: cover;
+  display: block;
 }
 
 /* ---------- Hero ---------- */
@@ -1281,6 +1473,15 @@ a {
   .navbar {
     padding: calc(20px - 8px * var(--nav-p)) 10px;
   }
+  /* While the menu overlay is open: hold the header at full height and force it
+     solid instantly (dark text on cream) rather than letting --nav-p ramp, which
+     otherwise flashes the transparent nav over the revealing cream panel. */
+  body.menu-open .header {
+    --nav-p: 1 !important; /* beats the rAF-set inline value */
+  }
+  body.menu-open .navbar {
+    padding: 20px 10px;
+  }
   .nav-link--shop,
   .nav-link--rest,
   .nav-link--search {
@@ -1301,9 +1502,141 @@ a {
     height: 12px;
   }
 
-  /* Shop mega-menu is desktop-only; mobile uses the MENU button instead */
+  /* ---- Shop menu → full-screen overlay, opened by MENU (toggles to CLOSE) ----
+     Sits under the fixed nav (which stays on top showing CLOSE · wordmark · Cart)
+     and scrolls internally (data-lenis-prevent keeps Lenis off it). */
   .megamenu {
+    display: block;
+    position: fixed;
+    inset: 52px 0 0; /* drops down from the navbar's bottom edge (52px nav) */
+    z-index: 90; /* under the fixed nav (100) */
+    background: var(--color-bg);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Reveal downward from under the nav — the same expand as the desktop panel.
+       Drive a registered percentage (clip from the bottom) so it eases smoothly;
+       a raw clip-path transition can stick mid-interpolation. */
+    visibility: hidden; /* out of the tab order until open */
+    clip-path: inset(0 0 var(--menu-reveal) 0);
+    transition: --menu-reveal 0.55s var(--ease-natural), visibility 0.55s;
+  }
+  .megamenu.is-open {
+    visibility: visible;
+    --menu-reveal: 0%;
+  }
+  /* The desktop Rest dropdown isn't used on mobile — Rest is a tab in the overlay */
+  .megamenu--rest {
     display: none;
+  }
+  /* Neutralise the desktop height-animation wrappers — show content immediately */
+  .megamenu__inner {
+    overflow: visible;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+  }
+  .megamenu__panel {
+    min-height: 0;
+    padding: 0 0 40px; /* overlay already starts below the nav; 40px foot */
+    border-bottom: none;
+  }
+
+  /* Search row — full width with hairline dividers above and below */
+  .megamenu__search {
+    display: flex;
+    align-items: center;
+    padding: 20px 10px;
+    font-size: 11px;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-nav);
+    border-bottom: 0.5px solid rgba(20, 8, 3, 0.1); /* nav's own border is the top divider */
+    text-box: trim-both cap alphabetic;
+  }
+
+  /* Tabs: Women · Men · Kids · Gifts · Rest — left-aligned, 10px inset */
+  .megamenu__tabs {
+    margin-top: 0;
+    padding: 40px 10px;
+  }
+  .megamenu__tab--rest {
+    display: inline; /* Rest appears as a tab on mobile */
+  }
+
+  /* Columns → 2-up grid; quick-links span the full first row */
+  .megamenu__cols {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+    row-gap: 40px;
+    align-items: start;
+  }
+  .megamenu__col--quick {
+    grid-column: 1 / -1;
+  }
+  .megamenu__group {
+    padding: 0 10px; /* 10px inset each side (desktop uses 40px left) */
+  }
+
+  /* Rest tab active → swap the shop columns for the Rest (The Studio) panel */
+  .megamenu.is-rest .megamenu__cols {
+    display: none;
+  }
+  .megamenu.is-rest .megamenu__rest {
+    display: block;
+  }
+  .megamenu__rest-feature {
+    display: block;
+    margin-top: 40px; /* gap below the studio links */
+    padding: 0 10px;
+  }
+  .megamenu__rest-media {
+    display: block;
+    aspect-ratio: 355 / 433; /* Figma: 355 × 433.07 (portrait) */
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .megamenu__rest-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .megamenu__rest-caption {
+    font-size: 11px;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-nav);
+  }
+
+  /* ---- Search overlay (mobile) ----
+     Opened from the menu's Search row; the nav Close dismisses it and Back to Menu
+     returns to the menu. Results stack two-up. */
+  .search__back {
+    display: block;
+    padding: 20px 10px;
+    font-size: 11px;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-nav);
+    border-bottom: 0.5px solid rgba(20, 8, 3, 0.1);
+    text-box: trim-both cap alphabetic;
+  }
+  .megamenu--search .search__close {
+    display: none; /* the nav Close handles dismissing on mobile */
+  }
+  .search__bar {
+    padding: 20px 10px;
+  }
+  .search__body {
+    padding: 40px 10px 0;
+  }
+  .search__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin: 0; /* keep the mobile 10px inset (no full-bleed) */
+  }
+  .search__grid > .searchcard:nth-child(n + 7) {
+    display: flex; /* mobile shows every match, wrapping into rows */
   }
 
   /* ---- Hero: full viewport (100vh inherited from the base rule) ---- */
@@ -1662,6 +1995,13 @@ a {
   syntax: "<percentage>";
   inherits: false;
   initial-value: 0%;
+}
+
+/* Drives the mobile menu's downward reveal (bottom clip); 100% = hidden. */
+@property --menu-reveal {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
 }
 
 .loader {

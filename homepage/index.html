@@ -26,52 +26,57 @@
       <!-- Navbar — overlays the hero; transparent + cream text at top,
            solidifies to a cream bar with dark text on scroll (--nav-p). -->
       <nav class="navbar" aria-label="Primary">
-        <!-- MENU collapses Shop/Rest/Search on mobile; placeholder for now -->
-        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <!-- MENU (mobile only) opens the full-screen menu overlay; toggles to CLOSE -->
+        <a class="nav-link nav-link--menu" href="#" role="button" aria-expanded="false" aria-controls="shop-menu">Menu</a>
         <a class="nav-link nav-link--shop nav-link--start" href="#" role="button" aria-expanded="false" aria-controls="shop-menu">Shop</a>
-        <a class="nav-link nav-link--rest" href="#">Rest</a>
+        <a class="nav-link nav-link--rest" href="#" role="button" aria-expanded="false" aria-controls="rest-menu">Rest</a>
         <a class="nav-logo" href="#" aria-label="Desmond &amp; Dempsey home"></a>
-        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--search" href="#" role="button" aria-expanded="false" aria-controls="search-menu">Search</a>
         <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
       </nav>
     </header>
 
     <!-- Shop mega-menu — opens on clicking "Shop", pushes the page content down
-         (desktop only). Each column's image fades in on hovering its links. -->
-    <div class="megamenu" id="shop-menu">
+         (desktop only). Text-only per v1.2: a quick-links column at the far left
+         (aligned to the heading row), then four categorised columns. -->
+    <div class="megamenu" id="shop-menu" data-lenis-prevent>
       <div class="megamenu__inner">
         <div class="megamenu__panel">
+          <!-- Search row — mobile only; folded into the menu since the navbar's
+               Search link is hidden on small screens -->
+          <a class="megamenu__search" href="#">Search</a>
           <nav class="megamenu__tabs" aria-label="Shop categories">
             <a class="megamenu__tab is-active" href="#">Women</a>
             <a class="megamenu__tab" href="#">Men</a>
             <a class="megamenu__tab megamenu__tab--soon" href="#">Kids - Coming Soon</a>
             <a class="megamenu__tab" href="#">Gifts</a>
+            <!-- Rest joins the tabs on mobile (it's a top-level navbar link on desktop) -->
+            <a class="megamenu__tab megamenu__tab--rest" href="#">Rest</a>
           </nav>
           <div class="megamenu__cols">
-            <div class="megamenu__col megamenu__col--product">
+            <div class="megamenu__col megamenu__col--quick">
+              <div class="megamenu__group">
+                <!-- No heading — these sit level with the other columns' headings -->
+                <ul class="megamenu__links">
+                  <li><a href="#">New In</a></li>
+                  <li><a href="#">Best Sellers</a></li>
+                  <li><a href="#">Shop All</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="megamenu__col">
               <div class="megamenu__group">
                 <h3 class="megamenu__heading">By Product</h3>
                 <ul class="megamenu__links">
-                  <li><a class="pl pl--nighties" href="#">Nighties</a></li>
-                  <li><a class="pl pl--short" href="#">Short Pyjama Sets</a></li>
-                  <li><a class="pl pl--long" href="#">Long Pyjama Sets</a></li>
-                  <li><a class="pl pl--robes" href="#">Robes</a></li>
-                  <li><a class="pl pl--lounge" href="#">Loungewear</a></li>
-                  <li><a class="pl pl--knickers" href="#">Knickers &amp; Bras</a></li>
-                  <li><a class="pl pl--socks" href="#">Socks &amp; Slippers</a></li>
-                  <li><a class="pl pl--all" href="#">Shop All</a></li>
+                  <li><a href="#">Nighties</a></li>
+                  <li><a href="#">Short Pyjama Sets</a></li>
+                  <li><a href="#">Long Pyjama Sets</a></li>
+                  <li><a href="#">Robes</a></li>
+                  <li><a href="#">Loungewear</a></li>
+                  <li><a href="#">Knickers &amp; Bras</a></li>
+                  <li><a href="#">Socks &amp; Slippers</a></li>
                 </ul>
               </div>
-              <span class="megamenu__media">
-                <img class="megamenu__img megamenu__img--nighties" src="assets/images/Legacy.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--short" src="assets/images/Classics.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--long" src="assets/images/Essentials.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--robes" src="assets/images/Heirloom.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--lounge" src="assets/images/band-1.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--knickers" src="assets/images/band-2.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--socks" src="assets/images/feature-left.jpg" alt="" />
-                <img class="megamenu__img megamenu__img--all" src="assets/images/feature-right.jpg" alt="" />
-              </span>
             </div>
             <div class="megamenu__col">
               <div class="megamenu__group">
@@ -81,12 +86,10 @@
                   <li><a href="#">Classics</a></li>
                   <li><a href="#">Heirlooms</a></li>
                   <li><a href="#">Essentials</a></li>
-                  <li><a href="#">New In</a></li>
-                  <li><a href="#">Bestsellers</a></li>
-                  <li><a href="#">Shop All</a></li>
+                  <li><a href="#">SS26</a></li>
+                  <li><a href="#">AW26</a></li>
                 </ul>
               </div>
-              <span class="megamenu__media"><img src="assets/images/feature-right.jpg" alt="" /></span>
             </div>
             <div class="megamenu__col">
               <div class="megamenu__group">
@@ -96,10 +99,8 @@
                   <li><a href="#">Cotton</a></li>
                   <li><a href="#">Pointelle</a></li>
                   <li><a href="#">Prints</a></li>
-                  <li><a href="#">Shop All</a></li>
                 </ul>
               </div>
-              <span class="megamenu__media"><img src="assets/images/band-1.jpg" alt="" /></span>
             </div>
             <div class="megamenu__col">
               <div class="megamenu__group">
@@ -111,7 +112,88 @@
                   <li><a href="#">Hosting</a></li>
                 </ul>
               </div>
-              <span class="megamenu__media"><img src="assets/images/band-2.jpg" alt="" /></span>
+            </div>
+          </div>
+          <!-- Rest content — mobile only; shown when the Rest tab is active -->
+          <div class="megamenu__rest">
+            <div class="megamenu__group">
+              <h3 class="megamenu__heading">The Studio</h3>
+              <ul class="megamenu__links">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Lazy Manifesto</a></li>
+                <li><a href="#">Sunday Paper</a></li>
+                <li><a href="#">Collaborations</a></li>
+              </ul>
+            </div>
+            <a class="megamenu__rest-feature" href="#">
+              <span class="megamenu__rest-media"><img src="assets/images/feature-left.jpg" alt="" /></span>
+              <span class="megamenu__rest-caption">Read the Lazy Manifesto in full</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rest dropdown — opens on clicking "Rest" (desktop), pushes the page down
+         like the Shop mega-menu. Four editorial cards linking into the journal.
+         On mobile this is hidden; Rest lives as a tab inside the #shop-menu overlay. -->
+    <div class="megamenu megamenu--rest" id="rest-menu" data-lenis-prevent>
+      <div class="megamenu__inner">
+        <div class="megamenu__panel">
+          <div class="restgrid">
+            <a class="restcard" href="#">
+              <span class="restcard__media"><img src="assets/images/feature-left.jpg" alt="" /></span>
+              <span class="restcard__label">About Us</span>
+            </a>
+            <a class="restcard" href="#">
+              <span class="restcard__media"><img src="assets/images/feature-right.jpg" alt="" /></span>
+              <span class="restcard__label">Lazy Manifesto</span>
+            </a>
+            <a class="restcard" href="#">
+              <span class="restcard__media"><img src="assets/images/promo-summer.jpg" alt="" /></span>
+              <span class="restcard__label">Sunday Paper</span>
+            </a>
+            <a class="restcard" href="#">
+              <span class="restcard__media"><img src="assets/images/card-1-rest.jpg" alt="" /></span>
+              <span class="restcard__label">Collaborations</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search dropdown — opens on clicking "Search" (desktop push-down); on mobile
+         it's a full-screen overlay opened from the menu's Search row. Live-filters a
+         demo catalog: empty → featured searches, matches → results, else → no results. -->
+    <div class="megamenu megamenu--search" id="search-menu" data-lenis-prevent>
+      <div class="megamenu__inner">
+        <div class="megamenu__panel">
+          <div class="search">
+            <!-- Mobile only: return to the menu overlay -->
+            <a class="search__back" href="#">Back to Menu</a>
+            <form class="search__bar" role="search" action="#">
+              <input class="search__input" type="search" name="q" placeholder="Search"
+                     aria-label="Search" autocomplete="off" />
+              <!-- Desktop only: closes the panel (mobile uses the nav's Close) -->
+              <button class="search__close" type="button">Close</button>
+            </form>
+            <div class="search__body" aria-live="polite">
+              <div class="search__featured">
+                <h3 class="search__heading">Featured Searches</h3>
+                <ul class="search__suggestions">
+                  <li><button type="button" class="search__suggestion">Soleia Long Set</button></li>
+                  <li><button type="button" class="search__suggestion">Loxodonta Print</button></li>
+                  <li><button type="button" class="search__suggestion">Gift Sets</button></li>
+                  <li><button type="button" class="search__suggestion">Slippers</button></li>
+                  <li><button type="button" class="search__suggestion">Jag Square Nightie</button></li>
+                  <li><button type="button" class="search__suggestion">Mens Accessories</button></li>
+                </ul>
+              </div>
+              <div class="search__results" hidden>
+                <p class="search__count"></p>
+                <div class="search__grid"></div>
+              </div>
+              <p class="search__empty" hidden>No results found</p>
             </div>
           </div>
         </div>

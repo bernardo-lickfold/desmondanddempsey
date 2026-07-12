@@ -92,36 +92,216 @@ function tabParallaxOffset(index, amount) {
   return (local - 0.5) * 2 * amount;
 }
 
-// ---- Shop mega-menu (desktop) -------------------------------------------
-// Clicking "Shop" toggles a panel that pushes the page down (CSS height anim).
-// While open the nav is forced to its solid state (menuOpen → navT = 1).
+// ---- Nav dropdowns (Shop + Rest) ----------------------------------------
+// Desktop: Shop and Rest each open a push-down panel (CSS height anim); only one
+// is open at a time, and it closes on scroll / outside click. Mobile: only
+// #shop-menu is used, as a full-screen overlay opened by MENU (which relabels to
+// CLOSE); it scrolls internally, so it must NOT close on scroll (Rest is a tab
+// inside it). While any panel is open the nav is forced solid (menuOpen → navT = 1).
 let menuOpen = false;
+let openPanel = null; // the currently open dropdown element, or null
+const menuTrigger = document.querySelector(".nav-link--menu");
 const shopTrigger = document.querySelector(".nav-link--shop");
-const megamenu = document.getElementById("shop-menu");
+const restTrigger = document.querySelector(".nav-link--rest");
+const searchTrigger = document.querySelector(".nav-link--search");
+const shopMenu = document.getElementById("shop-menu");
+const restMenu = document.getElementById("rest-menu");
+const searchMenu = document.getElementById("search-menu");
 
-function setMenu(open) {
-  if (!megamenu || !shopTrigger) return;
-  menuOpen = open;
-  megamenu.classList.toggle("is-open", open);
-  shopTrigger.setAttribute("aria-expanded", String(open));
+// { trigger, menu } pairs; the mobile MENU button also controls the shop panel.
+const panels = [
+  { trigger: shopTrigger, menu: shopMenu },
+  { trigger: restTrigger, menu: restMenu },
+  { trigger: searchTrigger, menu: searchMenu },
+].filter((p) => p.menu);
+const findPanel = (menu) => panels.find((p) => p.menu === menu);
+
+function setOpenPanel(panel) {
+  panels.forEach(({ trigger, menu }) => {
+    const on = panel != null && menu === panel.menu;
+    menu.classList.toggle("is-open", on);
+    if (trigger) trigger.setAttribute("aria-expanded", String(on));
+  });
+  openPanel = panel ? panel.menu : null;
+  menuOpen = panel != null;
+  document.body.classList.toggle("menu-open", menuOpen);
+  if (menuTrigger) {
+    // On mobile the nav button is the universal Close while ANY overlay is open
+    // (shop or search); when nothing is open it's MENU and opens the shop overlay.
+    menuTrigger.setAttribute("aria-expanded", String(menuOpen));
+    menuTrigger.textContent = menuOpen ? "Close" : "Menu"; // uppercased by CSS
+  }
 }
 
-if (shopTrigger && megamenu) {
-  shopTrigger.addEventListener("click", (e) => {
-    e.preventDefault();
-    setMenu(!menuOpen);
-  });
-  // Close on outside click, Escape, or as soon as the page is scrolled.
+if (panels.length) {
+  const shopPanel = panels.find((p) => p.menu === shopMenu);
+  const restPanel = panels.find((p) => p.menu === restMenu);
+  const searchPanel = panels.find((p) => p.menu === searchMenu);
+  const bind = (trigger, panel) => {
+    if (!trigger || !panel) return;
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      setOpenPanel(openPanel === panel.menu ? null : panel);
+    });
+  };
+  bind(shopTrigger, shopPanel);
+  bind(restTrigger, restPanel);
+  bind(searchTrigger, searchPanel);
+  // Mobile nav button: opens the shop overlay, or closes whatever overlay is open.
+  if (menuTrigger && shopPanel) {
+    menuTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      setOpenPanel(menuOpen ? null : shopPanel);
+    });
+  }
+
+  const triggers = [shopTrigger, restTrigger, searchTrigger, menuTrigger];
+  // Close on outside click or Escape (either layout).
   document.addEventListener("click", (e) => {
-    if (menuOpen && !megamenu.contains(e.target) && !shopTrigger.contains(e.target)) {
-      setMenu(false);
-    }
+    if (!menuOpen) return;
+    const insideOpen = openPanel && openPanel.contains(e.target);
+    const onTrigger = triggers.some((t) => t && t.contains(e.target));
+    if (!insideOpen && !onTrigger) setOpenPanel(null);
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && menuOpen) setMenu(false);
+    if (e.key === "Escape" && menuOpen) setOpenPanel(null);
   });
-  window.addEventListener("wheel", () => menuOpen && setMenu(false), { passive: true });
-  window.addEventListener("touchmove", () => menuOpen && setMenu(false), { passive: true });
+  // Desktop only: the push-down panels close as soon as the page is scrolled.
+  // (On mobile the overlay scrolls internally, so scrolling must not close it.)
+  const closeOnScroll = () => menuOpen && !mobileMQ.matches && setOpenPanel(null);
+  window.addEventListener("wheel", closeOnScroll, { passive: true });
+  window.addEventListener("touchmove", closeOnScroll, { passive: true });
+}
+
+// ---- Mobile: Shop ↔ Rest tab switch (inside the overlay) ----------------
+// On mobile the overlay's tabs swap content: the Rest tab shows the "The Studio"
+// panel, any other real tab shows the shop columns. Desktop tabs stay inert.
+if (shopMenu) {
+  const overlayTabs = [...shopMenu.querySelectorAll(".megamenu__tab")];
+  const restTab = shopMenu.querySelector(".megamenu__tab--rest");
+  overlayTabs.forEach((tab) => {
+    tab.addEventListener("click", (e) => {
+      if (!mobileMQ.matches) return; // desktop tabs are inert for now
+      if (tab.classList.contains("megamenu__tab--soon")) return; // "coming soon"
+      e.preventDefault();
+      overlayTabs.forEach((t) => t.classList.toggle("is-active", t === tab));
+      shopMenu.classList.toggle("is-rest", tab === restTab);
+    });
+  });
+}
+
+// ---- Search --------------------------------------------------------------
+// Live-filters a small demo catalog. Empty query → featured searches; matches →
+// a results grid; otherwise → "No results found". Shared by desktop (push-down)
+// and mobile (overlay); the panel's open/close is handled by the dropdown system.
+if (searchMenu) {
+  const CATALOG = [
+    { name: "Womens Chambray Blue", price: "£95", img: "assets/images/card-1-rest.jpg", tag: "New in" },
+    { name: "Mens Chambray Blue", price: "£95", img: "assets/images/card-2-rest.jpg", tag: "New in" },
+    { name: "Womens Floral Navy", price: "£110", img: "assets/images/card-3-rest.jpg" },
+    { name: "Mens Check Short Set", price: "£90", img: "assets/images/card-4-rest.jpg", tag: "New in" },
+    { name: "Soleia Long Set", price: "£95", img: "assets/images/feature-left.jpg", tag: "New in" },
+    { name: "Loxodonta Print Robe", price: "£120", img: "assets/images/feature-right.jpg" },
+    { name: "Jag Square Nightie", price: "£75", img: "assets/images/promo-summer.jpg" },
+    { name: "Cotton Slippers", price: "£45", img: "assets/images/band-1.jpg" },
+    { name: "Gift Set", price: "£150", img: "assets/images/band-2.jpg", tag: "New in" },
+    { name: "Mens Accessories", price: "£30", img: "assets/images/grid-1.jpg" },
+  ];
+  const SWATCHES = ["s1", "s2", "s3", "s4", "s5"].map((s) => `assets/images/swatches/${s}.png`);
+
+  const input = searchMenu.querySelector(".search__input");
+  const featured = searchMenu.querySelector(".search__featured");
+  const results = searchMenu.querySelector(".search__results");
+  const empty = searchMenu.querySelector(".search__empty");
+  const grid = searchMenu.querySelector(".search__grid");
+  const count = searchMenu.querySelector(".search__count");
+
+  const cardHTML = (p) => `
+    <a class="searchcard" href="#">
+      <span class="searchcard__media">
+        <img src="${p.img}" alt="${p.name}" />
+        ${p.tag ? `<span class="searchcard__tag">${p.tag}</span>` : ""}
+      </span>
+      <span class="searchcard__info">
+        <span class="searchcard__meta"><span class="searchcard__name">${p.name}</span><span class="searchcard__price">${p.price}</span></span>
+        <span class="searchcard__swatches">${SWATCHES.map((s) => `<img class="searchcard__swatch" src="${s}" alt="" />`).join("")}</span>
+      </span>
+    </a>`;
+
+  const render = (q) => {
+    const query = q.trim().toLowerCase();
+    if (!query) {
+      featured.hidden = false;
+      results.hidden = true;
+      empty.hidden = true;
+      return;
+    }
+    const matches = CATALOG.filter((p) => p.name.toLowerCase().includes(query));
+    featured.hidden = true;
+    if (!matches.length) {
+      results.hidden = true;
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+    results.hidden = false;
+    count.textContent = `${matches.length} result${matches.length === 1 ? "" : "s"} found`;
+    grid.innerHTML = matches.map(cardHTML).join("");
+  };
+
+  if (input) input.addEventListener("input", () => render(input.value));
+
+  // Featured suggestion → fill the input and search.
+  searchMenu.querySelectorAll(".search__suggestion").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (!input) return;
+      input.value = btn.textContent.trim();
+      render(input.value);
+      input.focus();
+    });
+  });
+
+  // Enter shouldn't submit/reload the page.
+  const form = searchMenu.querySelector(".search__bar");
+  if (form) form.addEventListener("submit", (e) => e.preventDefault());
+
+  // Reset to the empty (featured) state and focus the field.
+  const resetAndFocus = () => {
+    if (!input) return;
+    input.value = "";
+    render("");
+    setTimeout(() => input.focus(), 0);
+  };
+
+  // Close (desktop) closes the panel; Back to Menu (mobile) returns to the menu.
+  const closeBtn = searchMenu.querySelector(".search__close");
+  if (closeBtn) closeBtn.addEventListener("click", () => setOpenPanel(null));
+  const backBtn = searchMenu.querySelector(".search__back");
+  if (backBtn) {
+    backBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // switching panels shouldn't trip the outside-click close
+      setOpenPanel(findPanel(shopMenu) || null);
+    });
+  }
+
+  // Mobile: the menu overlay's Search row opens this overlay.
+  const searchRow = shopMenu && shopMenu.querySelector(".megamenu__search");
+  if (searchRow) {
+    searchRow.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // ditto — the row lives in #shop-menu, not #search-menu
+      setOpenPanel(findPanel(searchMenu) || null);
+      resetAndFocus();
+    });
+  }
+
+  // Reset + focus whenever the search panel is opened from the nav Search link.
+  if (searchTrigger) {
+    searchTrigger.addEventListener("click", () => {
+      if (openPanel === searchMenu) resetAndFocus();
+    });
+  }
 }
 
 // ---- UGC carousel -------------------------------------------------------
