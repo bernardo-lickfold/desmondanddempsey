@@ -160,15 +160,19 @@ a {
 
 /* ---------- Shop mega-menu (desktop) ----------
    In normal flow as the first item after the fixed header, so when it opens it
-   pushes the hero (and the rest of the page) DOWN rather than overlaying it.
-   Height animates via the grid 0fr→1fr trick. The fixed nav floats over its
-   top, so the panel pads its top by the nav height. */
+   drops down below the fixed nav as a full-width overlay, so it opens in place
+   at any scroll position (not only at the top). Height animates via the grid
+   0fr→1fr trick; the fixed nav floats over its top, so the panel pads its top
+   by the nav height. */
 .megamenu {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 1s var(--ease-natural); /* smooth ease-in-out */
   background: var(--color-bg);
-  position: relative;
+  position: fixed; /* anchored below the nav → opens wherever you are on the page */
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 90; /* below the nav (100) */
 }
 .megamenu__inner {
@@ -1470,7 +1474,7 @@ a {
 @media (max-width: 768px) {
   /* ---- Nav: MENU · wordmark · CART (0) ---- */
   .navbar {
-    padding: calc(20px - 8px * var(--nav-p)) 10px;
+    padding: 20px 10px; /* constant — don't shrink the nav on scroll */
   }
   /* While the menu overlay is open: hold the header at full height and force it
      solid instantly (dark text on cream) rather than letting --nav-p ramp, which
@@ -1625,13 +1629,15 @@ a {
   }
   .search__bar {
     padding: 20px 10px;
+    border-bottom: 0; /* no divider under the search field on mobile */
   }
   .search__body {
     padding: 40px 10px 0;
   }
   .search__grid {
     grid-template-columns: 1fr 1fr;
-    gap: 4px;
+    column-gap: 4px;
+    row-gap: 10px; /* breathing room below each card's swatches */
     margin: 0; /* keep the mobile 10px inset (no full-bleed) */
   }
   .search__grid > .searchcard:nth-child(n + 7) {
