@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&amp;D — Our Story (V2)</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/vendor/lenis.css" />
+  <!-- Shared design system: tokens, navbar, footer. -->
+  <link rel="stylesheet" href="v1.2.css" />
+  <!-- V2-specific: solid nav + the hover-driven filter section. -->
+  <link rel="stylesheet" href="about-v2.css" />
+</head>
+<body>
+  <main class="page page--v2">
+    <header class="header header--v2">
+      <nav class="navbar" aria-label="Primary">
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="#">Shop</a>
+        <a class="nav-link nav-link--rest" href="#">Rest</a>
+        <a class="nav-logo" href="#" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- Our Story — chapter index. Hovering a chapter on the left crossfades
+         its description (centre) and image (right). (Figma node 330:1540.) -->
+    <section class="filters" aria-label="Our story">
+      <div class="filters__inner">
+        <div class="filters__list" role="tablist" aria-label="Chapters">
+          <button class="filters__item is-active" type="button" role="tab" aria-selected="true" aria-controls="chapter-0" data-i="0">Our Story</button>
+          <button class="filters__item" type="button" role="tab" aria-selected="false" aria-controls="chapter-1" data-i="1">Our Mission</button>
+          <button class="filters__item" type="button" role="tab" aria-selected="false" aria-controls="chapter-2" data-i="2">The Sunday Paper</button>
+          <button class="filters__item" type="button" role="tab" aria-selected="false" aria-controls="chapter-3" data-i="3">Our Pyjamas</button>
+        </div>
+
+        <div class="filters__desc">
+          <div class="filters__panel is-active" id="chapter-0" role="tabpanel" data-i="0">
+            <p>Our studio is based in Brixton, London. We are Joel and Molly. Desmond &amp; Dempsey were our grandfathers. Our brand has often reflected moments in our lives. Holidays have turned into collections, friends into the team, family into models, Joel&rsquo;s shirt, my lack of appropriate pyjamas and a deep desire to be Sienna Miller painting walls in Alfie is actually how the first product came to be. We have never learnt boundaries between work and life, but over time have come to enjoy this about D&amp;D. In inviting us into your home and those sacred hours of Sunday, we promise to do our best to return the same intimacy.</p>
+          </div>
+          <div class="filters__panel" id="chapter-1" role="tabpanel" data-i="1">
+            <p>We are devoted to having a lovely time. To pursue the pleasure of leisure. So many of us have been fooled by the devil whose greatest trick has been convincing us that hard work is somehow godly. That putting friends, family and a good old jolly after a never-ending to-do list is the right order of things.</p>
+            <p>We are a generation of overachievers who have turned our breakfasts into content, our jogs into marathons, drinks into networking, relaxing into refueling. It seems that at some point, maybe when our hobbies became our side hustles, we forgot to just have hobbies at all.</p>
+          </div>
+          <div class="filters__panel" id="chapter-2" role="tabpanel" data-i="2">
+            <p>There&rsquo;s a universal warmth to Sunday. A softer mood, a gentler light, a slower groove, a glorious reward for a week well done. A day when only those closest to you are allowed in. A Sunday, and its many iterations, has always been sacred to us.</p>
+            <p>We founded D&amp;D as an ode to the day. Our hope is to encourage more people to embrace time off, to retreat, rest and do whatever it is that brings them complete joy, all the while connecting with the places they call home, and people they feel closest to.</p>
+          </div>
+          <div class="filters__panel" id="chapter-3" role="tabpanel" data-i="3">
+            <p>We make pyjamas, and other things to lounge in. Sunday attire so to speak. Soft, decorated, tactile things to wrap ourselves in that sends a message to the brain that says &lsquo;comfort&rsquo;. We make them for the busy, not the sleepy. Our intention is to mark the pause and help you celebrate the &lsquo;nothings&rsquo; in time.</p>
+            <p>We could sing lyrics about the &lsquo;whys&rsquo; behind our pyjamas, but a customer said it best &lsquo;these pyjamas make me feel like I have my sh*t together&rsquo;</p>
+          </div>
+        </div>
+
+        <div class="filters__media">
+          <img class="filters__img is-active" data-i="0" src="assets/images/about-v2/our-story.png" alt="Joel and Molly in the Brixton studio" />
+          <img class="filters__img" data-i="1" src="assets/images/about-v2/our-mission.png" alt="Model in a printed shirt in the garden" />
+          <img class="filters__img" data-i="2" src="assets/images/about-v2/sunday-paper.jpg" alt="Joel and Molly reading in bed on a Sunday" />
+          <img class="filters__img" data-i="3" src="assets/images/about-v2/pyjamas-b.png" alt="The studio moodboard of prints and references" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer (shared with the homepage) -->
+    <footer class="site-footer">
+      <p class="site-footer__headline">And on the seventh day<br />there was rest.</p>
+
+      <div class="site-footer__body">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="footer-col__title">Our World</h4>
+            <ul class="footer-col__links">
+              <li><a href="about.html">Our story</a></li>
+              <li><a href="#">The loyalty lounge</a></li>
+              <li><a href="#">Sustainability</a></li>
+              <li><a href="#">Work with us</a></li>
+              <li><a href="#">Refer a friend</a></li>
+              <li><a href="#">Pre-loved marketplace</a></li>
+              <li><a href="#">T&amp;Cs</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Information</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Sizing</a></li>
+              <li><a href="#">Monogramming</a></li>
+              <li><a href="#">How D&amp;Ds are made</a></li>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Bespoke</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Customer Care</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Delivery &amp; returns</a></li>
+              <li><a href="#">Customer reviews</a></li>
+              <li><a href="#">Privacy</a></li>
+              <li><a href="#">Cookies</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Sign up for the latest news</h4>
+            <form class="footer-newsletter" action="#" method="post">
+              <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
+              <button class="footer-newsletter__submit" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span class="footer-bottom__copy">©2026 Desmond &amp; Dempsey. All Rights Reserved.</span>
+          <nav class="footer-social" aria-label="Social">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="about-v2.js"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@ Static site preview, hosted with GitHub Pages. Each page is a self-contained fol
 |------|------|--------|
 | Homepage | [`/homepage/`](homepage/) | Live (V1.2) |
 | Our Story | [`/about-page/`](about-page/) | Live |
+| Our Story (V2) | [`/about-page-v2/`](about-page-v2/) | Live |
 | Collections | [`/collections/`](collections/) | Placeholder |
 | Product Page | [`/product-page/`](product-page/) | Placeholder |
 

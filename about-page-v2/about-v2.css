@@ -1,0 +1,138 @@
+/* ============================================================
+   Our Story — V2 (alternate treatment for client comparison).
+   Loaded after v1.2.css, so it reuses the shared tokens, navbar
+   and footer, and only adds:
+     · a solid (non-hero) navbar
+     · the hover-driven "chapter index" section — 4 filters on the
+       left crossfade the description (centre) and image (right)
+   Built from Figma node 330:1540, 1440 reference. Geometry is driven
+   off --w (1440px up to a 1440px viewport, the live viewport above),
+   so it's pixel-exact at ≤1440 and scales as one unit above — matching
+   the V1 about page. ============================================================ */
+
+.page--v2 {
+  --w: max(1440px, 100vw);
+  padding-top: 54px; /* clear the fixed nav */
+  overflow-x: clip;
+}
+
+/* ---------- Solid navbar (no hero behind it) ---------- */
+.header--v2 {
+  --nav-p: 1;
+  background: var(--color-bg);
+  border-bottom: 0.5px solid transparent;
+  transition: border-color 0.3s var(--ease-expo);
+}
+.header--v2.is-scrolled {
+  border-bottom-color: rgba(20, 8, 3, 0.12);
+}
+.header--v2 .navbar {
+  padding: 20px 40px;
+}
+
+/* ---------- Chapter-index section (330:1540) ---------- */
+.filters {
+  padding: calc(var(--w) * 0.083333) calc(var(--w) * 0.027778); /* 120 40 */
+}
+/* Hairline over the row, then the three columns (gap 2px). Top-aligned. */
+.filters__inner {
+  display: flex;
+  gap: 2px;
+  align-items: flex-start;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+  padding-top: calc(var(--w) * 0.013889); /* 20 */
+}
+
+/* Left: the 4 chapter filters. */
+.filters__list {
+  flex: 0 0 auto;
+  width: calc(var(--w) * 0.304861); /* 439 */
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--w) * 0.005556); /* 8 */
+}
+.filters__item {
+  /* button reset */
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  width: calc(var(--w) * 0.221528); /* 319 */
+  font-family: var(--font-base);
+  font-size: calc(var(--w) * 0.009722); /* 14 */
+  line-height: 1;
+  text-align: left;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.2); /* resting = dimmed */
+  text-box: trim-both cap alphabetic;
+  transition: color 0.4s var(--ease-expo);
+}
+.filters__item.is-active {
+  color: var(--color-nav);
+}
+
+/* Centre: the descriptions, stacked and crossfaded. The panels are absolute
+   (so they overlap for the fade); the row's height comes from the image. */
+.filters__desc {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  align-self: stretch; /* span the row so the panels can anchor top-left */
+}
+.filters__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--w) * 0.248611); /* 358 */
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--w) * 0.013889); /* 20 */
+  font-size: calc(var(--w) * 0.009722); /* 14 */
+  line-height: 1.2;
+  text-align: justify;
+  color: var(--color-nav);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-expo);
+}
+.filters__panel.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.filters__panel p {
+  margin: 0;
+  text-box: trim-both cap alphabetic;
+}
+
+/* Right: the image, one per chapter, crossfaded in the clipped frame. */
+.filters__media {
+  flex: 0 0 auto;
+  position: relative;
+  width: calc(var(--w) * 0.304861); /* 439 */
+  height: calc(var(--w) * 0.426389); /* 614 */
+  overflow: hidden;
+}
+.filters__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-expo);
+}
+.filters__img.is-active {
+  opacity: 1;
+}
+
+/* Reduced motion: no crossfade easing, just an instant, legible swap. */
+@media (prefers-reduced-motion: reduce) {
+  .filters__panel,
+  .filters__img,
+  .filters__item {
+    transition: none;
+  }
+}
