@@ -100,7 +100,7 @@
   pointer-events: none;
   /* Outgoing panel fades out (no motion) so the incoming appear reads on its
      own rather than as a simultaneous crossfade. */
-  transition: opacity 0.8s var(--ease-expo);
+  transition: opacity 1.2s var(--ease-expo);
 }
 .filters__panel.is-active {
   opacity: 1;
@@ -109,7 +109,7 @@
      in as it fades — a distinct "appear". `backwards` keeps it hidden during
      the delay instead of flashing in first. A gentle ease-out (softer onset
      than expo) reads smoother. */
-  animation: v2-appear-text 0.95s cubic-bezier(0.33, 1, 0.68, 1) 0.12s backwards;
+  animation: v2-appear-text 1.5s cubic-bezier(0.33, 1, 0.68, 1) 0.12s backwards;
 }
 .filters__panel p {
   margin: 0;
@@ -142,17 +142,17 @@
   object-fit: cover;
   opacity: 0;
   /* Outgoing image fades out underneath. */
-  transition: opacity 0.8s var(--ease-expo);
+  transition: opacity 1.2s var(--ease-expo);
 }
 .filters__img.is-active {
   opacity: 1;
   /* Incoming image waits a beat, then settles in from a zoom as it fades. */
-  animation: v2-appear-img 1.2s cubic-bezier(0.33, 1, 0.68, 1) 0.1s backwards;
+  animation: v2-appear-img 2s cubic-bezier(0.33, 1, 0.68, 1) 0.1s backwards;
 }
 @keyframes v2-appear-img {
   from {
     opacity: 0;
-    transform: scale(1.04);
+    transform: scale(1.02);
   }
   to {
     opacity: 1;
