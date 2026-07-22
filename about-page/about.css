@@ -1,0 +1,424 @@
+/* ============================================================
+   About page — "An Ode To Sunday" editorial.
+   Loaded after v1.2.css, so it reuses the shared tokens, navbar
+   and footer, and only adds what's unique here:
+     · a solid (non-hero) navbar
+     · the hero with the split "An Ode To / Sunday" headline
+     · tall collage sections with absolutely-scattered imagery
+     · two full-bleed clipped image bands
+   Built from Figma node 309:2, 1440 reference. Every collage
+   image carries data-plx (± px of vertical drift, see about.js),
+   mirroring the scroll-scrub on desmondanddempsey.com/pages/our-story.
+   ============================================================ */
+
+/* ---------- Solid navbar ----------
+   Same locked-solid treatment as the collection page: no hero sits behind
+   the nav, so --nav-p is pinned to 1 (cream bar, dark ink). A hairline
+   returns once the page scrolls (.is-scrolled, toggled in about.js). */
+.header--about {
+  --nav-p: 1;
+  background: var(--color-bg);
+  border-bottom: 0.5px solid transparent;
+  transition: border-color 0.3s var(--ease-expo);
+}
+.header--about.is-scrolled {
+  border-bottom-color: rgba(20, 8, 3, 0.12);
+}
+.header--about .navbar {
+  padding: 20px 40px;
+}
+
+/* The fixed header overlaps the page; push the content down to clear it.
+   --w is the whole page's effective design width: 1440px up to a 1440px
+   viewport, then the live viewport above that. Every canvas-pixel value on
+   the page is calc(var(--w) * its-Figma-fraction), so at ≤1440 the layout is
+   the exact comp and above 1440 the entire page scales as one proportional
+   unit. Viewport-relative values (50vh/100vh/%) are left untouched — they
+   already adapt. */
+.page--about {
+  --w: max(1440px, 100vw);
+  padding-top: 54px;
+  overflow-x: clip; /* collage drift must never cause a horizontal scrollbar */
+}
+
+/* ---------- Shared text blocks ---------- */
+/* Justified body column — the design's single measure (359px at 1440). */
+.about-copy {
+  width: calc(var(--w) * 0.249306); /* 359 */
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--w) * 0.013889); /* 20 */
+  font-size: calc(var(--w) * 0.009722); /* 14 */
+  line-height: 1.2;
+  text-align: justify;
+  color: var(--color-nav);
+}
+.about-copy p {
+  margin: 0;
+  /* Figma trims the text boxes to the cap/alphabetic edges, so the first
+     line's cap sits exactly on the block's top (the hero's side image is
+     top-aligned to it). Same treatment as the navbar links in v1.2.css. */
+  text-box: trim-both cap alphabetic;
+}
+
+/* Centred 720px text block used by the collage sections: serif title,
+   100px air, then the copy column pushed to the right half. */
+.about-text {
+  position: relative;
+  z-index: 2; /* reads above any image drifting beneath it */
+  width: calc(var(--w) * 0.5); /* 720 */
+}
+.about-text__title {
+  margin: 0 0 calc(var(--w) * 0.069444); /* 100 */
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: calc(var(--w) * 0.022222); /* 32 */
+  line-height: 1;
+  text-align: center;
+  color: var(--color-nav);
+}
+.about-text .about-copy {
+  margin-left: auto; /* right half of the 720 block (x=721 at 1440) */
+}
+
+/* "About The / Studio" — two lines in a centred 238px column, first
+   ranged left, second ranged right. */
+.about-text__title--stagger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--w) * 0.013889); /* 20 */
+  text-align: left;
+}
+.about-text__stagger-line {
+  width: calc(var(--w) * 0.165278); /* 238 */
+  /* Trim each line to its cap height so the 20px flex gap is the real gap
+     between the words (Figma 318:6 — lines 41px apart, 21px caps = 20px gap).
+     Without this the 32px line boxes pad the gap with the font's leading. */
+  text-box: trim-both cap alphabetic;
+}
+.about-text__stagger-line--right {
+  text-align: right;
+}
+
+/* ---------- Hero (309:35) ----------
+   At ≤1440 every value is the exact Figma pixel measure. Above 1440 the hero
+   scales as one proportional unit — the left photo and the display headline
+   grow "on the grid", keeping the 1440 composition — by driving all geometry
+   off --w: the effective design width, 1440px up to a 1440px viewport, then
+   the live viewport above that (so nothing changes at or below 1440). The body
+   copy keeps its fixed measure/size (consistent with the sections below); only
+   its vertical position scales. The small IG image keeps its size and stays
+   the same ~122px beside the copy column, as at 1440 — instead of pinning to
+   the far edge, which stranded it on wide screens. */
+.about-hero {
+  position: relative;
+  height: calc(var(--w) * 0.518056); /* 746 */
+}
+.about-hero__photo {
+  position: absolute;
+  left: calc(var(--w) * 0.166667); /* 240 */
+  top: calc(var(--w) * 0.085417); /* 123 */
+  width: calc(var(--w) * 0.249306); /* 359 */
+  height: calc(var(--w) * 0.347222); /* 500 */
+}
+.about-hero__photo img,
+.about-hero__ig img,
+.about-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.about-hero__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: calc(var(--w) * 0.044444); /* 64 — scales with the photo */
+  line-height: 1;
+  color: var(--color-nav);
+}
+/* "An Ode To" overlaps the photo's left edge; "Sunday" answers right of
+   centre — both above the drifting photo. */
+.about-hero__line {
+  position: absolute;
+  z-index: 2;
+}
+.about-hero__line--ode {
+  left: calc(var(--w) * 0.083333); /* 120 — tracks the photo's left anchor */
+  top: calc(var(--w) * 0.128472); /* 185 */
+}
+.about-hero__line--sunday {
+  /* Left-aligned with the copy column below it (Figma x=722 vs copy 721),
+     so it tracks the column at every viewport width. */
+  left: calc(50% + 1px);
+  top: calc(var(--w) * 0.172222); /* 248 */
+}
+.about-hero__copy {
+  position: absolute;
+  left: calc(50% + 1px);
+  top: calc(var(--w) * 0.257639); /* 371 */
+}
+.about-hero__ig {
+  position: absolute;
+  /* Beside the copy column (centre-anchored, so the gap to it stays
+     proportional) rather than pinned to the far right edge. Offset and size
+     scale with the page now that the copy does. */
+  left: calc(50% + var(--w) * 0.334722); /* +482 */
+  top: calc(var(--w) * 0.257639); /* 371 */
+  width: calc(var(--w) * 0.081944); /* 118 */
+  height: calc(var(--w) * 0.116667); /* 168 */
+}
+
+/* ---------- Pull quote (309:53) ---------- */
+.about-quote {
+  padding: calc(var(--w) * 0.138889) 0; /* 200 */
+}
+.about-quote__inner {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--w) * 0.027778); /* 40 */
+}
+.about-quote__text {
+  margin: 0;
+  width: calc(var(--w) * 0.5); /* 720 */
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: calc(var(--w) * 0.022222); /* 32 */
+  line-height: 1.18;
+  text-align: center;
+  color: var(--color-nav);
+}
+.about-quote__cite {
+  font-style: normal;
+  font-size: calc(var(--w) * 0.009722); /* 14 */
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+
+/* ---------- Collage sections ----------
+   Fixed 1300px canvases with the text block dead-centre and imagery
+   scattered absolutely (Figma coordinates, 1440 reference). Left-hand
+   images anchor left, right-hand ones anchor right, centred ones hang
+   off 50%, so the composition holds on wider viewports. Overflow stays
+   visible: the drift is allowed to cross section seams, as on the live
+   our-story page. */
+.about-sect {
+  position: relative;
+  height: calc(var(--w) * 0.902778); /* 1300 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.about-img {
+  position: absolute;
+}
+
+/* Decorate The Downtime (309:57) — every offset/size is calc(--w × frac);
+   the /1440 fractions are noted so the 1440 pixel value stays legible. */
+.about-img--s1a { right: calc(var(--w) * 0.027778); top: 0;                       width: calc(var(--w) * 0.304861); height: calc(var(--w) * 0.205556); } /* r40 t0 439×296 */
+.about-img--s1b { left: calc(var(--w) * 0.083333);  top: calc(var(--w) * 0.219444); width: calc(var(--w) * 0.167361); height: calc(var(--w) * 0.235417); } /* l120 t316 241×339 */
+.about-img--s1c { right: 0;                          top: calc(var(--w) * 0.559722); width: calc(var(--w) * 0.165278); height: calc(var(--w) * 0.220139); } /* r0 t806 238×317 */
+.about-img--s1d { left: calc(var(--w) * 0.166667);  top: calc(var(--w) * 0.715972); width: calc(var(--w) * 0.248611); height: calc(var(--w) * 0.186806); } /* l240 t1031 358×269 */
+
+/* About The Studio (309:71) — the section's third image (bottom-centre,
+   Figma y=1097) lives in .about-scrub below, so it can pin and expand. */
+.about-img--s2a { left: 0;                          top: calc(var(--w) * 0.24375);   width: calc(var(--w) * 0.332639); height: calc(var(--w) * 0.415972); } /* l0 t351 479×599 */
+.about-img--s2b { right: calc(var(--w) * 0.027778); top: calc(var(--w) * 0.169444); width: calc(var(--w) * 0.221528); height: calc(var(--w) * 0.147917); } /* r40 t244 319×213 */
+
+/* Pleasure of leisure (309:87) */
+.about-img--s3a { left: 0;                          top: calc(var(--w) * 0.142361); width: calc(var(--w) * 0.249306); height: calc(var(--w) * 0.375694); } /* l0 t205 359×541 */
+.about-img--s3b { right: calc(var(--w) * 0.027778); top: calc(var(--w) * 0.056944); width: calc(var(--w) * 0.304861); height: calc(var(--w) * 0.172222); } /* r40 t82 439×248 */
+.about-img--s3c { right: 0;                          top: calc(var(--w) * 0.611111); width: calc(var(--w) * 0.165278); height: calc(var(--w) * 0.210417); } /* r0 t880 238×303 */
+.about-img--s3d { left: 50%; margin-left: calc(var(--w) * -0.165972); top: calc(var(--w) * 0.715972); width: calc(var(--w) * 0.248611); height: calc(var(--w) * 0.186806); } /* c-239 t1031 358×269 */
+
+/* ---------- Pinned rise + expand scrub (Nuwa Statement port) ----------
+   Track = scroll distance; sticky stage pins for (height − 100vh) of it.
+   The −1300px top margin overlaps the WHOLE Studio section, so the stage
+   pins the moment that canvas tops out — with its text still on screen —
+   while the resting image (frame at stage y=1097, the Figma spot) sits just
+   past the fold. about.js damps pin progress into three vars on the stage:
+     --p1  rise, eased     0 → 1  (image floats up from its collage spot
+                                   to viewport centre, landing ON the copy)
+     --p2  expand, eased   0 → 1  (centred frame → full screen)
+     --p3  Ken Burns, linear      (slow drift from centre-arrival on)
+   JS tags the track .is-scrubbed when the animation is live; without it
+   (reduced motion, ?static) the fallback below renders the plain band. */
+.about-scrub {
+  position: relative;
+  height: 360vh; /* longer pin = more scroll room, so the sequence breathes */
+  /* Pin the moment the Studio text block is centred in the band BELOW the
+     fixed 54px nav (block centre at 50vh + 27px — a plain 50vh centre reads
+     high because the nav eats the top of the viewport): the text's canvas
+     top is y=479, so the stage tops out at canvas y = 623 − 50vh. With the
+     text placed at the matching stage offset below, its on-screen position
+     is continuous into the pin — it simply stops scrolling, centred. */
+  margin-top: calc(var(--w) * -0.470139 - 50vh); /* -677 (scaled) - 50vh */
+  margin-bottom: calc(var(--w) * 0.097222); /* 140 */
+  /* The transparent stage overlays the Studio section while resting —
+     it must never swallow clicks meant for the content behind it. */
+  pointer-events: none;
+}
+.about-scrub__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  /* No clip: at rest the frame sits below the 100vh box (stage y=1097);
+     once expanded it fits the box exactly, and the photo clips to .frame. */
+}
+/* Studio text on the stage: vertically centred (block is 342px tall), which
+   — given the track's margin above — is also exactly its canvas position
+   (y=479) while the stage scrolls in, so the handoff into the pin is
+   seamless. Nuwa's Statement treatment as the image expands over it:
+   fades out over overall progress 0.34 → 0.48 while lifting 24px away. */
+.about-scrub .about-text {
+  position: absolute;
+  left: 50%;
+  /* Block centred in the below-nav band: (50vh + 27px half-nav) − half the
+     block height. The block is ~342px at 1440 and scales with the page, so
+     half-height = var(--w) × 0.11875 (171). 27 stays fixed (half the fixed
+     54px nav). At 1440 this is 50vh − 144px. */
+  top: calc(50vh + 27px - var(--w) * 0.11875);
+  opacity: clamp(0, (0.48 - var(--p, 0)) / 0.14, 1);
+  transform: translateX(-50%)
+    translateY(calc(clamp(0, (var(--p, 0) - 0.34) / 0.14, 1) * -24px));
+  will-change: opacity, transform;
+}
+
+.about-scrub__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3; /* above the stage text (.about-text carries z-index: 2) */
+  /* Nuwa's centring trick: the frame stays centred while width/height grow,
+     so at full size it lands flush with the viewport on its own. The rise
+     (--p1) starts at the collage resting spot — canvas y=1097, a constant
+     575.5px below centre given the track's margin — and lands 27px below
+     centre: centred on the TEXT BLOCK (Figma 318:2 puts the image centre on
+     the block centre, itself centred in the below-nav band), tucked under
+     the heading. That 27px eases back out during the expand (--p2) so the
+     full-size frame still sits flush with the viewport. */
+  /* The max() floors the rise start at just-below-the-fold: on viewports
+     taller than ~950px the 575.5px canvas offset would leave the resting
+     image peeking into the pinned stage, so there it waits under the fold
+     and rises in instead.
+     The expand is pure transform (McAlpine-style): the frame keeps its
+     360×203 layout and scales up to full screen (--sx/--sy from about.js),
+     compositing on the GPU instead of re-laying-out width/height every
+     frame. Translate composes before scale, so the (offset) centre holds
+     while the window opens around it. */
+  transform: translate(-50%, -50%)
+    translateY(
+      calc(
+        (1 - var(--p1, 0)) *
+          max(var(--w) * 0.399653, 50vh + var(--w) * 0.070833) +
+          var(--p1, 0) * (1 - var(--p2, 0)) * var(--w) * 0.01875
+      )
+    )
+    scale(var(--sx, 1), var(--sy, 1));
+  /* Resting/landing size scales with the page (360×203 at 1440); about.js
+     computes --sx/--sy against this same scaled base so it still reaches full
+     screen. */
+  width: calc(var(--w) * 0.25); /* 360 */
+  height: calc(var(--w) * 0.140972); /* 203 */
+  overflow: hidden;
+}
+/* Oversized so it can drift inside the frame without showing an edge.
+   Nuwa's img treatment — rise parallax + settle-from-zoom (--p1), Ken Burns
+   pan/zoom (--p3) — times the McAlpine lag: the photo counter-scales down
+   by up to 8% mid-expand (0.32·p2·(1−p2), zero at both ends), so the
+   window opens slightly ahead of the photo and the photo eases into place.
+   The 12%/24% oversize keeps every edge covered through the dip + drifts. */
+.about-scrub__img {
+  position: absolute;
+  left: -5%;
+  /* Extra vertical slack (±12%) so the exit parallax (--pe, up to +10%) has
+     room to drift without ever exposing a frame edge. */
+  top: -12%;
+  width: 110%;
+  max-width: none; /* v1.2.css's global img{max-width:100%} would cap the
+                      oversize and shift the photo left of the frame */
+  height: 124%;
+  object-fit: cover;
+  /* rise settle (--p1) − Ken Burns pan (--p3) + exit lag (--pe): the last
+     term holds the image back as the full-screen frame scrolls away. */
+  transform: translateY(
+      calc(
+        (1 - var(--p1, 0)) * 5% - var(--p3, 0) * 1.5% + var(--pe, 0) * 10%
+      )
+    )
+    scale(
+      calc(
+        (1 + (1 - var(--p1, 0)) * 0.035 + var(--p3, 0) * 0.025) *
+          (1 - 0.28 * var(--p2, 0) * (1 - var(--p2, 0)))
+      )
+    );
+  will-change: transform;
+}
+
+/* Static fallback — no pin, no expand: the plain full-bleed band the page
+   had before (used under reduced motion and the ?static debug flag). */
+.about-scrub:not(.is-scrubbed) {
+  height: auto;
+  margin-top: 0;
+  padding: calc(var(--w) * 0.097222) 0; /* 140 */
+  pointer-events: auto;
+}
+.about-scrub:not(.is-scrubbed) .about-scrub__stage {
+  position: static;
+  height: auto;
+}
+.about-scrub:not(.is-scrubbed) .about-text {
+  position: static;
+  margin: 0 auto calc(var(--w) * 0.097222); /* 140 */
+  opacity: 1;
+  transform: none;
+}
+.about-scrub:not(.is-scrubbed) .about-scrub__frame {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 100%;
+  height: calc(var(--w) * 0.555556); /* 800 */
+}
+.about-scrub:not(.is-scrubbed) .about-scrub__img {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
+/* ---------- Full-bleed bands (309:84 / 309:99) ----------
+   The frame clips; the image inside is taller than the frame and gets
+   translated by the loop, so the photo drifts within its window. */
+.about-bleed {
+  padding: calc(var(--w) * 0.097222) 0; /* 140 */
+}
+.about-bleed--last {
+  padding-bottom: 0;
+}
+.about-bleed__frame {
+  position: relative;
+  height: calc(var(--w) * 0.555556); /* 800 */
+  overflow: hidden;
+}
+.about-bleed__img {
+  position: absolute;
+  left: 0;
+  top: -80px;
+  width: 100%;
+  height: calc(100% + 160px);
+  object-fit: cover;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .plx,
+  .about-bleed__img {
+    transform: none !important;
+  }
+}
