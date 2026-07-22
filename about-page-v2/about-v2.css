@@ -98,9 +98,9 @@
   color: var(--color-nav);
   opacity: 0;
   pointer-events: none;
-  /* Outgoing panel fades out quickly (no motion) so the incoming appear reads
-     on its own rather than as a simultaneous crossfade. */
-  transition: opacity 0.3s var(--ease-expo);
+  /* Outgoing panel fades out (no motion) so the incoming appear reads on its
+     own rather than as a simultaneous crossfade. */
+  transition: opacity 0.6s var(--ease-expo);
 }
 .filters__panel.is-active {
   opacity: 1;
@@ -117,7 +117,7 @@
 @keyframes v2-appear-text {
   from {
     opacity: 0;
-    transform: translateY(26px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -140,8 +140,8 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* Outgoing image fades out quickly underneath. */
-  transition: opacity 0.35s var(--ease-expo);
+  /* Outgoing image fades out underneath. */
+  transition: opacity 0.6s var(--ease-expo);
 }
 .filters__img.is-active {
   opacity: 1;
@@ -151,7 +151,7 @@
 @keyframes v2-appear-img {
   from {
     opacity: 0;
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
   to {
     opacity: 1;
