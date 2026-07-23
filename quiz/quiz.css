@@ -165,6 +165,7 @@
   left: 50%;
   top: 36.9%; /* 275 / 746 */
   transform: translateX(-50%);
+  z-index: 1; /* above the collage at squeezed widths */
   width: 478px;
   max-width: calc(100vw - 40px);
   text-align: center;
@@ -370,6 +371,16 @@
   opacity: 1;
 }
 
+/* ---------- Squeezed widths ----------
+   Below ~1024px the full four-image collage starts colliding with the fixed
+   478px copy column, so switch to the pared-back corner collage early. */
+@media (max-width: 1024px) {
+  .quiz-collage--2 { display: none; }
+  .quiz-collage--1 { width: 26%; left: 4%; top: 8%; }
+  .quiz-collage--3 { width: 30%; left: 66%; top: 6%; }
+  .quiz-collage--4 { width: 30%; left: 66%; top: 64%; }
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 760px) {
   .quiz-step {
@@ -379,7 +390,6 @@
   .quiz-step--entry {
     min-height: calc(100vh - 54px);
   }
-  .quiz-collage--2 { display: none; }
   .quiz-collage--1 { width: 32%; }
   .quiz-collage--3 { width: 36%; left: 60%; }
   .quiz-collage--4 { width: 36%; left: 60%; top: 60%; }
