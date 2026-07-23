@@ -56,9 +56,11 @@
 .quiz-chrome {
   position: absolute;
   top: 40px;
-  /* Columns 5–8 (comp: x=481, w=478). */
-  left: calc(4 * var(--qstep));
-  width: calc(4 * var(--qcol) + 6px);
+  /* Columns 5–8 (comp: x=481, w=478) — centre-anchored. */
+  left: 50%;
+  transform: translateX(-50%);
+  width: max(calc(4 * var(--qcol) + 6px), 478px);
+  max-width: calc(100% - 40px);
   z-index: 5;
 }
 .quiz-chrome[hidden] {
@@ -176,10 +178,12 @@
 
 .quiz-entry__copy {
   position: absolute;
-  /* Columns 5–8, top 275/746 (comp). */
-  left: calc(4 * var(--qstep));
+  /* Columns 5–8, top 275/746 (comp) — centre-anchored like the email block. */
+  left: 50%;
+  transform: translateX(-50%);
   top: 36.9%;
-  width: calc(4 * var(--qcol) + 6px);
+  width: max(calc(4 * var(--qcol) + 6px), 478px);
+  max-width: calc(100% - 40px);
   z-index: 1; /* above the collage at squeezed widths */
   text-align: center;
 }
@@ -275,10 +279,14 @@
 }
 .quiz-email__inner {
   position: absolute;
-  /* Columns 5–8, top 263/746 (comp). */
-  left: calc(4 * var(--qstep));
+  /* Columns 5–8 (the central 4 columns) — anchored to the viewport centre so
+     the block stays dead-centred at any width; never narrower than the comp's
+     478 column on squeezed screens. */
+  left: 50%;
+  transform: translateX(-50%);
   top: 35.3%;
-  width: calc(4 * var(--qcol) + 6px);
+  width: max(calc(4 * var(--qcol) + 6px), 478px);
+  max-width: calc(100% - 40px);
   color: var(--color-bg);
 }
 .quiz-step--email .quiz-eyebrow,
@@ -422,14 +430,13 @@
   .quiz-step--entry {
     min-height: calc(100vh - 54px);
   }
-  .quiz-chrome {
-    left: 20px;
-    width: calc(100% - 40px);
-  }
+  .quiz-chrome,
   .quiz-entry__copy,
   .quiz-email__inner {
     left: 20px;
+    transform: none;
     width: calc(100% - 40px);
+    max-width: none;
   }
   .quiz-question {
     padding-top: 128px;
