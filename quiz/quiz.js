@@ -200,24 +200,42 @@ function renderResults() {
       </article>`
     )
     .join("");
-  requestAnimationFrame(layoutResultsCarousel);
+  scheduleCarouselLayout();
+}
+
+// Kick the layout on the next frames until it succeeds (the results step can
+// need a frame or two to gain real width as it animates in). Self-terminating:
+// stops the moment layoutResultsCarousel reports success, or after ~1s. rAF is
+// paused on hidden tabs, so this never spins in the background.
+let carouselLayoutFrame = 0;
+function scheduleCarouselLayout() {
+  cancelAnimationFrame(carouselLayoutFrame);
+  let tries = 0;
+  const attempt = () => {
+    if (current !== "results") return;
+    if (layoutResultsCarousel()) return; // laid out — done
+    if (++tries < 60) carouselLayoutFrame = requestAnimationFrame(attempt);
+  };
+  carouselLayoutFrame = requestAnimationFrame(attempt);
 }
 
 // ---- Results carousel ------------------------------------------------------
 // Homepage-UGC mechanics: clone whole card sets until the track covers the
 // viewport plus one copy, then tell CSS one copy's exact width (--qc-shift)
 // so the marquee wraps invisibly. Re-run on resize while results is showing.
+// Returns true once the marquee is laid out (dimensions were available),
+// false while the carousel still has no size so callers can retry.
 function layoutResultsCarousel() {
   const carousel = quiz.querySelector("[data-quiz-result-carousel]");
   const track = quiz.querySelector("[data-quiz-result-track]");
-  if (!carousel || !track) return;
+  if (!carousel || !track) return false;
   [...track.children].forEach((el) => { if (el.dataset.clone) el.remove(); });
   const originals = [...track.children];
-  if (!originals.length) return;
+  if (!originals.length) return false;
   const GAP = 2;
   const copyW = originals.reduce((w, el) => w + el.getBoundingClientRect().width + GAP, 0);
   const viewW = carousel.clientWidth;
-  if (!copyW || !viewW) return; // not laid out yet — the ResizeObserver re-fires when it is
+  if (!copyW || !viewW) return false; // not laid out yet — retry / ResizeObserver re-fires
   const copies = Math.max(2, Math.ceil((viewW + copyW) / copyW));
   for (let i = 1; i < copies; i++) {
     for (const el of originals) {
@@ -230,6 +248,7 @@ function layoutResultsCarousel() {
   const SPEED = 40; // px per second — matches the homepage UGC marquee
   carousel.style.setProperty("--qc-shift", copyW.toFixed(2) + "px");
   carousel.style.setProperty("--qc-duration", (copyW / SPEED).toFixed(2) + "s");
+  return true;
 }
 // A ResizeObserver drives (re)layout: it fires when the carousel first gains
 // real dimensions (the results step animating in) and on every width change,
