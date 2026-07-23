@@ -10,7 +10,7 @@
   <!-- Solid navbar + .pcard product cards (reused on the results step). -->
   <link rel="stylesheet" href="collection.css" />
   <!-- Quiz-specific: step stage, option tiles, progress, email gate, results. -->
-  <link rel="stylesheet" href="quiz.css?v=10" />
+  <link rel="stylesheet" href="quiz.css?v=11" />
 </head>
 <body>
   <main class="page page--quiz">
@@ -162,14 +162,19 @@
         <div class="quiz-results__actions">
           <a class="quiz-btn" href="collection.html" data-quiz-result-cta>Shop your collection</a>
         </div>
-        <div class="quiz-results__grid" data-quiz-result-grid>
-          <!-- .pcard elements injected from the recommendation config -->
+        <!-- Infinite product marquee (same mechanics as the homepage UGC
+             carousel: cloned card sets, CSS keyframe shifted by one copy's
+             width, paused on hover). Cards reuse the homepage .card pattern. -->
+        <div class="quiz-results__carousel" data-quiz-result-carousel>
+          <div class="quiz-results__track" data-quiz-result-track>
+            <!-- .card elements injected from the recommendation config -->
+          </div>
         </div>
       </section>
 
     </div>
   </main>
 
-  <script type="module" src="quiz.js"></script>
+  <script type="module" src="quiz.js?v=11"></script>
 </body>
 </html>

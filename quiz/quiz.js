@@ -55,14 +55,16 @@ const COLLECTIONS = {
   },
 };
 
-// Result product rows — per collection, reusing the shared .pcard pattern
-// (quiz.css turns the info block + tag into hover-only overlays, per the comp).
+// Result product row — per collection, reusing the homepage .card pattern
+// (v1.2.css): rest/hover crossfade images, "New in" tag, cream info panel
+// with print swatches, all revealed on hover.
+const SWATCHES = [1, 2, 3, 4, 5].map((n) => "assets/images/swatches/s" + n + ".png");
 const PRODUCTS = {
   default: [
-    { img: "assets/images/quiz/result-1.png", name: "Womens 402 Long Set Chambray Blue", price: "£95", tag: "" },
-    { img: "assets/images/quiz/result-2.png", name: "Men Chambray Blue", price: "£95", tag: "New in" },
-    { img: "assets/images/quiz/result-3.png", name: "Womens Fleur Nightie", price: "£120", tag: "" },
-    { img: "assets/images/quiz/result-4.png", name: "Mens Gingham Short Set", price: "£85", tag: "" },
+    { img: "assets/images/card-1-rest.png", hover: "assets/images/card-1-hover.jpg", name: "Women Chambray Blue", price: "£95", tag: "", swatches: SWATCHES },
+    { img: "assets/images/card-2-rest.png", hover: "assets/images/card-2-hover.png", name: "Men Chambray Blue", price: "£95", tag: "New in", swatches: SWATCHES },
+    { img: "assets/images/card-3-rest.png", hover: "assets/images/card-3-hover.webp", name: "Womens Fleur Nightie", price: "£120", tag: "", swatches: SWATCHES },
+    { img: "assets/images/card-4-rest.png", hover: "assets/images/card-4-hover.webp", name: "Mens Gingham Short Set", price: "£85", tag: "", swatches: SWATCHES },
   ],
 };
 
@@ -176,25 +178,69 @@ function renderResults() {
     (traits ? traits + ". " : "") + c.copy;
   quiz.querySelector("[data-quiz-result-cta]").href = c.cta;
 
-  const grid = quiz.querySelector("[data-quiz-result-grid]");
+  const track = quiz.querySelector("[data-quiz-result-track]");
   const products = PRODUCTS[key] || PRODUCTS.default;
-  grid.innerHTML = products
+  track.innerHTML = products
     .map(
       (p) => `
-      <article class="pcard">
-        <a class="pcard__link" href="#">
-          <span class="pcard__media">
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
             <img src="${p.img}" alt="${p.name}" />
+            <img class="card__media-hover" src="${p.hover}" alt="" aria-hidden="true" />
           </span>
-          ${p.tag ? `<span class="pcard__tag">${p.tag}</span>` : ""}
-          <span class="pcard__info">
-            <span class="pcard__meta"><span class="pcard__name">${p.name}</span><span class="pcard__price">${p.price}</span></span>
+          ${p.tag ? `<span class="card__tag">${p.tag}</span>` : ""}
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">${p.name}</span><span class="card__price">${p.price}</span></span>
+            <span class="card__swatches">${(p.swatches || [])
+              .map((s) => `<img class="card__swatch" src="${s}" alt="" />`)
+              .join("")}</span>
           </span>
         </a>
       </article>`
     )
     .join("");
+  requestAnimationFrame(layoutResultsCarousel);
 }
+
+// ---- Results carousel ------------------------------------------------------
+// Homepage-UGC mechanics: clone whole card sets until the track covers the
+// viewport plus one copy, then tell CSS one copy's exact width (--qc-shift)
+// so the marquee wraps invisibly. Re-run on resize while results is showing.
+let carouselRetries = 0;
+function layoutResultsCarousel() {
+  const carousel = quiz.querySelector("[data-quiz-result-carousel]");
+  const track = quiz.querySelector("[data-quiz-result-track]");
+  if (!carousel || !track) return;
+  [...track.children].forEach((el) => { if (el.dataset.clone) el.remove(); });
+  const originals = [...track.children];
+  if (!originals.length) return;
+  const GAP = 2;
+  const copyW = originals.reduce((w, el) => w + el.getBoundingClientRect().width + GAP, 0);
+  const viewW = carousel.clientWidth;
+  if (!copyW || !viewW) {
+    // Hidden or mid-layout (fonts/images still settling) — retry briefly.
+    carouselRetries += 1;
+    if (carouselRetries <= 10) setTimeout(layoutResultsCarousel, 300);
+    return;
+  }
+  carouselRetries = 0;
+  const copies = Math.max(2, Math.ceil((viewW + copyW) / copyW));
+  for (let i = 1; i < copies; i++) {
+    for (const el of originals) {
+      const clone = el.cloneNode(true);
+      clone.dataset.clone = "1";
+      clone.setAttribute("aria-hidden", "true");
+      track.appendChild(clone);
+    }
+  }
+  const SPEED = 40; // px per second — matches the homepage UGC marquee
+  carousel.style.setProperty("--qc-shift", copyW.toFixed(2) + "px");
+  carousel.style.setProperty("--qc-duration", (copyW / SPEED).toFixed(2) + "s");
+}
+window.addEventListener("resize", () => {
+  if (current === "results") layoutResultsCarousel();
+});
 
 // ---- Email gate ------------------------------------------------------------
 // Front-end stub: valid emails are kept in localStorage and announced via a

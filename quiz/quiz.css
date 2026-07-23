@@ -369,44 +369,53 @@
 }
 .quiz-step--results .quiz-body {
   margin-top: 24px;
+  /* Comp: the trait line reads as a single line. */
+  max-width: none;
 }
 .quiz-results__actions {
   display: flex;
   justify-content: center;
   margin-top: 40px;
 }
-/* Full-bleed 4-up row seated at the bottom of the step. Reuses .pcard from
-   collection.css, but per the comp the info + "new in" tag live OVER the
-   image and only appear on hover (the row is a tease, not a grid). */
-.quiz-results__grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--gutter);
+/* Infinite product marquee seated at the bottom of the step — the homepage
+   UGC mechanics: the track scrolls left by exactly one card-set's width
+   (--qc-shift, measured in quiz.js) and wraps invisibly; hovering anywhere on
+   the carousel pauses it. Cards are the homepage .card pattern (v1.2.css):
+   crossfade hover + cream info panel + swatches. */
+.quiz-results__carousel {
+  overflow: hidden;
   margin-top: auto;
   padding-top: 44px;
 }
-.quiz-results__grid .pcard__media {
+.quiz-results__track {
+  display: flex;
+  gap: var(--gutter);
+  width: max-content;
+  will-change: transform;
+  animation: quiz-carousel var(--qc-duration, 60s) linear infinite;
+}
+.quiz-results__carousel:hover .quiz-results__track,
+.quiz-results__carousel:focus-within .quiz-results__track {
+  animation-play-state: paused;
+}
+@keyframes quiz-carousel {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(-1 * var(--qc-shift, 0px)), 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quiz-results__track {
+    animation: none;
+  }
+}
+.quiz-results__track .card {
+  flex: 0 0 359px;
+  width: 359px;
   aspect-ratio: 359 / 501;
 }
-.quiz-results__grid .pcard__info {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 30px;
-  z-index: 2;
-  padding: 0;
-  opacity: 0;
-  transition: opacity 0.4s var(--ease-expo);
-}
-.quiz-results__grid .pcard__tag {
-  opacity: 0;
-  transition: opacity 0.4s var(--ease-expo);
-}
-.quiz-results__grid .pcard:hover .pcard__info,
-.quiz-results__grid .pcard:focus-within .pcard__info,
-.quiz-results__grid .pcard:hover .pcard__tag,
-.quiz-results__grid .pcard:focus-within .pcard__tag {
-  opacity: 1;
+/* Print swatches as small squares, like the homepage product row. */
+.quiz-results__track .card__swatch {
+  width: 11px;
+  height: 11px;
 }
 
 /* ---------- Squeezed widths ----------
@@ -460,7 +469,8 @@
     flex-direction: column;
     align-items: stretch;
   }
-  .quiz-results__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .quiz-results__track .card {
+    flex-basis: 240px;
+    width: 240px;
   }
 }
