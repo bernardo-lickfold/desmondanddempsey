@@ -294,39 +294,37 @@
   margin: 34px auto 0;
   max-width: 478px;
 }
-/* Input row: underline field left, paper button right (comp: 365 + 2 + 111,
-   capped at the 478 column and centered so it can't stretch). */
+/* Input row — comp construction: one 478-wide, 36px-tall row with a single
+   30%-white hairline along its bottom (running under the button too); the
+   placeholder floats 9px above the line at 80% white, and the paper button
+   sits flush on the line at the right. */
 .quiz-email {
   display: flex;
   align-items: flex-end;
-  gap: 2px;
-  margin: 48px auto 0;
+  margin: 40px auto 0;
   max-width: 478px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.quiz-email:focus-within {
+  border-bottom-color: rgba(255, 255, 255, 0.6);
 }
 .quiz-email__input {
   flex: 1;
   min-width: 0;
-  /* Comp field is a 36px-tall block: text seated on a solid paper underline. */
-  padding: 10px 0 12px;
+  padding: 10px 0 9px; /* text floats 9px above the hairline (comp) */
   border: 0;
-  border-bottom: 1px solid var(--color-bg);
   background: none;
   font-family: var(--font-base);
   font-size: 11px;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: var(--color-bg);
+  color: #fff;
   border-radius: 0;
   outline: none;
 }
 .quiz-email__input::placeholder {
-  color: var(--color-bg);
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
-}
-.quiz-email__input:focus {
-  border-bottom-width: 2px;
-  padding-bottom: 11px; /* keep the row height stable as the line thickens */
 }
 .quiz-email__error {
   margin: 12px 0 0;
