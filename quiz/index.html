@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&amp;D — Find Your Perfect Pyjama</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <!-- Shared design system: tokens, navbar, footer, loader. -->
+  <link rel="stylesheet" href="v1.2.css" />
+  <!-- Solid navbar + .pcard product cards (reused on the results step). -->
+  <link rel="stylesheet" href="collection.css" />
+  <!-- Quiz-specific: step stage, option tiles, progress, email gate, results. -->
+  <link rel="stylesheet" href="quiz.css" />
+</head>
+<body>
+  <main class="page page--quiz">
+    <header class="header header--collection">
+      <nav class="navbar" aria-label="Primary">
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="#">Shop</a>
+        <a class="nav-link nav-link--rest" href="#">Rest</a>
+        <a class="nav-logo" href="../homepage/" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- The quiz is a single-viewport state machine: one .quiz-step is active
+         at a time; quiz.js drives navigation, progress, scoring and the email
+         gate. Step chrome (back + progress, per the comp: one compact centered
+         block) lives once, outside the steps. -->
+    <div class="quiz" data-quiz>
+
+      <div class="quiz-chrome" data-quiz-chrome hidden>
+        <div class="quiz-chrome__row">
+          <button class="quiz-back" type="button" data-quiz-back>back</button>
+          <span class="quiz-progress__step" data-quiz-step-label>01 / 04</span>
+        </div>
+        <span class="quiz-progress__track"><span class="quiz-progress__fill" data-quiz-progress></span></span>
+      </div>
+
+      <!-- 00 · Entry — centered copy inside a photo collage -->
+      <section class="quiz-step quiz-step--entry is-active" data-step="entry">
+        <figure class="quiz-collage quiz-collage--1"><img src="assets/images/quiz/entry-1.png" alt="" /></figure>
+        <figure class="quiz-collage quiz-collage--2"><img src="assets/images/quiz/entry-2.png" alt="" /></figure>
+        <figure class="quiz-collage quiz-collage--3"><img src="assets/images/quiz/entry-3.png" alt="" /></figure>
+        <figure class="quiz-collage quiz-collage--4"><img src="assets/images/quiz/entry-4.png" alt="" /></figure>
+        <div class="quiz-entry__copy">
+          <h1 class="quiz-entry__title">Let&rsquo;s find your perfect pyjama.</h1>
+          <p class="quiz-body">
+            Four quick questions &mdash; hardly homework. Tell us how you sleep,
+            how you lounge and what you love, and we&rsquo;ll match you to the
+            pyjamas made for exactly that.
+          </p>
+          <button class="quiz-btn quiz-btn--start" type="button" data-quiz-start>start the quiz</button>
+          <p class="quiz-micro">Takes about 30 seconds.</p>
+        </div>
+      </section>
+
+      <!-- 01 · Sleep temperature -->
+      <section class="quiz-step" data-step="q-sleep" data-question="sleep">
+        <h2 class="quiz-question">First things first: How do you sleep?</h2>
+        <div class="quiz-options">
+          <button class="quiz-option" type="button" data-value="hot" data-label="Hot sleeper">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q1-hot.png" alt="" /></span>
+            <span class="quiz-option__label">Hot sleeper</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="cold" data-label="Cold sleeper">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q1-cold.png" alt="" /></span>
+            <span class="quiz-option__label">Cold sleeper</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="between" data-label="Somewhere in between">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q1-between.png" alt="" /></span>
+            <span class="quiz-option__label">In between</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 02 · When they go on -->
+      <section class="quiz-step" data-step="q-wear" data-question="wear">
+        <h2 class="quiz-question">And when do your pyjamas go on?</h2>
+        <div class="quiz-options">
+          <button class="quiz-option" type="button" data-value="sleep" data-label="Strictly a sleeper">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q2-sleep.png" alt="" /></span>
+            <span class="quiz-option__label">Just for sleep</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="lounge" data-label="All-day lounger">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q2-lounge.png" alt="" /></span>
+            <span class="quiz-option__label">All-day lounging</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="both" data-label="Sofa-to-sleep">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q2-both.png" alt="" /></span>
+            <span class="quiz-option__label">A bit of both</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 03 · Fabric -->
+      <section class="quiz-step" data-step="q-fabric" data-question="fabric">
+        <h2 class="quiz-question">How should they feel?</h2>
+        <div class="quiz-options">
+          <button class="quiz-option" type="button" data-value="crisp" data-label="Crisp cotton">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q3-crisp.png" alt="" /></span>
+            <span class="quiz-option__label">Crisp cotton</span>
+            <span class="quiz-option__sub">Cool and clean, the hotel-sheet feeling</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="brushed" data-label="Brushed cotton">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q3-brushed.png" alt="" /></span>
+            <span class="quiz-option__label">Brushed cotton</span>
+            <span class="quiz-option__sub">Soft and warm, the winter-Sunday feeling</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="linen" data-label="Light linen">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q3-linen.png" alt="" /></span>
+            <span class="quiz-option__label">Light linen</span>
+            <span class="quiz-option__sub">Breezy and relaxed, the holiday feeling</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 04 · The look -->
+      <section class="quiz-step" data-step="q-look" data-question="look">
+        <h2 class="quiz-question">Last one: what&rsquo;s your look?</h2>
+        <div class="quiz-options">
+          <button class="quiz-option" type="button" data-value="bold" data-label="Bold prints">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q4-bold.png" alt="" /></span>
+            <span class="quiz-option__label">Bold prints</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="quiet" data-label="Quietly classic">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q4-quiet.png" alt="" /></span>
+            <span class="quiz-option__label">Quiet classics</span>
+          </button>
+          <button class="quiz-option" type="button" data-value="middle" data-label="A little of both">
+            <span class="quiz-option__media"><img src="assets/images/quiz/q4-middle.png" alt="" /></span>
+            <span class="quiz-option__label">In the middle</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 05 · Email gate — full-bleed image, paper text (per the comp: no
+           back/progress chrome and no skip; submitting is the only door) -->
+      <section class="quiz-step quiz-step--email" data-step="email">
+        <div class="quiz-email__inner">
+          <p class="quiz-eyebrow">Nearly there</p>
+          <h2 class="quiz-question quiz-question--email">Where should we<br />send your match?</h2>
+          <p class="quiz-body quiz-body--email">
+            Pop your email below and we&rsquo;ll send your recommendation,
+            along with 10% off your first pyjama order.
+          </p>
+          <form class="quiz-email" data-quiz-email-form novalidate>
+            <input class="quiz-email__input" type="email" name="email" placeholder="your email*"
+                   aria-label="Your email address" autocomplete="email" />
+            <button class="quiz-btn quiz-btn--paper" type="submit">See my match</button>
+          </form>
+          <p class="quiz-email__error" data-quiz-email-error hidden>That doesn&rsquo;t look like an email &mdash; mind checking it?</p>
+        </div>
+      </section>
+
+      <!-- 06 · Results — headline/copy/cards are filled in by quiz.js -->
+      <section class="quiz-step quiz-step--results" data-step="results">
+        <h2 class="quiz-results__title" data-quiz-result-title>You&rsquo;re a Classics sleeper.</h2>
+        <p class="quiz-body quiz-body--center" data-quiz-result-copy></p>
+        <div class="quiz-results__actions">
+          <a class="quiz-btn" href="collection.html" data-quiz-result-cta>Shop your collection</a>
+        </div>
+        <div class="quiz-results__grid" data-quiz-result-grid>
+          <!-- .pcard elements injected from the recommendation config -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script type="module" src="quiz.js"></script>
+</body>
+</html>
