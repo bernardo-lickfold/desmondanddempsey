@@ -73,8 +73,10 @@
   padding: 0;
   border: 0;
   background: none;
-  font: inherit;
+  font-family: var(--font-base);
   font-size: 11px;
+  letter-spacing: 0;
+  text-transform: uppercase; /* comp: "BACK" (textCase UPPER) */
   color: var(--color-nav);
   cursor: pointer;
 }
@@ -131,14 +133,14 @@
   border: 0;
   background: var(--color-nav);
   color: var(--color-bg);
-  /* Explicit stack — form controls don't inherit reliably, and the comp's
-     buttons are Gerstner 11 with no tracking or casing transforms. */
+  /* Explicit stack — form controls don't inherit reliably. Comp spec:
+     Gerstner 11, UPPERCASE, tracking 0 (every quiz CTA uses textCase UPPER). */
   font-family: var(--font-base);
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 18px;
-  text-transform: none;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
 }
