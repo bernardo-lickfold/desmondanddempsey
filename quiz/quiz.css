@@ -295,23 +295,26 @@
   max-width: 478px;
 }
 /* Input row — comp construction: one 478-wide, 36px-tall row with a single
-   30%-white hairline along its bottom (running under the button too); the
-   placeholder floats 9px above the line at 80% white, and the paper button
-   sits flush on the line at the right. */
+   30%-white hairline along its TOP (running over the button's column too);
+   the placeholder hangs 19px below the line at 80% white, and the paper
+   button hangs from it at the right. */
 .quiz-email {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   margin: 40px auto 0;
   max-width: 478px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 .quiz-email:focus-within {
-  border-bottom-color: rgba(255, 255, 255, 0.6);
+  border-top-color: rgba(255, 255, 255, 0.6);
+}
+.quiz-email .quiz-btn {
+  margin-top: 10px; /* comp: button top 10px below the hairline */
 }
 .quiz-email__input {
   flex: 1;
   min-width: 0;
-  padding: 10px 0 9px; /* text floats 9px above the hairline (comp) */
+  padding: 19px 0 0; /* comp: text hangs 19px below the hairline */
   border: 0;
   background: none;
   font-family: var(--font-base);
