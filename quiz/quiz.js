@@ -208,15 +208,22 @@ function renderResults() {
 // stops the moment layoutResultsCarousel reports success, or after ~1s. rAF is
 // paused on hidden tabs, so this never spins in the background.
 let carouselLayoutFrame = 0;
+let carouselLayoutTimer = 0;
 function scheduleCarouselLayout() {
   cancelAnimationFrame(carouselLayoutFrame);
+  clearTimeout(carouselLayoutTimer);
   let tries = 0;
   const attempt = () => {
     if (current !== "results") return;
     if (layoutResultsCarousel()) return; // laid out — done
-    if (++tries < 60) carouselLayoutFrame = requestAnimationFrame(attempt);
+    if (++tries >= 60) return;
+    // rAF is the primary retry; a parallel timer covers browsers/tabs that
+    // throttle rAF but still run timers. Whichever lands a valid frame first
+    // succeeds and both stop (layoutResultsCarousel returning true).
+    carouselLayoutFrame = requestAnimationFrame(attempt);
+    carouselLayoutTimer = setTimeout(attempt, 250);
   };
-  carouselLayoutFrame = requestAnimationFrame(attempt);
+  attempt();
 }
 
 // ---- Results carousel ------------------------------------------------------
