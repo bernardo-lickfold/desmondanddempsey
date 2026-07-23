@@ -3,25 +3,537 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product Page — Desmond &amp; Dempsey</title>
-  <style>
-    :root { --bg:#f5f5f2; --ink:#140803; }
-    * { box-sizing:border-box; margin:0; }
-    html,body { height:100%; }
-    body {
-      background:var(--bg); color:var(--ink);
-      font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-height:100vh; text-align:center; padding:40px; gap:20px;
-    }
-    h1 { font-family:Georgia,"Times New Roman",serif; font-weight:300; font-size:32px; line-height:1.15; }
-    p { font-size:11px; letter-spacing:.04em; text-transform:uppercase; opacity:.5; }
-    a { color:inherit; font-size:11px; letter-spacing:.04em; text-transform:uppercase; text-decoration:none; border-bottom:0.5px solid rgba(20,8,3,.3); padding-bottom:2px; }
-  </style>
+  <title>402 Long Set Chambray — Desmond &amp; Dempsey</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/vendor/lenis.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Product Page</h1>
-  <p>Coming soon</p>
-  <a href="../homepage/">← Home</a>
+  <div class="page">
+    <!-- Header / nav — solid cream bar, sticks to the top on scroll.
+         SHOP · REST · wordmark · SEARCH · CART, evenly spread. -->
+    <header class="header">
+      <nav class="navbar" aria-label="Primary">
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="../homepage/">Shop</a>
+        <a class="nav-link nav-link--rest" href="#">Rest</a>
+        <a class="nav-logo" href="../homepage/" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- Hero — an infinite carousel of product shots scrolling behind a fixed
+         product-info card. The .hero__track is duplicated in script.js so the
+         marquee loops seamlessly (CSS translate). The card stays put on top. -->
+    <section class="hero" aria-label="402 Long Set Chambray">
+      <div class="hero__carousel" data-speed="20" aria-hidden="true">
+        <div class="hero__track">
+          <a class="hero__slide" href="#"><img src="assets/images/hero-1.jpg" alt="" /></a>
+          <a class="hero__slide" href="#"><img src="assets/images/hero-2.jpg" alt="" /></a>
+          <a class="hero__slide" href="#"><img src="assets/images/hero-3.jpg" alt="" /></a>
+          <a class="hero__slide" href="#"><img src="assets/images/hero-2.jpg" alt="" /></a>
+        </div>
+      </div>
+      <!-- Mobile only: swipe position dots (populated by script.js; sits in
+           flow just above the carousel's bottom edge so it can't swipe away) -->
+      <div class="hero__dots" aria-hidden="true"></div>
+
+      <!-- Fixed product-info card -->
+      <aside class="product-card" aria-label="Product details">
+        <div class="pc__top">
+          <!-- Name + rating -->
+          <div class="pc__head">
+            <h1 class="pc__name">402 Long Set Chambray</h1>
+            <div class="pc__rating">
+              <img class="pc__stars" src="assets/images/stars.svg" alt="Rated 5 out of 5" />
+              <span class="pc__reviews">400 Reviews</span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p class="pc__desc">Fresh. Simple. Stretch. A longer-length shirt paired with relaxed full-length trousers, designed for comfort and ease.</p>
+
+          <!-- Colour swatches -->
+          <div class="pc__color">
+            <span class="pc__color-label">Color:</span>
+            <div class="pc__swatches">
+              <button class="pc__swatch is-active" type="button" aria-label="Chambray Blue"><img src="assets/images/swatches/c1.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 2"><img src="assets/images/swatches/c2.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 3"><img src="assets/images/swatches/c3.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 4"><img src="assets/images/swatches/c4.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 5"><img src="assets/images/swatches/c5.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 6"><img src="assets/images/swatches/c6.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 7"><img src="assets/images/swatches/c7.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 8"><img src="assets/images/swatches/c8.png" alt="" /></button>
+              <button class="pc__swatch" type="button" aria-label="Colour 9"><img src="assets/images/swatches/c9.png" alt="" /></button>
+            </div>
+          </div>
+
+          <!-- Two product lines (shirt + trouser), each with its own size picker -->
+          <div class="pc__lines">
+            <div class="pc__line">
+              <span class="pc__line-thumb"><img src="assets/images/line-shirt.jpg" alt="" /></span>
+              <div class="pc__line-col">
+                <div class="pc__line-head">
+                  <div class="pc__line-title">
+                    <span class="pc__line-name">Womens 402 Shirt Chambray Blue</span>
+                    <a class="pc__line-view" href="#">View</a>
+                  </div>
+                  <a class="pc__size-guide" href="#">Size guide</a>
+                </div>
+                <div class="pc__sizes" role="group" aria-label="Shirt size">
+                  <button class="pc__size" type="button">S</button>
+                  <button class="pc__size" type="button">M</button>
+                  <button class="pc__size" type="button">L</button>
+                  <button class="pc__size" type="button">XL</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="pc__line">
+              <span class="pc__line-thumb"><img src="assets/images/hero-1.jpg" alt="" /></span>
+              <div class="pc__line-col">
+                <div class="pc__line-head">
+                  <div class="pc__line-title">
+                    <span class="pc__line-name">Womens 402 Trouser Chambray Blue</span>
+                    <a class="pc__line-view" href="#">View</a>
+                  </div>
+                  <a class="pc__size-guide" href="#">Size guide</a>
+                </div>
+                <div class="pc__sizes" role="group" aria-label="Trouser size">
+                  <button class="pc__size" type="button">S</button>
+                  <button class="pc__size" type="button">M</button>
+                  <button class="pc__size" type="button">L</button>
+                  <button class="pc__size" type="button">XL</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add to cart + payment note -->
+          <div class="pc__actions">
+            <button class="pc__cart" type="button">
+              <span>Add to Cart</span>
+              <span>£95</span>
+            </button>
+            <p class="pc__pay">Shop now. Pay with Klarna or Apple Pay. <a href="#">Learn more</a></p>
+          </div>
+        </div>
+
+        <!-- Accordion — each item expands upward as an overlay panel covering
+             the other tabs (never the CTA above). Exclusivity + the animated
+             open/close choreography live in script.js (initCardAccordion). -->
+        <div class="pc__accordion">
+          <details class="pc__acc-item">
+            <summary class="pc__acc-head">Size<span class="pc__acc-icon" aria-hidden="true"></span></summary>
+            <div class="pc__acc-body"><p>If in between two sizes, size down.<br />Silvia is 178 cm and wears a small</p></div>
+          </details>
+          <details class="pc__acc-item">
+            <summary class="pc__acc-head">About the fabric<span class="pc__acc-icon" aria-hidden="true"></span></summary>
+            <div class="pc__acc-body"><p>Woven from a breathable cotton chambray that softens with every wash.<br />Lightweight, with a gentle drape and natural stretch.</p></div>
+          </details>
+          <details class="pc__acc-item">
+            <summary class="pc__acc-head">Packaging<span class="pc__acc-icon" aria-hidden="true"></span></summary>
+            <div class="pc__acc-body"><p>Wrapped in tissue and packed in a reusable cotton bag, ready for gifting.</p></div>
+          </details>
+          <details class="pc__acc-item">
+            <summary class="pc__acc-head">Delivery &amp; Returns<span class="pc__acc-icon" aria-hidden="true"></span></summary>
+            <div class="pc__acc-body"><p>No Hassle 90 day returns<br />Free Delivery over £120/$175<br />Next Day delivery in the UK<br />We ship around the globe</p></div>
+          </details>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Trust bar — three evenly-spread service highlights (desktop);
+         a scrolling ticker on mobile (script.js clones the track) -->
+    <section class="trustbar" aria-label="Service highlights">
+      <div class="trustbar__track">
+        <span>Free delivery over £150</span>
+        <span>Over 300,000 orders shipped</span>
+        <span>90 day returns</span>
+      </div>
+    </section>
+
+    <!-- Editorial quote — full-bleed back-of-model shot + dark overlay + serif line -->
+    <section class="ed-quote">
+      <img class="ed-quote__img" src="assets/images/editorial-back.jpg" alt="" />
+      <span class="ed-quote__overlay" aria-hidden="true"></span>
+      <p class="ed-quote__text">Designed in London, we put the effort in to make your downtime look and feel effortless.</p>
+    </section>
+
+    <!-- Editorial — lab dips + oversized 402 -->
+    <section class="split">
+      <div class="split__text">
+        <p class="prose">Our pyjamas are designed to inspire in-action. To make doing nothing feel a little more holy. We aren&rsquo;t suggesting you throw in the towel and give up on your ambitions, just take a single day, to take pleasure in your rest.</p>
+      </div>
+      <div class="split__media">
+        <video src="assets/videos/402.mp4" poster="assets/images/poster-402.jpg"
+               autoplay muted loop playsinline aria-label="The 402 campaign film"></video>
+      </div>
+    </section>
+
+    <!-- Editorial — collection love letter + image grid -->
+    <section class="split">
+      <div class="split__text">
+        <p class="prose">This pyjama is from a collection that was a love letter to the heat of the ranch. To staying up past your bedtime, to late night rendezvous, to cancelling plans to lie in the sun and to &lsquo;doing it for the plot&rsquo;.</p>
+      </div>
+      <div class="split__media collection">
+        <a class="collection__hero" href="#">
+          <img src="assets/images/editorial-robe.jpg" alt="" />
+          <span class="collection__pill">See entire collection</span>
+        </a>
+        <a class="collection__cell card" href="#">
+          <span class="card__media"><img src="assets/images/editorial-peony.jpg" alt="Peony White pyjama" /></span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Peony White</span><span class="card__price">£95</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c5.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c7.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c8.png" alt="" />
+            </span>
+          </span>
+        </a>
+        <a class="collection__cell card" href="#">
+          <span class="card__media"><img src="assets/images/card-3-rest.jpg" alt="Women Floral Navy" /></span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Women Floral Navy</span><span class="card__price">£165</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/c7.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c8.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c9.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Editorial — a personal touch + wax seal -->
+    <section class="split split--personal">
+      <div class="split__text">
+        <h2 class="ed-heading">A personal touch</h2>
+        <p class="prose">We can personalise D&amp;Ds by embroidering initials onto pockets. A practical, no nonsense luxury. Whether you&rsquo;re buying for yourself, your crew, your mate, your man, your mother, if a bigger power move exists, we&rsquo;re yet to hear of it.</p>
+        <p class="prose">Just click &lsquo;add monogram&rsquo; for a little preview.</p>
+        <a class="btn-dark" href="#">Make it personal</a>
+      </div>
+      <div class="split__media">
+        <video src="assets/videos/a-personal-touch.mp4" poster="assets/images/poster-personal-touch.jpg"
+               autoplay muted loop playsinline aria-label="Monogrammed D&amp;D robe"></video>
+      </div>
+    </section>
+
+    <!-- Product row — 4 cards, homepage hover treatment (image swap + tag +
+         info panel reveal). On mobile this becomes the "You might also like"
+         horizontal scroller (serif label below is mobile-only). -->
+    <section class="products" aria-label="From the collection">
+      <p class="products__label">You might also like</p>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-2-rest.jpg" alt="Men Chambray Blue" />
+            <img class="card__media-hover" src="assets/images/card-2-hover.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__tag">New in</span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Men Chambray Blue</span><span class="card__price">£95</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c2.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c4.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c5.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-3-rest.jpg" alt="Women Floral Navy" />
+            <img class="card__media-hover" src="assets/images/card-3-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Women Floral Navy</span><span class="card__price">£165</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/c7.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c8.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c9.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/card-4-rest.jpg" alt="Men Gingham Check" />
+            <img class="card__media-hover" src="assets/images/card-4-hover.webp" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__tag">New in</span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Men Gingham Check</span><span class="card__price">£110</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c4.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c6.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+      <article class="card">
+        <a class="card__link" href="#">
+          <span class="card__media">
+            <img src="assets/images/hero-2.jpg" alt="Womens 402 Long Set Chambray" />
+            <img class="card__media-hover" src="assets/images/hero-3.jpg" alt="" aria-hidden="true" />
+          </span>
+          <span class="card__info">
+            <span class="card__meta"><span class="card__name">Womens 402 Long Set Chambray</span><span class="card__price">£95</span></span>
+            <span class="card__swatches">
+              <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c2.png" alt="" />
+              <img class="card__swatch" src="assets/images/swatches/c3.png" alt="" />
+            </span>
+          </span>
+        </a>
+      </article>
+    </section>
+
+    <!-- Editorial — packaging care band (two shots + serif line) -->
+    <section class="ed-care">
+      <div class="ed-care__col">
+        <video src="assets/videos/packaging-care-band.mp4" poster="assets/images/poster-care-band.jpg"
+               autoplay muted loop playsinline aria-label="Folding a pyjama in its wrap"></video>
+      </div>
+      <div class="ed-care__col">
+        <img src="assets/images/editorial-bed-tag.jpg" alt="" />
+        <span class="ed-care__overlay" aria-hidden="true"></span>
+        <p class="ed-care__text">Wrapped with the same care<br />we put into the pyjamas.</p>
+      </div>
+    </section>
+
+    <!-- UGC carousel — reused from the homepage. Auto-scrolling community shots;
+         script.js duplicates the track so the marquee loops; pauses on hover.
+         Video cards play on hover with a mute toggle. -->
+    <section class="ugc" aria-label="From the D&amp;D community" data-speed="28">
+      <div class="ugc__viewport">
+        <div class="ugc__track">
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Women Pima Long Set — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-1.mp4" poster="assets/ugc/ugc-1.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@sunday.stories</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Women Pima Long Set</span><span class="ugc-card__price">£120</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c1.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c2.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c3.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Men Chambray Blue — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-2.mp4" poster="assets/ugc/ugc-2.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@bedhead.club</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Men Chambray Blue</span><span class="ugc-card__price">£95</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c4.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c5.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c6.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Leopard Short Set — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-3.mp4" poster="assets/ugc/ugc-3.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@slow.mornings</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Leopard Short Set</span><span class="ugc-card__price">£110</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c7.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c8.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+          <article class="ugc-card" data-media="video">
+            <a class="ugc-card__link" href="#" aria-label="Men Gingham Check — shop the look">
+              <span class="ugc-card__media">
+                <video class="ugc-card__video" src="assets/ugc/ugc-4.mp4" poster="assets/ugc/ugc-4.jpg" muted loop playsinline preload="none"></video>
+              </span>
+              <span class="ugc-card__tag">@still.in.bed</span>
+              <span class="ugc-card__info">
+                <span class="ugc-card__meta"><span class="ugc-card__name">Men Gingham Check</span><span class="ugc-card__price">£110</span></span>
+                <span class="ugc-card__swatches">
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c9.png" alt="" />
+                  <img class="ugc-card__swatch" src="assets/images/swatches/c1.png" alt="" />
+                </span>
+              </span>
+            </a>
+            <button class="ugc-card__mute" type="button" aria-label="Unmute video" aria-pressed="false">Mute</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ — You ask, we always answer -->
+    <section class="faq" aria-label="Frequently asked questions">
+      <div class="faq__intro">
+        <h2 class="faq__title">You ask,<br />we always answer</h2>
+        <img class="faq__img" src="assets/images/editorial-couple.jpg" alt="" />
+      </div>
+      <div class="faq__list">
+        <details class="faq__item"><summary class="faq__head">Question number 01<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Our pyjamas run true to size. If you&rsquo;re between sizes or prefer a roomier fit, size up.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 02<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Machine wash cold on a gentle cycle and hang to dry to keep the fabric at its best.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 03<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Yes — every set can be personalised with an embroidered monogram at checkout.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 04<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>We ship worldwide. Free UK delivery over £100; international rates shown at checkout.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 05<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Returns are free within 30 days on all unworn items with tags attached.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 06<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Our chambray is woven from breathable cotton that softens with every wash.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 07<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Gift wrapping is included — everything arrives ready to give.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 08<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Join the Sunday Club for early access, loyalty rewards and £15 off your first order.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 09<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Yes, we offer a pre-loved marketplace to give your D&amp;Ds a second life.</p></div></details>
+        <details class="faq__item"><summary class="faq__head">Question number 10<span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__body"><p>Reach our team any day of the week — we always answer.</p></div></details>
+      </div>
+    </section>
+
+    <!-- Reviews — static comp image for now (export of the Figma section);
+         swap back to live markup when the reviews UI is ready to build. -->
+    <section class="reviews reviews--static" aria-label="Customer reviews">
+      <picture>
+        <source media="(max-width: 768px)" srcset="assets/images/reviews-comp-mobile.png" />
+        <img class="reviews__comp" src="assets/images/reviews-comp.png" alt="Customer reviews — 4.6 stars from 72 reviews" />
+      </picture>
+    </section>
+
+    <!-- You might also like -->
+    <section class="alsolike" aria-label="You might also like">
+      <p class="alsolike__label">You might also like</p>
+      <div class="products">
+        <article class="card">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/hero-1.jpg" alt="Womens 402 Long Set Chambray Blue" /></span>
+            <span class="card__tag">New in</span>
+            <span class="card__info">
+              <span class="card__meta"><span class="card__name">Womens 402 Long Set Chambray Blue</span><span class="card__price">£95</span></span>
+              <span class="card__swatches">
+                <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c2.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c3.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c4.png" alt="" />
+              </span>
+            </span>
+          </a>
+        </article>
+        <article class="card">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/card-2-rest.jpg" alt="Men Chambray Blue" /></span>
+            <span class="card__tag">New in</span>
+            <span class="card__info">
+              <span class="card__meta"><span class="card__name">Men Chambray Blue</span><span class="card__price">£95</span></span>
+              <span class="card__swatches">
+                <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c4.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c5.png" alt="" />
+              </span>
+            </span>
+          </a>
+        </article>
+        <article class="card">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/card-3-rest.jpg" alt="Womens 402 Long Set Floral Navy" /></span>
+            <span class="card__tag">New in</span>
+            <span class="card__info">
+              <span class="card__meta"><span class="card__name">Womens 402 Long Set Floral Navy</span><span class="card__price">£95</span></span>
+              <span class="card__swatches">
+                <img class="card__swatch" src="assets/images/swatches/c7.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c8.png" alt="" />
+              </span>
+            </span>
+          </a>
+        </article>
+        <article class="card">
+          <a class="card__link" href="#">
+            <span class="card__media"><img src="assets/images/card-4-rest.jpg" alt="Womens 402 Long Set Gingham Check" /></span>
+            <span class="card__tag">New in</span>
+            <span class="card__info">
+              <span class="card__meta"><span class="card__name">Womens 402 Long Set Gingham Check</span><span class="card__price">£95</span></span>
+              <span class="card__swatches">
+                <img class="card__swatch" src="assets/images/swatches/c9.png" alt="" />
+                <img class="card__swatch" src="assets/images/swatches/c1.png" alt="" />
+              </span>
+            </span>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Footer — reused from the homepage -->
+    <footer class="site-footer">
+      <p class="site-footer__headline">And on the seventh day<br />there was rest.</p>
+      <div class="site-footer__body">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="footer-col__title">Our World</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Our story</a></li>
+              <li><a href="#">The loyalty lounge</a></li>
+              <li><a href="#">Sustainability</a></li>
+              <li><a href="#">Work with us</a></li>
+              <li><a href="#">Refer a friend</a></li>
+              <li><a href="#">Pre-loved marketplace</a></li>
+              <li><a href="#">T&amp;Cs</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Information</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Sizing</a></li>
+              <li><a href="#">Monogramming</a></li>
+              <li><a href="#">How D&amp;Ds are made</a></li>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Bespoke</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Customer Care</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Delivery &amp; returns</a></li>
+              <li><a href="#">Customer reviews</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Sign up for the latest news</h4>
+            <form class="footer-newsletter" action="#" method="post">
+              <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
+              <button class="footer-newsletter__submit" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-bottom__copy">©2026 Desmond &amp; Dempsey. All Rights Reserved.</span>
+          <nav class="footer-social" aria-label="Social">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="script.js"></script>
 </body>
 </html>
