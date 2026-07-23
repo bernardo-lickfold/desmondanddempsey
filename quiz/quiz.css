@@ -373,12 +373,14 @@
 
 /* ---------- Squeezed widths ----------
    Below ~1024px the full four-image collage starts colliding with the fixed
-   478px copy column, so switch to the pared-back corner collage early. */
+   478px copy column, so switch to a pared-back corner collage: small images
+   pinned to the top corners and bottom-right, well clear of the centered
+   copy (which sits at 36.9% with ~200px of content below it). */
 @media (max-width: 1024px) {
   .quiz-collage--2 { display: none; }
-  .quiz-collage--1 { width: 26%; left: 4%; top: 8%; }
-  .quiz-collage--3 { width: 30%; left: 66%; top: 6%; }
-  .quiz-collage--4 { width: 30%; left: 66%; top: 64%; }
+  .quiz-collage--1 { width: 22%; left: 4%;  top: 6%; }
+  .quiz-collage--3 { width: 26%; left: 72%; top: 6%; }
+  .quiz-collage--4 { width: 26%; left: 72%; top: 72%; }
 }
 
 /* ---------- Mobile ---------- */
@@ -390,9 +392,6 @@
   .quiz-step--entry {
     min-height: calc(100vh - 54px);
   }
-  .quiz-collage--1 { width: 32%; }
-  .quiz-collage--3 { width: 36%; left: 60%; }
-  .quiz-collage--4 { width: 36%; left: 60%; top: 60%; }
   .quiz-question {
     padding-top: 128px;
   }
