@@ -328,8 +328,13 @@
 }
 
 /* ---------- 06 · Results ---------- */
-.quiz-step--results {
+/* display only when active — a bare `display:flex` here would override the
+   base .quiz-step { display:none } (same specificity, later in file) and
+   leave the invisible step permanently on top, swallowing every click. */
+.quiz-step--results.is-active {
   display: flex;
+}
+.quiz-step--results {
   flex-direction: column;
   text-align: center;
   padding-top: 53px;
