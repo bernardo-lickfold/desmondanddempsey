@@ -18,6 +18,12 @@
   /* Steps are laid out inside the viewport under the 54px navbar. The comp's
      content area is 1440×746. */
   min-height: calc(100vh - 54px);
+  /* 12-column grid primitives (2px gutters, no offset — the comp's grid).
+     --qcol is one column's width; --qstep is the stride from one column's
+     start to the next (column + gutter). Everything below positions and
+     sizes off these, so the layout stays grid-true at any viewport. */
+  --qcol: calc((100% - 22px) / 12);
+  --qstep: calc((100% - 22px) / 12 + 2px);
 }
 
 /* ---------- Step visibility + transition ---------- */
@@ -50,11 +56,10 @@
 .quiz-chrome {
   position: absolute;
   top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Columns 5–8 (comp: x=481, w=478). */
+  left: calc(4 * var(--qstep));
+  width: calc(4 * var(--qcol) + 6px);
   z-index: 5;
-  width: 478px;
-  max-width: calc(100vw - 40px);
 }
 .quiz-chrome[hidden] {
   display: none;
@@ -126,9 +131,14 @@
   border: 0;
   background: var(--color-nav);
   color: var(--color-bg);
-  font: inherit;
+  /* Explicit stack — form controls don't inherit reliably, and the comp's
+     buttons are Gerstner 11 with no tracking or casing transforms. */
+  font-family: var(--font-base);
   font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
   line-height: 18px;
+  text-transform: none;
   text-decoration: none;
   cursor: pointer;
 }
@@ -155,19 +165,20 @@
   height: auto;
   display: block;
 }
-.quiz-collage--1 { left: 2.8%;  top: 13.4%; width: 13.75%; }  /*  40,100 198w */
-.quiz-collage--2 { left: 8.3%;  top: 63.9%; width: 24.9%;  }  /* 120,477 359w */
-.quiz-collage--3 { left: 75.1%; top: 5.4%;  width: 16.5%;  }  /* 1082,40 238w */
-.quiz-collage--4 { left: 83.5%; top: 46.6%; width: 16.5%;  }  /* 1202,348 238w */
+/* Comp positions on the 12-col grid: img 2 starts col 2 and spans 3 cols;
+   imgs 3/4 start cols 10/11 and span 2; img 1 hangs on the 40px page inset. */
+.quiz-collage--1 { left: 40px; top: 13.4%; width: 13.75%; }
+.quiz-collage--2 { left: calc(1 * var(--qstep));  top: 63.9%; width: calc(3 * var(--qcol) + 4px); }
+.quiz-collage--3 { left: calc(9 * var(--qstep));  top: 5.4%;  width: calc(2 * var(--qcol) + 2px); }
+.quiz-collage--4 { left: calc(10 * var(--qstep)); top: 46.6%; width: calc(2 * var(--qcol) + 2px); }
 
 .quiz-entry__copy {
   position: absolute;
-  left: 50%;
-  top: 36.9%; /* 275 / 746 */
-  transform: translateX(-50%);
+  /* Columns 5–8, top 275/746 (comp). */
+  left: calc(4 * var(--qstep));
+  top: 36.9%;
+  width: calc(4 * var(--qcol) + 6px);
   z-index: 1; /* above the collage at squeezed widths */
-  width: 478px;
-  max-width: calc(100vw - 40px);
   text-align: center;
 }
 .quiz-entry__title {
@@ -199,17 +210,21 @@
   text-align: center;
 }
 
-/* Option tiles — 3-up, 239×334 images with generous 122px gaps (comp). */
+/* Option tiles — the comp's 12-col grid: each tile spans 2 columns starting
+   at cols 3 / 6 / 9, leaving one empty column between tiles (the 122px gap
+   at 1440). The grid itself is full-bleed with 2px gutters. */
 .quiz-options {
-  display: flex;
-  justify-content: center;
-  gap: 122px;
-  padding: 64px 40px 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 2px;
+  padding: 64px 0 0;
 }
+.quiz-option:nth-of-type(1) { grid-column: 3 / span 2; }
+.quiz-option:nth-of-type(2) { grid-column: 6 / span 2; }
+.quiz-option:nth-of-type(3) { grid-column: 9 / span 2; }
 .quiz-option {
   display: flex;
   flex-direction: column;
-  width: 239px;
   padding: 0;
   border: 0;
   background: none;
@@ -258,11 +273,10 @@
 }
 .quiz-email__inner {
   position: absolute;
-  left: 50%;
-  top: 35.3%; /* 263 / 746 */
-  transform: translateX(-50%);
-  width: 478px;
-  max-width: calc(100vw - 40px);
+  /* Columns 5–8, top 263/746 (comp). */
+  left: calc(4 * var(--qstep));
+  top: 35.3%;
+  width: calc(4 * var(--qcol) + 6px);
   color: var(--color-bg);
 }
 .quiz-step--email .quiz-eyebrow,
@@ -280,7 +294,7 @@
 .quiz-email {
   display: flex;
   align-items: flex-end;
-  gap: 24px;
+  gap: 2px; /* one gutter between field and button (comp: 365 + 2 + 111) */
   margin-top: 48px;
 }
 .quiz-email__input {
@@ -392,16 +406,28 @@
   .quiz-step--entry {
     min-height: calc(100vh - 54px);
   }
+  .quiz-chrome {
+    left: 20px;
+    width: calc(100% - 40px);
+  }
+  .quiz-entry__copy,
+  .quiz-email__inner {
+    left: 20px;
+    width: calc(100% - 40px);
+  }
   .quiz-question {
     padding-top: 128px;
   }
   .quiz-options {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
+    grid-template-columns: 1fr;
+    row-gap: 40px;
     padding-bottom: 48px;
   }
-  .quiz-option {
+  .quiz-option:nth-of-type(1),
+  .quiz-option:nth-of-type(2),
+  .quiz-option:nth-of-type(3) {
+    grid-column: 1;
+    justify-self: center;
     width: min(280px, calc(100vw - 80px));
   }
   .quiz-step--email {

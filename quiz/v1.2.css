@@ -11,7 +11,8 @@
   font-weight: 400;
   font-display: swap;
   src: url("assets/fonts/GerstnerProgrammFSL-Regular.woff2") format("woff2"),
-       url("assets/fonts/GerstnerProgrammFSL-Regular.woff") format("woff");
+       url("assets/fonts/GerstnerProgrammFSL-Regular.woff") format("woff"),
+       url("assets/fonts/GerstnerProgrammFSL-Regular.otf") format("opentype");
 }
 
 /* Reckless Neue (Light) — the editorial serif used for the loading copy.
