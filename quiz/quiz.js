@@ -207,7 +207,6 @@ function renderResults() {
 // Homepage-UGC mechanics: clone whole card sets until the track covers the
 // viewport plus one copy, then tell CSS one copy's exact width (--qc-shift)
 // so the marquee wraps invisibly. Re-run on resize while results is showing.
-let carouselRetries = 0;
 function layoutResultsCarousel() {
   const carousel = quiz.querySelector("[data-quiz-result-carousel]");
   const track = quiz.querySelector("[data-quiz-result-track]");
@@ -218,13 +217,7 @@ function layoutResultsCarousel() {
   const GAP = 2;
   const copyW = originals.reduce((w, el) => w + el.getBoundingClientRect().width + GAP, 0);
   const viewW = carousel.clientWidth;
-  if (!copyW || !viewW) {
-    // Hidden or mid-layout (fonts/images still settling) — retry briefly.
-    carouselRetries += 1;
-    if (carouselRetries <= 10) setTimeout(layoutResultsCarousel, 300);
-    return;
-  }
-  carouselRetries = 0;
+  if (!copyW || !viewW) return; // not laid out yet — the ResizeObserver re-fires when it is
   const copies = Math.max(2, Math.ceil((viewW + copyW) / copyW));
   for (let i = 1; i < copies; i++) {
     for (const el of originals) {
@@ -238,9 +231,19 @@ function layoutResultsCarousel() {
   carousel.style.setProperty("--qc-shift", copyW.toFixed(2) + "px");
   carousel.style.setProperty("--qc-duration", (copyW / SPEED).toFixed(2) + "s");
 }
-window.addEventListener("resize", () => {
-  if (current === "results") layoutResultsCarousel();
-});
+// A ResizeObserver drives (re)layout: it fires when the carousel first gains
+// real dimensions (the results step animating in) and on every width change,
+// so the marquee is correct without polling or racing first paint.
+const carouselEl = quiz.querySelector("[data-quiz-result-carousel]");
+if (carouselEl && "ResizeObserver" in window) {
+  new ResizeObserver(() => {
+    if (current === "results") layoutResultsCarousel();
+  }).observe(carouselEl);
+} else {
+  window.addEventListener("resize", () => {
+    if (current === "results") layoutResultsCarousel();
+  });
+}
 
 // ---- Email gate ------------------------------------------------------------
 // Front-end stub: valid emails are kept in localStorage and announced via a
