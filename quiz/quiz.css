@@ -11,6 +11,8 @@
   /* The fixed header overlaps the page (same clearance as .page--collection;
      the solid navbar itself comes from collection.css). */
   padding-top: 54px;
+  /* Soft ease-out for the intro settle (transform/blur ease into rest). */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* The collection navbar only shows its bottom stroke once scroll-pinned; the
@@ -210,37 +212,62 @@
   min-width: 160px;
 }
 
-/* ---------- Entry intro (staggered fade-in) ----------
-   On first load the collage images drift/fade in one after another, then the
-   copy rises in after them — a slow, soft entrance (never all at once). JS adds
-   .is-revealed to trigger it. The hidden start state lives only inside the
-   no-preference query, so reduced-motion users see everything immediately. */
+/* ---------- Entry intro (staggered, blur-to-sharp collage) ----------
+   Premium recipe, on first load (JS adds .is-revealed):
+   · TWO LAYERS per image — the <figure> carries the fade + directional drift;
+     the <img> carries a blur-to-sharp focus pull + a Ken-Burns scale settle.
+     Splitting them keeps the eases from fighting (mirrors the v2 collage).
+   · SPLIT EASING — opacity fades quickly (0.7s) while the transform/blur settle
+     slowly (1.5s) on a soft ease-out, so each piece *arrives* rather than pops.
+   · DIRECTIONAL DRIFT — every image enters from its own corner and resolves
+     toward the centre, so the collage assembles instead of stacking.
+   · --d (a custom prop, which inherits) sets one stagger delay per image and is
+     picked up by both the figure and its child <img>.
+   The hidden start state lives only inside the no-preference query, so
+   reduced-motion users see everything immediately. */
 @media (prefers-reduced-motion: no-preference) {
-  .quiz-collage,
+  .quiz-collage {
+    opacity: 0;
+    transition: opacity 0.7s var(--ease-expo) var(--d, 0s),
+                transform 1.5s var(--ease-settle) var(--d, 0s);
+    will-change: opacity, transform;
+  }
+  .quiz-collage img {
+    filter: blur(8px);
+    transform: scale(1.05);
+    transition: filter 1.3s var(--ease-settle) var(--d, 0s),
+                transform 1.5s var(--ease-settle) var(--d, 0s);
+    will-change: filter, transform;
+  }
+  /* Directional drift (hidden state) + stagger, per corner. --d inherits to the
+     child <img>, so both layers share the same delay. */
+  .quiz-collage--1 { --d: 0s;    transform: translate(-16px, -12px); } /* top-left */
+  .quiz-collage--2 { --d: 0.14s; transform: translate(-14px, 16px); }  /* bottom-left */
+  .quiz-collage--3 { --d: 0.28s; transform: translate(16px, -12px); }  /* top-right */
+  .quiz-collage--4 { --d: 0.42s; transform: translate(18px, 14px); }   /* bottom-right */
+
   .quiz-entry__copy > * {
     opacity: 0;
-    transition: opacity 1.2s var(--ease-expo), transform 1.3s var(--ease-expo);
-  }
-  .quiz-collage {
-    transform: translateY(26px) scale(0.98);
-  }
-  .quiz-entry__copy > * {
     transform: translateY(14px);
+    transition: opacity 0.7s var(--ease-expo) var(--d, 0s),
+                transform 1.2s var(--ease-settle) var(--d, 0s);
+    will-change: opacity, transform;
   }
+  /* Copy follows the images in. */
+  .quiz-entry__copy > *:nth-child(1) { --d: 0.62s; }
+  .quiz-entry__copy > *:nth-child(2) { --d: 0.74s; }
+  .quiz-entry__copy > *:nth-child(3) { --d: 0.86s; }
+  .quiz-entry__copy > *:nth-child(4) { --d: 0.98s; }
+
   .quiz-step--entry.is-revealed .quiz-collage,
   .quiz-step--entry.is-revealed .quiz-entry__copy > * {
     opacity: 1;
     transform: none;
   }
-  /* Images lead (staggered), copy follows a beat later. */
-  .quiz-collage--1 { transition-delay: 0s; }
-  .quiz-collage--2 { transition-delay: 0.13s; }
-  .quiz-collage--3 { transition-delay: 0.26s; }
-  .quiz-collage--4 { transition-delay: 0.39s; }
-  .quiz-entry__copy > *:nth-child(1) { transition-delay: 0.6s; }
-  .quiz-entry__copy > *:nth-child(2) { transition-delay: 0.72s; }
-  .quiz-entry__copy > *:nth-child(3) { transition-delay: 0.84s; }
-  .quiz-entry__copy > *:nth-child(4) { transition-delay: 0.96s; }
+  .quiz-step--entry.is-revealed .quiz-collage img {
+    filter: blur(0);
+    transform: none;
+  }
 }
 
 /* ---------- Questions ---------- */
