@@ -59,6 +59,30 @@
   }
 }
 
+/* Question steps advance with the first-screen treatment — a blur-to-sharp
+   focus pull + scale settle on the soft ease, and slower than the plain fade —
+   so moving between questions feels smooth rather than snappy. Scoped to
+   [data-question] so the entry / email / results keep their own timing.
+   Reuses the is-entering mechanism (quiz.js re-arms it for one frame). */
+@media (prefers-reduced-motion: no-preference) {
+  .quiz-step[data-question] {
+    transform: translateY(12px) scale(1.02);
+    filter: blur(7px);
+  }
+  .quiz-step[data-question].is-active {
+    transform: none;
+    filter: blur(0);
+    transition: opacity 0.7s var(--ease-expo),
+                transform 1s var(--ease-settle),
+                filter 0.85s var(--ease-settle);
+  }
+  .quiz-step[data-question].is-entering {
+    opacity: 0;
+    transform: translateY(12px) scale(1.02);
+    filter: blur(7px);
+  }
+}
+
 /* ---------- Shared chrome: one compact centered block ----------
    Comp: [back · 01 / 04] over a 2px track, 478 wide, 40px under the nav. */
 .quiz-chrome {
