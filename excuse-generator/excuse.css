@@ -7,6 +7,12 @@
    Type sticks to the system: serif display, sans 11/14, tracking 0.
    ============================================================ */
 
+:root {
+  /* Soft ease-out for the intro settle (transform/blur ease into rest) — same
+     curve the quiz entry collage uses. */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .page--excuse {
   /* Clear the fixed 54px solid navbar (same clearance as collection/quiz). */
   padding-top: 54px;
@@ -44,9 +50,8 @@
 
 /* ---------- Corner collage ----------
    Four lifestyle frames pinned to the corners, flanking the centred excuse.
-   They fade in with the page, then crossfade to new images on every swap
-   (blur + fade, mirroring the word reveal). Sizes/insets are slightly varied
-   so the arrangement reads as an organic collage, not a symmetrical border. */
+   On first load they play the quiz-entry intro (see below); after that they
+   crossfade to new images on every swap. */
 .excuse-collage {
   position: absolute;
   inset: 0;
@@ -59,29 +64,17 @@
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background: #e9e7e1; /* placeholder tone while the image loads */
-  /* Fade/rise in on load; the swap state (below) blurs them out and back. */
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 1s var(--ease-natural), transform 1.1s var(--ease-natural),
-              filter 0.5s var(--ease-natural);
+  /* Steady-state transition (used for the swap settle-back). */
+  transition: opacity 0.5s var(--ease-natural);
   will-change: opacity, transform, filter;
 }
-.excuse.is-ready .excuse-collage__frame {
-  opacity: 1;
-  transform: none;
-}
-/* Staggered entrance so the four don't pop in at once. */
-.excuse-collage__frame--tl { transition-delay: 0.05s; }
-.excuse-collage__frame--tr { transition-delay: 0.12s; }
-.excuse-collage__frame--bl { transition-delay: 0.19s; }
-.excuse-collage__frame--br { transition-delay: 0.26s; }
-
 .excuse-collage__frame img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 1.2s var(--ease-expo);
+  /* Steady-state transition (used for the swap settle-back). */
+  transition: filter 0.5s var(--ease-natural), transform 0.6s var(--ease-natural);
 }
 
 /* Corner placement (clear of the ~478px centre column). */
@@ -90,16 +83,56 @@
 .excuse-collage__frame--tr { top: 8%;   right: 7%;    width: clamp(132px, 13vw, 208px); }
 .excuse-collage__frame--br { bottom: 12%; right: 3.5%; width: clamp(120px, 12vw, 184px); }
 
+/* ---------- First-load intro (quiz-entry recipe) ----------
+   Two layers per frame: the <figure> carries the fade + per-corner directional
+   drift; the <img> carries a blur-to-sharp focus pull + a scale settle. Split
+   easing (opacity fades quickly on ease-expo; transform/blur settle slowly on
+   ease-settle) so each piece *arrives* rather than pops. --cd staggers one
+   delay per corner and inherits to the child <img>. Scoped to a one-time
+   .is-intro class so per-swap crossfades stay quick, and to no-preference so
+   reduced-motion users see the images immediately. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Hidden start state — only until the stage is revealed. */
+  .excuse:not(.is-ready) .excuse-collage__frame {
+    opacity: 0;
+  }
+  .excuse:not(.is-ready) .excuse-collage__frame img {
+    filter: blur(8px);
+    transform: scale(1.05);
+  }
+  /* Directional drift start + per-corner stagger (--cd inherits to the img). */
+  .excuse:not(.is-ready) .excuse-collage__frame--tl { transform: translate(-16px, -12px); }
+  .excuse:not(.is-ready) .excuse-collage__frame--bl { transform: translate(-14px, 16px); }
+  .excuse:not(.is-ready) .excuse-collage__frame--tr { transform: translate(16px, -12px); }
+  .excuse:not(.is-ready) .excuse-collage__frame--br { transform: translate(18px, 14px); }
+  .excuse-collage__frame--tl { --cd: 0s; }
+  .excuse-collage__frame--bl { --cd: 0.14s; }
+  .excuse-collage__frame--tr { --cd: 0.28s; }
+  .excuse-collage__frame--br { --cd: 0.42s; }
+
+  /* Intro transitions (split easing + stagger) — active only during the
+     one-time reveal, so the reveal settles slowly while swaps stay snappy. */
+  .excuse.is-intro .excuse-collage__frame {
+    transition: opacity 0.7s var(--ease-expo) var(--cd, 0s),
+                transform 1.5s var(--ease-settle) var(--cd, 0s);
+  }
+  .excuse.is-intro .excuse-collage__frame img {
+    transition: filter 1.3s var(--ease-settle) var(--cd, 0s),
+                transform 1.5s var(--ease-settle) var(--cd, 0s);
+  }
+}
+
 /* Swap state: while a new excuse rolls in, the frames blur + fade out; JS
-   swaps their src during the gap, then removes this so they settle back in.
-   Placed after .is-ready so it wins at equal specificity. */
+   swaps their src during the gap, then removes this so they settle back via the
+   steady-state transitions above. Placed after the intro block so it wins. */
 .excuse.is-swapping .excuse-collage__frame {
   opacity: 0;
+  transition: opacity 0.4s var(--ease-natural);
+}
+.excuse.is-swapping .excuse-collage__frame img {
   filter: blur(9px);
   transform: scale(1.03);
-  transition: opacity 0.4s var(--ease-natural), filter 0.4s var(--ease-natural),
-              transform 0.4s var(--ease-natural);
-  transition-delay: 0s;
+  transition: filter 0.4s var(--ease-natural), transform 0.4s var(--ease-natural);
 }
 
 /* Tablet — pull the frames tight to the corners and trim them so they never
@@ -283,13 +316,15 @@
   .excuse__btn {
     transition: none;
   }
-  .excuse-collage__frame {
+  .excuse-collage__frame,
+  .excuse-collage__frame img {
     opacity: 1;
     filter: none;
     transform: none;
     transition: none;
   }
-  .excuse.is-swapping .excuse-collage__frame {
+  .excuse.is-swapping .excuse-collage__frame,
+  .excuse.is-swapping .excuse-collage__frame img {
     opacity: 1;
     filter: none;
     transform: none;

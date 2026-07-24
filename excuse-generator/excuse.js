@@ -190,14 +190,30 @@ function init() {
   const reveal = () => {
     if (revealed) return;
     revealed = true;
+    // .is-intro carries the one-time quiz-entry intro transition (blur-to-sharp
+    // + scale settle + directional drift + stagger); removed once it finishes so
+    // later swaps use the quick steady-state crossfade. Longest piece ≈ 0.42s
+    // stagger + 1.5s settle, so clear it at ~2.1s.
+    stage.classList.add("is-intro");
     stage.classList.add("is-ready");
     line.classList.add("is-in");
+    window.setTimeout(() => stage.classList.remove("is-intro"), 2100);
   };
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(reveal);
-  }
-  // Fallback so we always reveal even if the font promise never settles.
-  window.setTimeout(reveal, 1500);
+
+  // Reveal once BOTH the fonts and the collage images are ready, so the
+  // blur-to-sharp pull resolves onto a loaded photo (never the placeholder).
+  const fontsReady =
+    document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  const imagesReady = Promise.all(
+    collageImgs.map((img) =>
+      img.complete && img.naturalWidth
+        ? Promise.resolve()
+        : (img.decode ? img.decode() : Promise.resolve()).catch(() => {})
+    )
+  );
+  Promise.all([fontsReady, imagesReady]).then(reveal);
+  // Fallback so we always reveal even if a promise never settles.
+  window.setTimeout(reveal, 1800);
 
   btn.addEventListener("click", advance);
 
