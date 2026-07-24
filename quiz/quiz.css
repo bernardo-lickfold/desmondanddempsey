@@ -205,9 +205,30 @@
 }
 
 /* ---------- Questions ---------- */
+/* The question + tiles block is centred vertically within the step, so it
+   stays balanced as the viewport grows taller instead of anchoring to a fixed
+   top offset (the empty band otherwise pooling at the bottom on big screens).
+   At the 1440 comp height this lands within ~10px of the old 145px top offset,
+   so the "perfect" 1440 view is preserved. The absolute chrome (back/progress)
+   is out of flow and stays pinned at the top. `min-height:0` + top padding keep
+   the block clear of the chrome on shorter viewports. */
+/* Desktop only — mobile (≤760) keeps its own top-anchored flow below. */
+@media (min-width: 761px) {
+  .quiz-step[data-question].is-active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Symmetric padding keeps the block centred (so 1440 is unchanged) while
+       reserving a gap top and bottom — the top gap clears the fixed chrome on
+       shorter viewports. */
+    padding: 96px 0;
+  }
+}
 .quiz-question {
   margin: 0;
-  padding: 145px 40px 0;
+  /* Desktop centring (above) provides the top offset; mobile restores a fixed
+     top pad in its own media block. */
+  padding: 0 40px;
   font-family: var(--font-serif);
   font-weight: 300;
   font-size: 32px;
