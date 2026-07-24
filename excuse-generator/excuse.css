@@ -77,11 +77,17 @@
   transition: filter 0.5s var(--ease-natural), transform 0.6s var(--ease-natural);
 }
 
-/* Corner placement (clear of the ~478px centre column). */
-.excuse-collage__frame--tl { top: 11%;  left: 3.5%;  width: clamp(120px, 12vw, 184px); }
-.excuse-collage__frame--bl { bottom: 9%; left: 7%;    width: clamp(132px, 13vw, 208px); }
-.excuse-collage__frame--tr { top: 8%;   right: 7%;    width: clamp(132px, 13vw, 208px); }
-.excuse-collage__frame--br { bottom: 12%; right: 3.5%; width: clamp(120px, 12vw, 184px); }
+/* Corner placement — matched to the Figma comp on the 12-col grid, expressed in
+   viewport-proportional units so 1440 is pixel-exact and the collage scales up
+   on bigger screens. Outer frames (tl/br) sit at the 40px page inset and run a
+   touch larger; inner frames (bl/tr) tuck ~120px in and slightly smaller.
+   Heights follow the 3:4 aspect-ratio on .excuse-collage__frame.
+     1440 reference → tl/br: left/right 40px (2.78vw), width 198px (13.75vw)
+                      bl/tr: left/right 120px (8.33vw), width 187px (12.99vw) */
+.excuse-collage__frame--tl { top: 11%;  left: 2.78vw;  width: clamp(150px, 13.75vw, 300px); }
+.excuse-collage__frame--bl { bottom: 9%; left: 8.33vw;  width: clamp(140px, 12.99vw, 284px); }
+.excuse-collage__frame--tr { top: 8%;   right: 8.33vw; width: clamp(140px, 12.99vw, 284px); }
+.excuse-collage__frame--br { bottom: 8%; right: 2.78vw; width: clamp(150px, 13.75vw, 300px); }
 
 /* ---------- First-load intro (quiz-entry recipe) ----------
    Two layers per frame: the <figure> carries the fade + per-corner directional
