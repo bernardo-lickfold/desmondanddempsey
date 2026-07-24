@@ -1,0 +1,320 @@
+/* ============================================================
+   Excuse Generator — "Reasons to Stay In…"
+   Loaded after v1.2.css + collection.css (tokens, solid navbar,
+   footer). A single full-height stage: eyebrow · one giant serif
+   excuse that swaps on demand · index · CTA. The swap reuses the
+   site's signature per-word blur+rise reveal (loader / press).
+   Type sticks to the system: serif display, sans 11/14, tracking 0.
+   ============================================================ */
+
+.page--excuse {
+  /* Clear the fixed 54px solid navbar (same clearance as collection/quiz). */
+  padding-top: 54px;
+}
+/* The collection navbar only strokes once scroll-pinned; give the generator a
+   persistent hairline so the bar reads as solid from the top. */
+.page--excuse .header--collection {
+  border-bottom-color: rgba(20, 8, 3, 0.12);
+}
+
+/* ---------- Stage ----------
+   Exactly one viewport: the fixed 54px nav + this section = 100vh, so the
+   generator fills the first screen and the footer sits just below the fold.
+   Content is vertically centred; the footnote is pinned to the bottom. */
+.excuse {
+  position: relative;
+  height: calc(100vh - 54px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 40px;
+  text-align: center;
+  overflow: hidden;
+}
+/* Keep the text/CTA above the corner collage. */
+.excuse__eyebrow,
+.excuse__line,
+.excuse__foot,
+.excuse__foot-note {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Corner collage ----------
+   Four lifestyle frames pinned to the corners, flanking the centred excuse.
+   They fade in with the page, then crossfade to new images on every swap
+   (blur + fade, mirroring the word reveal). Sizes/insets are slightly varied
+   so the arrangement reads as an organic collage, not a symmetrical border. */
+.excuse-collage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.excuse-collage__frame {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: #e9e7e1; /* placeholder tone while the image loads */
+  /* Fade/rise in on load; the swap state (below) blurs them out and back. */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s var(--ease-natural), transform 1.1s var(--ease-natural),
+              filter 0.5s var(--ease-natural);
+  will-change: opacity, transform, filter;
+}
+.excuse.is-ready .excuse-collage__frame {
+  opacity: 1;
+  transform: none;
+}
+/* Staggered entrance so the four don't pop in at once. */
+.excuse-collage__frame--tl { transition-delay: 0.05s; }
+.excuse-collage__frame--tr { transition-delay: 0.12s; }
+.excuse-collage__frame--bl { transition-delay: 0.19s; }
+.excuse-collage__frame--br { transition-delay: 0.26s; }
+
+.excuse-collage__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s var(--ease-expo);
+}
+
+/* Corner placement (clear of the ~478px centre column). */
+.excuse-collage__frame--tl { top: 11%;  left: 3.5%;  width: clamp(120px, 12vw, 184px); }
+.excuse-collage__frame--bl { bottom: 9%; left: 7%;    width: clamp(132px, 13vw, 208px); }
+.excuse-collage__frame--tr { top: 8%;   right: 7%;    width: clamp(132px, 13vw, 208px); }
+.excuse-collage__frame--br { bottom: 12%; right: 3.5%; width: clamp(120px, 12vw, 184px); }
+
+/* Swap state: while a new excuse rolls in, the frames blur + fade out; JS
+   swaps their src during the gap, then removes this so they settle back in.
+   Placed after .is-ready so it wins at equal specificity. */
+.excuse.is-swapping .excuse-collage__frame {
+  opacity: 0;
+  filter: blur(9px);
+  transform: scale(1.03);
+  transition: opacity 0.4s var(--ease-natural), filter 0.4s var(--ease-natural),
+              transform 0.4s var(--ease-natural);
+  transition-delay: 0s;
+}
+
+/* Tablet — pull the frames tight to the corners and trim them so they never
+   crowd the (now wider-relative) centre column. */
+@media (max-width: 1024px) {
+  .excuse-collage__frame--tl { top: 8%;   left: 2.5%; width: clamp(96px, 11vw, 150px); }
+  .excuse-collage__frame--bl { bottom: 7%; left: 2.5%; width: clamp(104px, 12vw, 164px); }
+  .excuse-collage__frame--tr { top: 6%;   right: 2.5%; width: clamp(104px, 12vw, 164px); }
+  .excuse-collage__frame--br { bottom: 9%; right: 2.5%; width: clamp(96px, 11vw, 150px); }
+}
+
+.excuse__eyebrow {
+  margin: 0;
+  font-family: var(--font-base); /* Gerstner Programm FSL */
+  font-size: 14px;
+  line-height: 1; /* 100% */
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  /* Fades in on load (no rise). */
+  opacity: 0;
+  transition: opacity 1s var(--ease-natural);
+}
+.excuse.is-ready .excuse__eyebrow {
+  opacity: 1;
+}
+
+/* ---------- The excuse line ----------
+   One centred serif display line. It holds a fixed vertical band (min-height)
+   so shorter/longer excuses never nudge the eyebrow and CTA around — the words
+   settle inside a stable stage. Sized with clamp so it fills the width on the
+   1440 comp and scales down gracefully. */
+.excuse__line {
+  margin: 18px auto 32px;
+  /* Fixed three-line band that vertically centres the text. A *fixed* height
+     (not min-height) means the CTA below never shifts as excuses of different
+     lengths swap in; the rare longer excuse spills symmetrically from the
+     centre (overflow visible) rather than pushing the button. */
+  height: 3.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 64px;
+  line-height: 1; /* 100% */
+  letter-spacing: -0.01em;
+  color: var(--color-nav);
+}
+
+/* The text block the words live in. `text-wrap: balance` lets the browser even
+   out the line lengths — so no line is left with a single orphan word and the
+   last line isn't dramatically shorter than the one above it. Word spans stay
+   inline-block (for the per-word transform) inside this balanced block. */
+.excuse__line-text {
+  display: block;
+  max-width: 15ch;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Each word is wrapped by excuse.js so it can settle on its own stagger.
+   Enter: blur + rise + fade → resolve, L→R by --i (mirrors .loader__word).
+   The .is-out state (set for the exit) lifts + blurs the whole line away. */
+.excuse__word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(0.42em);
+  will-change: opacity, transform, filter;
+}
+.excuse__line.is-in .excuse__word {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+  transition: opacity 1.05s var(--ease-expo),
+              filter 1.05s var(--ease-expo),
+              transform 1.05s var(--ease-expo);
+  transition-delay: calc(var(--i, 0) * 0.055s);
+}
+.excuse__line.is-out .excuse__word {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(-0.42em);
+  transition: opacity 0.4s var(--ease-natural),
+              filter 0.4s var(--ease-natural),
+              transform 0.4s var(--ease-natural);
+  /* Exit rolls the OTHER way (R→L) so the swap reads as a turn, not a rewind. */
+  transition-delay: calc(var(--out, 0) * 0.03s);
+}
+
+/* ---------- Foot: CTA ---------- */
+.excuse__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 1s var(--ease-natural) 0.15s;
+}
+.excuse.is-ready .excuse__foot {
+  opacity: 1;
+}
+
+/* CTA — the site's standard button (spec: 26px, square, ink fill, 11px
+   uppercase; dims slightly on hover), matching the homepage/quiz/promo CTAs. */
+.excuse__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 4px 16px;
+  border: 0;
+  background: var(--color-nav);
+  color: var(--color-bg);
+  font-family: var(--font-base);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-expo);
+}
+.excuse__btn:hover,
+.excuse__btn:focus-visible {
+  opacity: 0.85;
+  outline: none;
+}
+.excuse__btn.is-busy {
+  opacity: 0.85;
+}
+
+/* Footnote / secondary exit — sits at the very bottom of the stage. */
+.excuse__foot-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  margin: 0;
+  padding: 0 40px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: rgba(20, 8, 3, 0.5);
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-natural) 0.35s;
+}
+.excuse.is-ready .excuse__foot-note {
+  opacity: 1;
+}
+.excuse__link {
+  color: var(--color-nav);
+  transition: opacity 0.3s var(--ease-expo);
+}
+.excuse__link:hover {
+  opacity: 0.6;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .excuse__eyebrow,
+  .excuse__foot,
+  .excuse__foot-note {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .excuse__word {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+  .excuse__line.is-out .excuse__word {
+    opacity: 0;
+    transform: none;
+    transition: opacity 0.15s linear;
+  }
+  .excuse__btn {
+    transition: none;
+  }
+  .excuse-collage__frame {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+  .excuse.is-swapping .excuse-collage__frame {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  .excuse {
+    padding: 40px 20px;
+  }
+  /* The big centred excuse needs the full width on phones — drop the collage. */
+  .excuse-collage {
+    display: none;
+  }
+  .excuse__line {
+    margin: 16px auto 28px;
+    height: 3.3em;
+    font-size: 44px;
+  }
+  .excuse__line-text {
+    max-width: 12ch;
+  }
+  .excuse__foot-note {
+    bottom: 28px;
+    padding: 0 20px;
+  }
+}

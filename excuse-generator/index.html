@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&amp;D — Reasons to Stay In</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <!-- Shared design system: tokens, navbar, footer, type. -->
+  <link rel="stylesheet" href="v1.2.css?v=2" />
+  <!-- Solid navbar (locked cream bar, dark ink) reused from the collection page. -->
+  <link rel="stylesheet" href="collection.css" />
+  <!-- Excuse-generator-specific: the stage, the per-word reveal, the CTA. -->
+  <link rel="stylesheet" href="excuse.css?v=12" />
+</head>
+<body>
+  <main class="page page--excuse">
+    <header class="header header--collection">
+      <nav class="navbar" aria-label="Primary">
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="#">Shop</a>
+        <a class="nav-link nav-link--rest" href="../homepage/">Rest</a>
+        <a class="nav-logo" href="../homepage/" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- The generator is a single, full-height stage: an eyebrow, one giant
+         serif excuse that swaps on demand, an index counter and the CTA.
+         excuse.js drives the swap with the site's signature per-word blur+rise
+         reveal (the same treatment as the loader / press pull-quotes). -->
+    <section class="excuse" data-excuse aria-label="Reasons to stay in">
+      <!-- Corner collage — four lifestyle frames flanking the centred excuse.
+           excuse.js sets each src on load and crossfades them to new images
+           every time the excuse swaps (same rhythm as the word reveal). They
+           are decorative, so alt="" and aria-hidden. -->
+      <div class="excuse-collage" aria-hidden="true">
+        <figure class="excuse-collage__frame excuse-collage__frame--tl"><img data-collage alt="" /></figure>
+        <figure class="excuse-collage__frame excuse-collage__frame--bl"><img data-collage alt="" /></figure>
+        <figure class="excuse-collage__frame excuse-collage__frame--tr"><img data-collage alt="" /></figure>
+        <figure class="excuse-collage__frame excuse-collage__frame--br"><img data-collage alt="" /></figure>
+      </div>
+
+      <p class="excuse__eyebrow">Reasons to Stay In&hellip;</p>
+
+      <!-- Live region: the current excuse. Words are split into spans by
+           excuse.js so each can settle in on its own stagger. -->
+      <h1 class="excuse__line" data-excuse-line aria-live="polite">
+        Eating everything in the freezer
+      </h1>
+
+      <div class="excuse__foot">
+        <button class="excuse__btn" type="button" data-excuse-next>Give me another</button>
+      </div>
+
+      <p class="excuse__foot-note">
+        Or, if you must&hellip;
+        <a class="excuse__link" href="../collections/">get dressed and shop the new arrivals</a>
+      </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p class="site-footer__headline">And on the seventh day<br />there was rest.</p>
+
+      <div class="site-footer__body">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="footer-col__title">Our World</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Our story</a></li>
+              <li><a href="#">The loyalty lounge</a></li>
+              <li><a href="#">Sustainability</a></li>
+              <li><a href="#">Work with us</a></li>
+              <li><a href="#">Refer a friend</a></li>
+              <li><a href="#">Pre-loved marketplace</a></li>
+              <li><a href="#">T&amp;Cs</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Information</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Sizing</a></li>
+              <li><a href="#">Personalisation</a></li>
+              <li><a href="#">How D&amp;Ds are made</a></li>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Bespoke</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Customer Care</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Delivery &amp; returns</a></li>
+              <li><a href="#">Customer reviews</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Cookie Consent</a></li>
+              <li><a href="#">SMS</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Get £15/$20 Off when you sign up for our Sunday Club</h4>
+            <form class="footer-newsletter" action="#" method="post">
+              <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
+              <button class="footer-newsletter__submit" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span class="footer-bottom__copy">©2026 Desmond &amp; Dempsey. All Rights Reserved.</span>
+          <nav class="footer-social" aria-label="Social">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="excuse.js?v=6"></script>
+</body>
+</html>
