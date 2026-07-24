@@ -253,16 +253,18 @@
     opacity: 0;
     transform: scale(1.04);
     filter: blur(5px);
-    transition: opacity 0.7s var(--ease-expo) var(--d, 0s),
-                transform 1.5s var(--ease-settle) var(--d, 0s),
-                filter 1.3s var(--ease-settle) var(--d, 0s);
+    /* Slower than the images' fade so the copy eases in extra-smoothly. */
+    transition: opacity 1.1s var(--ease-expo) var(--d, 0s),
+                transform 1.7s var(--ease-settle) var(--d, 0s),
+                filter 1.5s var(--ease-settle) var(--d, 0s);
     will-change: opacity, transform, filter;
   }
-  /* Copy follows the images in. */
-  .quiz-entry__copy > *:nth-child(1) { --d: 0.62s; }
-  .quiz-entry__copy > *:nth-child(2) { --d: 0.74s; }
-  .quiz-entry__copy > *:nth-child(3) { --d: 0.86s; }
-  .quiz-entry__copy > *:nth-child(4) { --d: 0.98s; }
+  /* Copy starts sooner now — it begins overlapping the last images in, so the
+     screen fills in as one continuous motion. */
+  .quiz-entry__copy > *:nth-child(1) { --d: 0.38s; }
+  .quiz-entry__copy > *:nth-child(2) { --d: 0.5s; }
+  .quiz-entry__copy > *:nth-child(3) { --d: 0.62s; }
+  .quiz-entry__copy > *:nth-child(4) { --d: 0.74s; }
 
   .quiz-step--entry.is-revealed .quiz-collage {
     opacity: 1;
