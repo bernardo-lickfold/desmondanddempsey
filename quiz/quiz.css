@@ -246,12 +246,17 @@
   .quiz-collage--3 { --d: 0.28s; transform: translate(16px, -12px); }  /* top-right */
   .quiz-collage--4 { --d: 0.42s; transform: translate(18px, 14px); }   /* bottom-right */
 
+  /* Copy takes the same treatment as the images — a blur-to-sharp focus pull
+     and scale settle (lighter blur so the type never muddies) — so the whole
+     screen reads as one system rather than a different motion in the middle. */
   .quiz-entry__copy > * {
     opacity: 0;
-    transform: translateY(14px);
+    transform: scale(1.04);
+    filter: blur(5px);
     transition: opacity 0.7s var(--ease-expo) var(--d, 0s),
-                transform 1.2s var(--ease-settle) var(--d, 0s);
-    will-change: opacity, transform;
+                transform 1.5s var(--ease-settle) var(--d, 0s),
+                filter 1.3s var(--ease-settle) var(--d, 0s);
+    will-change: opacity, transform, filter;
   }
   /* Copy follows the images in. */
   .quiz-entry__copy > *:nth-child(1) { --d: 0.62s; }
@@ -259,14 +264,15 @@
   .quiz-entry__copy > *:nth-child(3) { --d: 0.86s; }
   .quiz-entry__copy > *:nth-child(4) { --d: 0.98s; }
 
-  .quiz-step--entry.is-revealed .quiz-collage,
-  .quiz-step--entry.is-revealed .quiz-entry__copy > * {
+  .quiz-step--entry.is-revealed .quiz-collage {
     opacity: 1;
     transform: none;
   }
-  .quiz-step--entry.is-revealed .quiz-collage img {
-    filter: blur(0);
+  .quiz-step--entry.is-revealed .quiz-collage img,
+  .quiz-step--entry.is-revealed .quiz-entry__copy > * {
+    opacity: 1;
     transform: none;
+    filter: blur(0);
   }
 }
 
