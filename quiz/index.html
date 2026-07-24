@@ -10,7 +10,7 @@
   <!-- Solid navbar + .pcard product cards (reused on the results step). -->
   <link rel="stylesheet" href="collection.css" />
   <!-- Quiz-specific: step stage, option tiles, progress, email gate, results. -->
-  <link rel="stylesheet" href="quiz.css?v=14" />
+  <link rel="stylesheet" href="quiz.css?v=15" />
 </head>
 <body>
   <main class="page page--quiz">
@@ -152,6 +152,8 @@
             <button class="quiz-btn quiz-btn--paper" type="submit">See my match</button>
           </form>
           <p class="quiz-email__error" data-quiz-email-error hidden>That doesn&rsquo;t look like an email &mdash; mind checking it?</p>
+          <!-- Skip the gate straight to the recommendation (Figma 378:4634). -->
+          <button class="quiz-skip" type="button" data-quiz-skip>No thanks, just show me my match &rarr;</button>
         </div>
       </section>
 
@@ -180,6 +182,6 @@
     </div>
   </main>
 
-  <script type="module" src="quiz.js?v=11"></script>
+  <script type="module" src="quiz.js?v=12"></script>
 </body>
 </html>

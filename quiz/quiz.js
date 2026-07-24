@@ -298,6 +298,8 @@ emailForm.addEventListener("submit", (e) => {
 // ---- Wiring ----------------------------------------------------------------
 quiz.querySelector("[data-quiz-start]").addEventListener("click", () => show(STEPS[1]));
 quiz.querySelector("[data-quiz-back]").addEventListener("click", back);
+// Skip the email gate straight to the recommendation.
+quiz.querySelector("[data-quiz-skip]").addEventListener("click", () => show("results"));
 
 // Option tiles: record the answer, mark the tile, advance after a beat so the
 // selection state is seen (matches the Figma selected-tile treatment).
