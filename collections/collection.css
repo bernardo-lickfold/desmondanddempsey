@@ -364,22 +364,36 @@
 .filter-acc--category {
   display: none;
 }
+/* Styled to match the fabric checklist: same 6px spacing, dark labels, and a
+   square on the right (single-select, so the active category's box is filled). */
 .filter-cats {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 .filter-cat {
-  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 11px;
   line-height: 1;
   text-transform: uppercase;
-  color: rgba(20, 8, 3, 0.5);
-  transition: color 0.3s var(--ease-expo);
-}
-.filter-cat.is-active,
-.filter-cat:hover {
   color: var(--color-nav);
+}
+/* 10px box within a 16px slot (3px inset) — matches .fcheck__box::before */
+.filter-cat::after {
+  content: "";
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin: 3px;
+  border: 0.5px solid var(--color-nav);
+  background: transparent;
+  transition: background 0.2s var(--ease-expo);
+}
+.filter-cat.is-active::after {
+  background: var(--color-nav);
 }
 
 /* Footer actions */
