@@ -375,10 +375,22 @@
 .quiz-step--results {
   flex-direction: column;
   text-align: center;
-  padding-top: 53px;
-  /* Copy block + card row can exceed short viewports; scroll instead of
-     overlapping (the comp's 800px height pins the row to the fold). */
+  /* No top pad — the head (flex:1) centres itself in the whole band above the
+     carousel, so a leftover top offset won't bias it downward. */
   overflow-y: auto;
+}
+/* Head grows to fill the space above the carousel and centres its content, so
+   the title/copy/CTA stay balanced between the nav and the pinned marquee as
+   the viewport grows taller. At the 1440 comp height the head zone ≈ its own
+   height, so the title still lands at the comp's ~107px (1440 preserved);
+   taller screens simply centre it in the larger zone. */
+.quiz-results__head {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .quiz-results__title {
   margin: 0;
@@ -405,7 +417,7 @@
    crossfade hover + cream info panel + swatches. */
 .quiz-results__carousel {
   overflow: hidden;
-  margin-top: auto;
+  /* Head (flex:1) fills the space above, seating the marquee at the bottom. */
   padding-top: 44px;
 }
 .quiz-results__track {

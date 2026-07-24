@@ -10,7 +10,7 @@
   <!-- Solid navbar + .pcard product cards (reused on the results step). -->
   <link rel="stylesheet" href="collection.css" />
   <!-- Quiz-specific: step stage, option tiles, progress, email gate, results. -->
-  <link rel="stylesheet" href="quiz.css?v=12" />
+  <link rel="stylesheet" href="quiz.css?v=13" />
 </head>
 <body>
   <main class="page page--quiz">
@@ -157,10 +157,15 @@
 
       <!-- 06 · Results — headline/copy/cards are filled in by quiz.js -->
       <section class="quiz-step quiz-step--results" data-step="results">
-        <h2 class="quiz-results__title" data-quiz-result-title>You&rsquo;re a Classics sleeper.</h2>
-        <p class="quiz-body quiz-body--center" data-quiz-result-copy></p>
-        <div class="quiz-results__actions">
-          <a class="quiz-btn" href="collection.html" data-quiz-result-cta>Shop your collection</a>
+        <!-- Head fills the space above the carousel and centres its content, so
+             the title/copy/CTA stay balanced between the nav and the pinned row
+             as the viewport grows taller. -->
+        <div class="quiz-results__head">
+          <h2 class="quiz-results__title" data-quiz-result-title>You&rsquo;re a Classics sleeper.</h2>
+          <p class="quiz-body quiz-body--center" data-quiz-result-copy></p>
+          <div class="quiz-results__actions">
+            <a class="quiz-btn" href="collection.html" data-quiz-result-cta>Shop your collection</a>
+          </div>
         </div>
         <!-- Infinite product marquee (same mechanics as the homepage UGC
              carousel: cloned card sets, CSS keyframe shifted by one copy's
@@ -175,6 +180,6 @@
     </div>
   </main>
 
-  <script type="module" src="quiz.js?v=14"></script>
+  <script type="module" src="quiz.js?v=11"></script>
 </body>
 </html>
