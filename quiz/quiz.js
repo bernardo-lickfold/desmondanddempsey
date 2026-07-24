@@ -115,6 +115,21 @@ function show(step, { push = true } = {}) {
   window.scrollTo(0, 0);
 
   if (step === "results") renderResults();
+  if (step === "entry") revealEntry();
+}
+
+// Entry intro — add .is-revealed so the collage + copy fade/drift in on their
+// staggered CSS delays. Idempotent: the class persists, so the intro plays the
+// first time entry is shown and the content simply stays put afterwards.
+function revealEntry() {
+  const entry = stepEls.get("entry");
+  if (!entry) return;
+  const reveal = () => entry.classList.add("is-revealed");
+  // rAF lets the hidden initial state paint first so the transition runs; the
+  // timeout is a fallback for backgrounded tabs where rAF is throttled, so the
+  // copy/images can never stay stuck hidden.
+  requestAnimationFrame(() => requestAnimationFrame(reveal));
+  setTimeout(reveal, 150);
 }
 
 function syncChrome() {
@@ -340,4 +355,7 @@ if (initial && initial !== "entry" && stepEls.has(initial)) {
 } else {
   history.replaceState({ step: "entry" }, "", "#entry");
   syncChrome();
+  // Entry is already active in the HTML (show() isn't called), so kick off the
+  // intro here.
+  revealEntry();
 }

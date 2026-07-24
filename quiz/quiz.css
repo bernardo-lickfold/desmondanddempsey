@@ -210,6 +210,39 @@
   min-width: 160px;
 }
 
+/* ---------- Entry intro (staggered fade-in) ----------
+   On first load the collage images drift/fade in one after another, then the
+   copy rises in after them — a slow, soft entrance (never all at once). JS adds
+   .is-revealed to trigger it. The hidden start state lives only inside the
+   no-preference query, so reduced-motion users see everything immediately. */
+@media (prefers-reduced-motion: no-preference) {
+  .quiz-collage,
+  .quiz-entry__copy > * {
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-expo), transform 1.3s var(--ease-expo);
+  }
+  .quiz-collage {
+    transform: translateY(26px) scale(0.98);
+  }
+  .quiz-entry__copy > * {
+    transform: translateY(14px);
+  }
+  .quiz-step--entry.is-revealed .quiz-collage,
+  .quiz-step--entry.is-revealed .quiz-entry__copy > * {
+    opacity: 1;
+    transform: none;
+  }
+  /* Images lead (staggered), copy follows a beat later. */
+  .quiz-collage--1 { transition-delay: 0s; }
+  .quiz-collage--2 { transition-delay: 0.13s; }
+  .quiz-collage--3 { transition-delay: 0.26s; }
+  .quiz-collage--4 { transition-delay: 0.39s; }
+  .quiz-entry__copy > *:nth-child(1) { transition-delay: 0.6s; }
+  .quiz-entry__copy > *:nth-child(2) { transition-delay: 0.72s; }
+  .quiz-entry__copy > *:nth-child(3) { transition-delay: 0.84s; }
+  .quiz-entry__copy > *:nth-child(4) { transition-delay: 0.96s; }
+}
+
 /* ---------- Questions ---------- */
 /* The question + tiles block is centred vertically within the step, so it
    stays balanced as the viewport grows taller instead of anchoring to a fixed
