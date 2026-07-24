@@ -13,6 +13,12 @@
   padding-top: 54px;
 }
 
+/* The collection navbar only shows its bottom stroke once scroll-pinned; the
+   quiz has no scroll, so make the divider persistent (same hairline). */
+.page--quiz .header--collection {
+  border-bottom-color: rgba(20, 8, 3, 0.12);
+}
+
 .quiz {
   position: relative;
   /* Steps are laid out inside the viewport under the 54px navbar. The comp's
