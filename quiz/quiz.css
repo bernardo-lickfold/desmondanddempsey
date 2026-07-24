@@ -373,7 +373,9 @@
 /* Skip link — Figma 378:4634: Gerstner 11, sentence case, no underline, paper
    colour, centred ~30px below the CTA. */
 .quiz-skip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px; /* comp: 10px between the copy and the arrow */
   margin-top: 30px;
   padding: 0;
   border: 0;
