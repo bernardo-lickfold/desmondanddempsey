@@ -59,28 +59,38 @@
   }
 }
 
-/* Question steps advance with the first-screen treatment — a blur-to-sharp
-   focus pull + scale settle on the soft ease, and slower than the plain fade —
-   so moving between questions feels smooth rather than snappy. Scoped to
-   [data-question] so the entry / email / results keep their own timing.
-   Reuses the is-entering mechanism (quiz.js re-arms it for one frame). */
+/* Question steps advance with the first-screen treatment — the heading and each
+   answer focus in individually (blur-to-sharp + scale settle on the soft ease),
+   on their own staggered delays, so the answers arrive at different times and
+   the whole thing feels slow and smooth rather than snapping. The step itself
+   shows instantly; only its children animate. `:not(.is-entering)` gates the
+   reveal to the frame after quiz.js drops is-entering. Scoped to [data-question]
+   so entry / email / results keep their own timing. */
 @media (prefers-reduced-motion: no-preference) {
-  .quiz-step[data-question] {
-    transform: translateY(12px) scale(1.02);
-    filter: blur(7px);
-  }
   .quiz-step[data-question].is-active {
+    transition: none;
+  }
+  .quiz-step[data-question] .quiz-question,
+  .quiz-step[data-question] .quiz-option {
+    opacity: 0;
+    transform: scale(1.03);
+    filter: blur(8px);
+    transition: opacity 0.9s var(--ease-expo) var(--d, 0s),
+                transform 1.4s var(--ease-settle) var(--d, 0s),
+                filter 1.15s var(--ease-settle) var(--d, 0s);
+    will-change: opacity, transform, filter;
+  }
+  .quiz-step[data-question].is-active:not(.is-entering) .quiz-question,
+  .quiz-step[data-question].is-active:not(.is-entering) .quiz-option {
+    opacity: 1;
     transform: none;
     filter: blur(0);
-    transition: opacity 0.7s var(--ease-expo),
-                transform 1s var(--ease-settle),
-                filter 0.85s var(--ease-settle);
   }
-  .quiz-step[data-question].is-entering {
-    opacity: 0;
-    transform: translateY(12px) scale(1.02);
-    filter: blur(7px);
-  }
+  /* Heading leads, then each answer at its own beat. */
+  .quiz-question { --d: 0s; }
+  .quiz-option:nth-of-type(1) { --d: 0.2s; }
+  .quiz-option:nth-of-type(2) { --d: 0.38s; }
+  .quiz-option:nth-of-type(3) { --d: 0.56s; }
 }
 
 /* ---------- Shared chrome: one compact centered block ----------
