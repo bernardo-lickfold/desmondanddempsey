@@ -116,6 +116,95 @@ function setCollage() {
   });
 }
 
+/* ---------- Collage scatter ----------
+   Each swap re-places the four frames at random spots so the collage feels
+   playful, one new arrangement per excuse. Constraints keep it premium:
+   · each frame stays in its side band (left/right of a protected centre
+     column), so nothing ever covers the excuse, eyebrow or CTA;
+   · the two frames sharing a side must be vertically separated, so frames
+     never overlap each other;
+   · sizes jitter a little (±) around the comp's scale;
+   · positions/widths are written as %/vw, so a window resize keeps the
+     arrangement proportional.
+   Runs while the frames are blurred out mid-swap, so they simply *reappear*
+   somewhere new. First load keeps the designed comp arrangement. */
+const collageFrames = [...document.querySelectorAll(".excuse-collage__frame")];
+
+function scatterCollage() {
+  if (!collageFrames.length) return;
+  const rect = stage.getBoundingClientRect();
+  const W = rect.width;
+  const H = rect.height;
+  if (W <= 760) return; // collage is hidden on mobile
+
+  // Half-width of the protected centre column — measured from the freshly
+  // painted heading (scatter runs right after paint), plus a breathing gap,
+  // so the frames always clear the actual text at any width.
+  const headEl = line.querySelector(".excuse__line-text");
+  const headHalf = headEl ? headEl.getBoundingClientRect().width / 2 : W * 0.2;
+  const halfSafe = Math.min(380, Math.max(headHalf + 24, W * 0.2));
+  const inset = Math.max(24, W * 0.028);
+  const topPad = 24;
+  const bottomPad = 72; // clear of the pinned footnote
+  const gap = 24; // minimum vertical gap between a side's two frames
+
+  const sides = {
+    left: collageFrames.filter(
+      (f) =>
+        f.classList.contains("excuse-collage__frame--tl") ||
+        f.classList.contains("excuse-collage__frame--bl")
+    ),
+    right: collageFrames.filter(
+      (f) =>
+        f.classList.contains("excuse-collage__frame--tr") ||
+        f.classList.contains("excuse-collage__frame--br")
+    ),
+  };
+
+  for (const [side, pair] of Object.entries(sides)) {
+    // Random stack order per round (which frame lands on top).
+    if (Math.random() < 0.5) pair.reverse();
+
+    // Sample sizes (jitter around the comp's ~13vw scale). Cap to the side
+    // band's width so narrow desktops never push a frame into the heading,
+    // then shrink both proportionally if a short viewport can't fit the pair.
+    const bandW = W / 2 - halfSafe - inset;
+    let hs = pair.map(() => {
+      let w = Math.min(300, Math.max(130, W * (0.11 + Math.random() * 0.045)));
+      w = Math.max(90, Math.min(w, bandW));
+      return (w * 4) / 3;
+    });
+    const span = H - topPad - bottomPad;
+    const needed = hs[0] + hs[1] + gap;
+    if (needed > span) {
+      const k = (span - gap) / (hs[0] + hs[1]);
+      hs = hs.map((h) => h * k);
+    }
+
+    // Split the leftover slack into three random chunks (above / between /
+    // below), which guarantees the pair never overlaps.
+    const slack = Math.max(0, span - (hs[0] + hs[1] + gap));
+    const a = Math.random() * slack;
+    const b = Math.random() * slack;
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    const ys = [topPad + lo, topPad + lo + hs[0] + gap + (hi - lo)];
+
+    pair.forEach((f, i) => {
+      const h = hs[i];
+      const w = (h * 3) / 4;
+      const minX = side === "left" ? inset : W / 2 + halfSafe;
+      const maxX = side === "left" ? W / 2 - halfSafe - w : W - inset - w;
+      const x = minX + Math.random() * Math.max(0, maxX - minX);
+      f.style.left = ((x / W) * 100).toFixed(2) + "%";
+      f.style.top = ((ys[i] / H) * 100).toFixed(2) + "%";
+      f.style.right = "auto";
+      f.style.bottom = "auto";
+      f.style.width = ((w / W) * 100).toFixed(2) + "vw";
+    });
+  }
+}
+
 /* ---------- Word splitting ----------
    Wrap each word in a span carrying its L→R index (--i) for the enter
    stagger and its R→L index (--out) for the exit stagger. */
@@ -154,8 +243,10 @@ function advance() {
 
   window.setTimeout(() => {
     // Swap the text + collage images while they're invisible, then settle in.
+    // The frames also scatter to fresh random spots each round.
     paint(EXCUSES[nextIndex()]);
     setCollage();
+    scatterCollage();
     line.classList.remove("is-out");
     stage.classList.remove("is-swapping");
     // Force a frame so the fresh words start from their pre-enter state.
