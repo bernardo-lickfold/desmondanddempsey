@@ -137,13 +137,33 @@ function scatterCollage() {
   const H = rect.height;
   if (W <= 760) return; // collage is hidden on mobile
 
+  // The site's 12-col grid (full-bleed, 2px gutters — same construction as
+  // the quiz collage): frames snap to column starts / spans so every random
+  // arrangement stays on the grid. The 40px page inset joins the candidate
+  // x positions, mirroring how the comp mixes inset + column edges.
+  const colW = (W - 22) / 12;
+  const step = colW + 2;
+  const inset = 40;
+  const spanW = (n) => n * colW + (n - 1) * 2;
+
   // Half-width of the protected centre column — measured from the freshly
   // painted heading (scatter runs right after paint), plus a breathing gap,
   // so the frames always clear the actual text at any width.
   const headEl = line.querySelector(".excuse__line-text");
   const headHalf = headEl ? headEl.getBoundingClientRect().width / 2 : W * 0.2;
   const halfSafe = Math.min(380, Math.max(headHalf + 24, W * 0.2));
-  const inset = Math.max(24, W * 0.028);
+
+  // Grid-true (x, width) options that fit the side band: 1- or 2-column
+  // spans, anchored at the page inset or a column start.
+  const bandRight = W / 2 - halfSafe;
+  const gridOptions = [];
+  for (const n of [1, 2]) {
+    const w = spanW(n);
+    for (const x of [inset, step, 2 * step]) {
+      if (x + w <= bandRight) gridOptions.push({ x, w });
+    }
+  }
+  if (!gridOptions.length) gridOptions.push({ x: inset, w: spanW(1) });
   const topPad = 24;
   const bottomPad = 72; // clear of the pinned footnote
   const gap = 24; // minimum vertical gap between a side's two frames
@@ -165,15 +185,13 @@ function scatterCollage() {
     // Random stack order per round (which frame lands on top).
     if (Math.random() < 0.5) pair.reverse();
 
-    // Sample sizes (jitter around the comp's ~13vw scale). Cap to the side
-    // band's width so narrow desktops never push a frame into the heading,
-    // then shrink both proportionally if a short viewport can't fit the pair.
-    const bandW = W / 2 - halfSafe - inset;
-    let hs = pair.map(() => {
-      let w = Math.min(300, Math.max(130, W * (0.11 + Math.random() * 0.045)));
-      w = Math.max(90, Math.min(w, bandW));
-      return (w * 4) / 3;
-    });
+    // Each frame draws a grid-true (x, width) option; heights follow the 3:4
+    // ratio. If a short viewport can't fit the pair + gap, shrink both
+    // proportionally (slightly off-grid, but only on cramped screens).
+    const picks = pair.map(
+      () => gridOptions[Math.floor(Math.random() * gridOptions.length)]
+    );
+    let hs = picks.map((p) => (p.w * 4) / 3);
     const span = H - topPad - bottomPad;
     const needed = hs[0] + hs[1] + gap;
     if (needed > span) {
@@ -182,7 +200,8 @@ function scatterCollage() {
     }
 
     // Split the leftover slack into three random chunks (above / between /
-    // below), which guarantees the pair never overlaps.
+    // below), which guarantees the pair never overlaps. Vertical stays free —
+    // the grid governs columns, not rows.
     const slack = Math.max(0, span - (hs[0] + hs[1] + gap));
     const a = Math.random() * slack;
     const b = Math.random() * slack;
@@ -193,9 +212,9 @@ function scatterCollage() {
     pair.forEach((f, i) => {
       const h = hs[i];
       const w = (h * 3) / 4;
-      const minX = side === "left" ? inset : W / 2 + halfSafe;
-      const maxX = side === "left" ? W / 2 - halfSafe - w : W - inset - w;
-      const x = minX + Math.random() * Math.max(0, maxX - minX);
+      // Right side mirrors the left-side anchor, so frame edges land on
+      // column boundaries measured from either end (like the comp).
+      const x = side === "left" ? picks[i].x : W - picks[i].x - w;
       f.style.left = ((x / W) * 100).toFixed(2) + "%";
       f.style.top = ((ys[i] / H) * 100).toFixed(2) + "%";
       f.style.right = "auto";
