@@ -62,9 +62,10 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SPIN_SLOTS = 11;
 const SPIN_MS = 2400;
 const SPIN_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-// Beat between the reel settling and the photo blooming, so the landing reads
-// as "…and here's why" rather than everything arriving at once.
-const IMAGE_DELAY_MS = 800;
+// Beat between the reel settling and the photo blooming. Short — just enough
+// that the excuse registers first and the photo reads as its answer, without
+// leaving a lull after the roll stops.
+const IMAGE_DELAY_MS = 260;
 
 /* ---------- Shuffle bags ---------- */
 function makeBag(items) {
