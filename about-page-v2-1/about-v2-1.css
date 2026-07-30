@@ -70,16 +70,27 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: rgba(20, 8, 3, 0.2);
+  background: rgba(20, 8, 3, 0.4); /* 40% overlay */
 }
 
-/* Chapters overlaid on the image, top-left. The rule spans the whole left
-   column (to the image's right edge), light over the photo. */
-.story__filters {
+/* Menu block — moved DOWN for breathing space at the top (Figma 407:2):
+   bottom-anchored ~100px above the section bottom. Filters (left, over the
+   image) + description (right, over the cream) sit in a row, each carrying
+   the rule at its top. */
+.story__menu {
   position: absolute;
   left: calc(var(--w) * 0.027778); /* 40 */
-  top: calc(54px + var(--w) * 0.083333); /* nav 54 + 120 */
+  right: calc(var(--w) * 0.027778); /* 40 */
+  bottom: calc(var(--w) * 0.069444); /* 100 */
   z-index: 3;
+  display: flex;
+  gap: 2px;
+  align-items: flex-start;
+}
+/* Chapters overlaid on the image. The rule spans the whole left column
+   (to the image's right edge), light over the photo. */
+.story__filters {
+  flex: 0 0 auto;
   width: calc(var(--w) * 0.554861); /* 799 — full left column */
   padding-top: calc(var(--w) * 0.013889); /* 20 */
   border-top: 0.5px solid rgba(245, 245, 242, 0.4);
@@ -111,31 +122,20 @@
   color: #f5f5f2;
 }
 
-/* Right column: description (top) + accent (bottom), on the cream. The rule
-   spans the full column (dark over cream); the content is indented under it. */
+/* Right column, on the cream. The rule spans the full column (dark over
+   cream); the description is indented under it. */
 .story__right {
-  position: absolute;
-  left: calc(var(--w) * 0.584028); /* 841 = image 839 + 2 gap */
-  top: calc(54px + var(--w) * 0.083333); /* aligned with the left rule */
-  bottom: 0; /* accent bottom lines up with the full-bleed image bottom */
-  z-index: 2;
+  flex: 0 0 auto;
+  align-self: stretch;
   width: calc(var(--w) * 0.332639); /* 479 — full right column */
   padding-top: calc(var(--w) * 0.013889); /* 20 */
   padding-left: calc(var(--w) * 0.083333); /* 120 — indents the content */
   border-top: 0.5px solid rgba(20, 8, 3, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* Minimum gap between the description and the accent — matters on short
-     viewports where space-between would otherwise collapse it to nothing.
-     On tall viewports space-between still opens it up further. */
-  gap: 40px;
 }
 .filters__desc {
   position: relative;
-  flex: 0 0 auto; /* description keeps its height; the accent absorbs the squeeze */
   width: calc(var(--w) * 0.248611); /* 358 */
-  min-height: calc(var(--w) * 0.14); /* room for the tallest 2-paragraph panel */
+  min-height: calc(var(--w) * 0.152); /* room for the tallest 2-paragraph panel */
 }
 .filters__panel {
   position: absolute;
@@ -173,39 +173,9 @@
   }
 }
 
-/* Warm lifestyle accent, bottom of the right column. No shadow. Its images
-   crossfade per chapter, mirroring the main image. */
-.story__accent {
-  position: relative;
-  margin: 0;
-  width: calc(var(--w) * 0.166); /* 239 */
-  height: calc(var(--w) * 0.232); /* 334 preferred */
-  overflow: hidden;
-  /* On short viewports the accent shrinks (rather than overflowing past the
-     section bottom) so the 40px gap holds AND its bottom stays aligned with
-     the full-bleed image. */
-  flex: 0 1 auto;
-  min-height: 0;
-}
-.filters__accimg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  opacity: 0;
-  transition: opacity 1.2s var(--ease-expo);
-}
-.filters__accimg.is-active {
-  opacity: 1;
-  animation: v21-appear-img 2s cubic-bezier(0.33, 1, 0.68, 1) 0.1s backwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .filters__panel,
   .filters__img,
-  .filters__accimg,
   .filters__item {
     transition: none;
     animation: none;
