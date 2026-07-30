@@ -85,9 +85,9 @@
     opacity: 0;
     transform: scale(1.015);
     filter: blur(4px);
-    transition: opacity 0.5s var(--ease-expo) var(--d, 0s),
-                transform 0.75s var(--ease-settle) var(--d, 0s),
-                filter 0.55s var(--ease-settle) var(--d, 0s);
+    transition: opacity 0.65s var(--ease-expo) var(--d, 0s),
+                transform 0.9s var(--ease-settle) var(--d, 0s),
+                filter 0.7s var(--ease-settle) var(--d, 0s);
     will-change: opacity, transform, filter;
   }
   .quiz-step[data-question].is-active:not(.is-entering) .quiz-question,
@@ -492,6 +492,15 @@
   color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
 }
+/* Chrome autofill otherwise paints an opaque pale box over the photo. */
+.quiz-email__input:-webkit-autofill,
+.quiz-email__input:-webkit-autofill:hover,
+.quiz-email__input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  caret-color: #fff;
+  transition: background-color 9999s ease-in-out 0s;
+}
 .quiz-email__error {
   margin: 12px 0 0;
   font-size: 11px;
@@ -572,8 +581,9 @@
    crossfade hover + cream info panel + swatches. */
 .quiz-results__carousel {
   overflow: hidden;
-  /* Head (flex:1) fills the space above, seating the marquee at the bottom. */
-  padding-top: 44px;
+  /* Head (flex:1) fills the space above, seating the marquee at the bottom.
+     No padding here — the gap above the cards is owned by the head so the
+     text centres across the whole cream band (comp: title at y=107). */
 }
 .quiz-results__track {
   display: flex;
@@ -611,7 +621,13 @@
    absolute full-height box (as on desktop), the question header hugs its
    content and the three cards split the remaining height between them. */
 @media (max-width: 760px) {
-  .quiz-chrome,
+  /* Progress bar sits on a 10px side margin. */
+  .quiz-chrome {
+    left: 10px;
+    transform: none;
+    width: calc(100% - 20px);
+    max-width: none;
+  }
   .quiz-entry__copy,
   .quiz-email__inner {
     left: 20px;
@@ -657,16 +673,40 @@
     margin-top: 0;
     align-self: flex-start;
   }
-  /* Results: shrink the marquee so the step fits without scrolling. */
+  /* ---- Email ---- */
+  /* Let the copy wrap naturally instead of keeping the desktop line break. */
+  .quiz-optional-br {
+    display: none;
+  }
+  .quiz-email__inner {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .quiz-body--email {
+    margin-top: 24px;
+  }
+  .quiz-question--email {
+    padding-top: 16px;
+  }
+  .quiz-email {
+    margin-top: 36px;
+  }
+  /* ---- Results ---- */
   .quiz-step--results {
-    padding-top: 32px;
+    padding-top: 0;
     overflow: hidden;
   }
-  .quiz-results__carousel {
-    padding-top: 32px;
+  .quiz-results__title {
+    font-size: 24px;
   }
+  .quiz-step--results .quiz-body {
+    padding: 0 4px;
+  }
+  /* Size the cards off the viewport height so the row always fits. */
   .quiz-results__track .card {
-    flex-basis: 180px;
-    width: 180px;
+    flex: 0 0 auto;
+    width: auto;
+    height: 40vh;
+    aspect-ratio: 359 / 501;
   }
 }
