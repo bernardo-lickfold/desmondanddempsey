@@ -126,9 +126,14 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* Minimum gap between the description and the accent — matters on short
+     viewports where space-between would otherwise collapse it to nothing.
+     On tall viewports space-between still opens it up further. */
+  gap: 40px;
 }
 .filters__desc {
   position: relative;
+  flex: 0 0 auto; /* description keeps its height; the accent absorbs the squeeze */
   width: calc(var(--w) * 0.248611); /* 358 */
   min-height: calc(var(--w) * 0.14); /* room for the tallest 2-paragraph panel */
 }
@@ -174,9 +179,13 @@
   position: relative;
   margin: 0;
   width: calc(var(--w) * 0.166); /* 239 */
-  height: calc(var(--w) * 0.232); /* 334 */
+  height: calc(var(--w) * 0.232); /* 334 preferred */
   overflow: hidden;
-  flex: 0 0 auto;
+  /* On short viewports the accent shrinks (rather than overflowing past the
+     section bottom) so the 40px gap holds AND its bottom stays aligned with
+     the full-bleed image. */
+  flex: 0 1 auto;
+  min-height: 0;
 }
 .filters__accimg {
   position: absolute;
