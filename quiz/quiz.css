@@ -664,15 +664,6 @@
     padding: 62px 24px 0;
     font-size: 13px;
   }
-  .quiz-email {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-  .quiz-email .quiz-btn {
-    margin-top: 0;
-    align-self: flex-start;
-  }
   /* ---- Email ---- */
   /* Let the copy wrap naturally instead of keeping the desktop line break. */
   .quiz-optional-br {
