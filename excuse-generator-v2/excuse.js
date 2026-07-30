@@ -146,10 +146,10 @@ const REEL_MAX_PX = 64;
 const REEL_WRAP_BREAKPOINT = 760;
 
 function fitReelType() {
-  if (window.innerWidth <= REEL_WRAP_BREAKPOINT) {
-    reel.style.fontSize = ""; // let the mobile rule take over
-    return;
-  }
+  // Below the breakpoint the mobile rule sets its own font-size and excuses
+  // wrap, so there is nothing to fit.
+  if (window.innerWidth <= REEL_WRAP_BREAKPOINT) return;
+
   const probe = document.createElement("span");
   probe.className = "excuse-reel__text";
   probe.style.cssText =
@@ -163,7 +163,8 @@ function fitReelType() {
   probe.remove();
   const avail = reel.clientWidth;
   if (!widest || !avail) return;
-  reel.style.fontSize = Math.floor(Math.min(REEL_MAX_PX, (avail / widest) * 100)) + "px";
+  const size = Math.floor(Math.min(REEL_MAX_PX, (avail / widest) * 100));
+  reel.style.setProperty("--reel-size", size + "px");
 }
 
 // Park the resting excuse in the centre, no transition.
@@ -177,6 +178,8 @@ function centerAtRest() {
 /* ---------- State machine: idle → spinning → landed → spinning… ---------- */
 let state = "idle";
 let landTimer = null;
+// Set when the viewport changes mid-spin; applied once the reel settles.
+let needsRefit = false;
 
 function startSpin() {
   state = "spinning";
@@ -222,8 +225,12 @@ function startSpin() {
     // spin starts from a clean single-item state.
     track.textContent = "";
     track.appendChild(makeItem(target));
+    if (needsRefit) {
+      needsRefit = false;
+      fitReelType(); // the viewport changed mid-spin
+    }
     centerAtRest();
-    stage.classList.remove("is-spinning"); // drop the rolling edge fade
+    stage.classList.remove("is-spinning");
     landTimer = window.setTimeout(land, IMAGE_DELAY_MS);
   };
   track.addEventListener("transitionend", settle);
@@ -281,9 +288,14 @@ function init() {
   // the transform.
   let resizeTimer = null;
   window.addEventListener("resize", () => {
-    if (state === "spinning") return;
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
+      // Mid-spin the transition owns the transform and the roll's end offset
+      // was measured at the old size — defer, and let settle() catch up.
+      if (state === "spinning") {
+        needsRefit = true;
+        return;
+      }
       fitReelType();
       centerAtRest();
     }, 120);

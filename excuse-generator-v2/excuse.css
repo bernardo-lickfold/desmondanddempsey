@@ -117,9 +117,11 @@
   margin: 18px auto 32px;
   font-family: var(--font-serif);
   font-weight: 300;
-  /* Desktop size is fitted by excuse.js so the longest excuse stays on one
-     line; this is the cap it fits down from. */
-  font-size: 64px;
+  /* excuse.js fits --reel-size so the longest excuse stays on one line (64px
+     is the cap it fits down from). Passing it as a custom property rather than
+     an inline font-size matters: the mobile rule below must be able to win,
+     and an inline style would outrank it. */
+  font-size: var(--reel-size, 64px);
   line-height: 1; /* 100% */
   letter-spacing: -0.01em;
   color: var(--color-nav);
@@ -264,7 +266,7 @@
      does the same. Taller slots keep the spacing between them even. */
   .excuse-reel {
     margin: 16px auto 28px;
-    font-size: 44px;
+    font-size: 44px; /* overrides the fitted --reel-size; excuses wrap here */
     height: 3.4em;
   }
   .excuse-reel__item {
