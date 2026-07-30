@@ -70,14 +70,24 @@
   .quiz-step[data-question].is-active {
     transition: none;
   }
-  .quiz-step[data-question] .quiz-question,
+  .quiz-step[data-question] .quiz-question {
+    opacity: 0;
+    transform: scale(1.02);
+    filter: blur(6px);
+    transition: opacity 0.7s var(--ease-expo) var(--d, 0s),
+                transform 1s var(--ease-settle) var(--d, 0s),
+                filter 0.85s var(--ease-settle) var(--d, 0s);
+    will-change: opacity, transform, filter;
+  }
+  /* Cards: a lighter focus pull (less blur/scale) that resolves quicker, so
+     the row arrives briskly instead of drifting in. */
   .quiz-step[data-question] .quiz-option {
     opacity: 0;
-    transform: scale(1.03);
-    filter: blur(8px);
-    transition: opacity 0.9s var(--ease-expo) var(--d, 0s),
-                transform 1.4s var(--ease-settle) var(--d, 0s),
-                filter 1.15s var(--ease-settle) var(--d, 0s);
+    transform: scale(1.015);
+    filter: blur(4px);
+    transition: opacity 0.5s var(--ease-expo) var(--d, 0s),
+                transform 0.75s var(--ease-settle) var(--d, 0s),
+                filter 0.55s var(--ease-settle) var(--d, 0s);
     will-change: opacity, transform, filter;
   }
   .quiz-step[data-question].is-active:not(.is-entering) .quiz-question,
@@ -88,9 +98,9 @@
   }
   /* Heading leads, then each answer at its own beat. */
   .quiz-question { --d: 0s; }
-  .quiz-option:nth-of-type(1) { --d: 0.2s; }
-  .quiz-option:nth-of-type(2) { --d: 0.38s; }
-  .quiz-option:nth-of-type(3) { --d: 0.56s; }
+  .quiz-option:nth-of-type(1) { --d: 0.1s; }
+  .quiz-option:nth-of-type(2) { --d: 0.19s; }
+  .quiz-option:nth-of-type(3) { --d: 0.28s; }
 }
 
 /* ---------- Shared chrome: one compact centered block ----------
@@ -228,10 +238,10 @@
 
 .quiz-entry__copy {
   position: absolute;
-  /* Columns 5–8, top 275/746 (comp) — centre-anchored like the email block. */
+  /* Columns 5–8, centred in the background image (both axes). */
   left: 50%;
-  transform: translateX(-50%);
-  top: 36.9%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: max(calc(4 * var(--qcol) + 6px), 478px);
   max-width: calc(100% - 40px);
   z-index: 1; /* above the collage at squeezed widths */
@@ -596,18 +606,11 @@
   height: 11px;
 }
 
-/* ---------- Mobile ---------- */
+/* ---------- Mobile ----------
+   Every step stays a single non-scrolling viewport: the steps keep their
+   absolute full-height box (as on desktop), the question header hugs its
+   content and the three cards split the remaining height between them. */
 @media (max-width: 760px) {
-  .quiz-step {
-    position: relative;
-    inset: auto;
-  }
-  .quiz-step--entry {
-    min-height: calc(100vh - 54px);
-  }
-  .quiz-step[data-question].is-active {
-    display: block;
-  }
   .quiz-chrome,
   .quiz-entry__copy,
   .quiz-email__inner {
@@ -616,33 +619,54 @@
     width: calc(100% - 40px);
     max-width: none;
   }
-  /* Header band shrinks; tiles stack full-bleed and each keeps a tall,
-     comfortable crop rather than squeezing three across. */
+  /* the entry block keeps its vertical centring */
+  .quiz-entry__copy {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  /* Headings step down to 24px. */
+  .quiz-entry__title,
+  .quiz-question {
+    font-size: 24px;
+  }
   .quiz-qhead {
     flex: 0 0 auto;
   }
   .quiz-question {
-    padding: 118px 20px 32px;
+    padding: 100px 20px 28px;
   }
+  /* Three equal rows fill whatever height is left below the header. */
   .quiz-options {
     grid-template-columns: 1fr;
+    grid-auto-rows: 1fr;
     gap: var(--gutter);
-  }
-  .quiz-option {
-    min-height: 62vw;
   }
   .quiz-option__label {
     font-size: 20px;
   }
-  .quiz-step--email {
-    min-height: calc(100vh - 54px);
+  .quiz-option__sub {
+    padding: 62px 24px 0;
+    font-size: 13px;
   }
   .quiz-email {
     flex-direction: column;
     align-items: stretch;
+    gap: 16px;
+  }
+  .quiz-email .quiz-btn {
+    margin-top: 0;
+    align-self: flex-start;
+  }
+  /* Results: shrink the marquee so the step fits without scrolling. */
+  .quiz-step--results {
+    padding-top: 32px;
+    overflow: hidden;
+  }
+  .quiz-results__carousel {
+    padding-top: 32px;
   }
   .quiz-results__track .card {
-    flex-basis: 240px;
-    width: 240px;
+    flex-basis: 180px;
+    width: 180px;
   }
 }
