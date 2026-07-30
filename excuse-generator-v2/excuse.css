@@ -271,16 +271,21 @@
   /* Phones can't hold 38 characters on one line at display size without
      shrinking the type to a caption, so excuses wrap here — the live site
      does the same. --reel-gap is inherited unchanged, so the space between
-     excuses stays 24px exactly as on desktop; only the window has to grow, to
-     frame the tallest (three-line) excuse. */
+     excuses stays 24px exactly as on desktop; only the window differs, framing
+     two lines instead of one. */
   .excuse-reel {
     margin: 16px auto 28px;
     font-size: 32px; /* overrides the fitted --reel-size; excuses wrap here */
-    height: 3.5em;
+    height: 2.6em; /* two lines + the same breathing room as desktop */
   }
+  /* Full column width, so every excuse wraps to at most TWO lines. The old
+     12ch cap (229px of the 335px available) forced 7 of the 18 onto a third
+     line; at full width the longest ("Watching the First Dates back
+     catalogue", 38 chars) still balances onto two. text-wrap: balance keeps
+     the two lines even rather than long-then-short. */
   .excuse-reel__text {
     white-space: normal;
-    max-width: 12ch;
+    max-width: 100%;
     margin: 0 auto;
     text-align: center;
     text-wrap: balance;
