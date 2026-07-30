@@ -117,7 +117,7 @@
   position: absolute;
   left: calc(var(--w) * 0.584028); /* 841 = image 839 + 2 gap */
   top: calc(54px + var(--w) * 0.083333); /* aligned with the left rule */
-  bottom: calc(var(--w) * 0.041667); /* 60 */
+  bottom: 0; /* accent bottom lines up with the full-bleed image bottom */
   z-index: 2;
   width: calc(var(--w) * 0.332639); /* 479 — full right column */
   padding-top: calc(var(--w) * 0.013889); /* 20 */
