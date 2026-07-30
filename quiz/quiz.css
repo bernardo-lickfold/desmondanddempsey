@@ -23,6 +23,11 @@
 
 .quiz {
   position: relative;
+  /* The reveal scales the heading/cards slightly above 100%, which briefly
+     pushed the page past the viewport and flashed scrollbars — shifting the
+     fixed navbar on every step change. Clip that transient overflow: each step
+     is a fixed single viewport, so nothing here should ever scroll the page. */
+  overflow: hidden;
   /* Steps are laid out inside the viewport under the 54px navbar. The comp's
      content area is 1440×746. */
   min-height: calc(100vh - 54px);
