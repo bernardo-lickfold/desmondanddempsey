@@ -1,22 +1,19 @@
 /* ============================================================
-   Our Story — V2.1 (warmer, layered take for client comparison).
-   Commesi-inspired: a warm colour field fills the section (kills the
-   cold empty cream of V2), the image bleeds off the RIGHT edge over a
-   stepped backing panel (layering), and the chapters + description sit
-   on the field at left. Same hover interaction + appear animation as V2.
-   Geometry scales off --w above 1440; type stays a fixed size. Keeps V1
-   and V2 untouched. ============================================================ */
+   Our Story — V2.1 (editorial layered layout, Figma 402:2).
+   The chapter image bleeds off the LEFT edge with the chapters
+   overlaid on it in light type; the description sits top-right on
+   the cream; a warm lifestyle accent image is layered lower-right.
+   Same hover crossfade + appear as V2. Geometry scales off --w
+   above 1440; type stays a fixed size. V1 and V2 stay untouched.
+   ============================================================ */
 
 .page--v21 {
   --w: max(1440px, 100vw);
-  /* Warm palette — the main lever against "cold". */
-  --warm: #e6dac6; /* light warm sand — the field */
-  --warm-deep: #cdb89b; /* deeper warm — the backing panel behind the image */
-  padding-top: 54px;
+  padding-top: 54px; /* clear the fixed nav */
   overflow-x: clip;
 }
 
-/* Solid navbar (no hero behind it). */
+/* Solid navbar. */
 .header--v21 {
   --nav-p: 1;
   background: var(--color-bg);
@@ -33,36 +30,19 @@
 /* ---------- The layered story section ---------- */
 .story {
   position: relative;
-  height: calc(var(--w) * 0.583333); /* 840 at 1440 */
-  background: var(--warm); /* warm field fills the whole section */
-  overflow: hidden;
+  height: calc(var(--w) * 0.520833); /* 750 at 1440 */
+  background: var(--color-bg);
 }
 
-/* Layer 1 — stepped backing panel: bleeds off the right, peeks above and to
-   the left of the image so the image reads as a card stacked on top of it. */
-.story__backing {
-  position: absolute;
-  right: 0;
-  top: calc(var(--w) * 0.013889); /* 20 */
-  bottom: calc(var(--w) * 0.076389); /* 110 */
-  left: calc(var(--w) * 0.486111); /* 700 */
-  background: var(--warm-deep);
-  z-index: 0;
-}
-
-/* Layer 2 — the full-bleed image: flush to the right edge, floating a little
-   off the top/bottom so the warm field frames it (Commesi-style bleed). */
+/* Big image — bleeds off the left edge, full section height. */
 .story__media {
   position: absolute;
-  right: 0;
-  top: calc(var(--w) * 0.041667); /* 60 */
-  bottom: calc(var(--w) * 0.041667); /* 60 */
-  left: calc(var(--w) * 0.520833); /* 750 */
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc(var(--w) * 0.582639); /* 839 */
   overflow: hidden;
-  z-index: 1;
-  /* Soft lift so the image sits above the field/backing. */
-  box-shadow: 0 calc(var(--w) * 0.011) calc(var(--w) * 0.03)
-    rgba(20, 8, 3, 0.12);
+  z-index: 0;
 }
 .filters__img {
   position: absolute;
@@ -71,12 +51,10 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* Outgoing image fades out underneath. */
   transition: opacity 1.2s var(--ease-expo);
 }
 .filters__img.is-active {
   opacity: 1;
-  /* Incoming image waits a beat, then settles in from a soft zoom as it fades. */
   animation: v21-appear-img 2s cubic-bezier(0.33, 1, 0.68, 1) 0.1s backwards;
 }
 @keyframes v21-appear-img {
@@ -89,21 +67,31 @@
     transform: scale(1);
   }
 }
-
-/* Layer 3 — chapters + description on the warm field (left), vertically
-   centred against the image. */
-.story__content {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  width: calc(var(--w) * 0.5); /* 720 — sits left of the image */
-  padding-left: calc(var(--w) * 0.083333); /* 120 */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: calc(var(--w) * 0.027778); /* 40 */
+/* Scrim: a soft overall warm-dark tint for mood, plus a stronger top-left
+   gradient so the light chapters stay legible over any image. */
+.story__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom right,
+      rgba(20, 8, 3, 0.5),
+      rgba(20, 8, 3, 0) 42%
+    ),
+    rgba(20, 8, 3, 0.12);
 }
 
+/* Chapters overlaid on the image, top-left, in light type. */
+.story__filters {
+  position: absolute;
+  left: calc(var(--w) * 0.027778); /* 40 */
+  top: calc(var(--w) * 0.083333); /* 120 */
+  z-index: 3;
+  width: calc(var(--w) * 0.221528); /* 319 */
+  padding-top: calc(var(--w) * 0.013889); /* 20 */
+  border-top: 0.5px solid rgba(245, 245, 242, 0.4);
+}
 .filters__list {
   display: flex;
   flex-direction: column;
@@ -117,30 +105,31 @@
   margin: 0;
   padding: 0;
   cursor: pointer;
-  width: calc(var(--w) * 0.221528); /* 319 */
+  width: 100%;
   font-family: var(--font-base);
   font-size: 14px; /* fixed — layout scales, type does not */
   line-height: 1;
   text-align: left;
   text-transform: uppercase;
-  color: rgba(20, 8, 3, 0.35); /* resting = dimmed (warm field needs a touch more) */
+  color: rgba(245, 245, 242, 0.5); /* light, dimmed at rest */
   text-box: trim-both cap alphabetic;
+  text-shadow: 0 1px 6px rgba(20, 8, 3, 0.35); /* legibility over the photo */
   transition: color 0.4s var(--ease-expo);
 }
 .filters__item.is-active {
-  color: var(--color-nav);
+  color: #f5f5f2;
 }
 
-/* Editorial connect-rule: from the content, across, onto the image. */
-.story__rule {
-  height: 0;
-  border-top: 0.5px solid rgba(20, 8, 3, 0.25);
-  /* Reaches from the content's left padding to well over the image. */
-  width: calc(var(--w) * 0.75);
-  margin-left: calc(var(--w) * -0.083333); /* cancel content padding-left */
-  margin-inline-start: 0;
+/* Description — top-right, on the cream. */
+.story__desc {
+  position: absolute;
+  left: calc(var(--w) * 0.666667); /* 960 */
+  top: calc(var(--w) * 0.083333); /* 120 — aligned with the chapters */
+  z-index: 2;
+  width: calc(var(--w) * 0.248611); /* 358 */
+  padding-top: calc(var(--w) * 0.013889); /* 20 */
+  border-top: 0.5px solid rgba(20, 8, 3, 0.1);
 }
-
 .filters__desc {
   position: relative;
   min-height: calc(var(--w) * 0.14); /* room for the tallest 2-paragraph panel */
@@ -149,7 +138,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--w) * 0.248611); /* 358 */
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: calc(var(--w) * 0.013889); /* 20 */
@@ -159,13 +148,11 @@
   color: var(--color-nav);
   opacity: 0;
   pointer-events: none;
-  /* Outgoing panel fades out. */
   transition: opacity 1.2s var(--ease-expo);
 }
 .filters__panel.is-active {
   opacity: 1;
   pointer-events: auto;
-  /* Incoming panel waits a beat, then rises in as it fades. */
   animation: v21-appear-text 1.5s cubic-bezier(0.33, 1, 0.68, 1) 0.12s backwards;
 }
 .filters__panel p {
@@ -181,6 +168,26 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Warm lifestyle accent, layered lower-right. */
+.story__accent {
+  position: absolute;
+  margin: 0;
+  left: calc(var(--w) * 0.666667); /* 960 — aligned under the description */
+  bottom: calc(var(--w) * 0.041667); /* 60 */
+  width: calc(var(--w) * 0.166); /* 239 */
+  height: calc(var(--w) * 0.232); /* 334 */
+  overflow: hidden;
+  z-index: 2;
+  box-shadow: 0 calc(var(--w) * 0.009) calc(var(--w) * 0.025)
+    rgba(20, 8, 3, 0.12);
+}
+.story__accent img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 @media (prefers-reduced-motion: reduce) {
