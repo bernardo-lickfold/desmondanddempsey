@@ -54,9 +54,9 @@
   z-index: 0;
   opacity: 0;
   pointer-events: none;
-  /* Blooms in a little quicker than it clears, so the landing feels prompt
-     while the exit still reads as a soft wipe on the next click. */
-  transition: opacity 0.65s var(--ease-natural);
+  /* Blooms in briskly so it reads as part of the landing, not a follow-up;
+     the exit still reads as a soft wipe on the next click. */
+  transition: opacity 0.5s var(--ease-natural);
 }
 .excuse-fullbleed__img {
   position: absolute;

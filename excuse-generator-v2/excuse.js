@@ -57,15 +57,19 @@ const fullbleedImg = document.querySelector("[data-fullbleed-img]");
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Roll shape: how many slots the reel travels and how long it takes. A long
-// expo ease-out reads as a slot machine losing momentum.
+// Roll shape: how many slots the reel travels and how long it takes.
+// The curve matters as much as the duration here. A hard expo ease-out
+// (0.16,1,0.3,1) covers the last few pixels so slowly that the reel LOOKS
+// stopped ~570ms before the transition actually ends — and since the photo
+// waits on transitionend, that dead tail reads as lag. This cubic ease-out
+// keeps a convincing slot-machine deceleration but stays perceptibly in
+// motion until ~1580ms of 1800ms, leaving only a ~220ms tail.
 const SPIN_SLOTS = 11;
-const SPIN_MS = 2400;
-const SPIN_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-// Beat between the reel settling and the photo blooming. Short — just enough
-// that the excuse registers first and the photo reads as its answer, without
-// leaving a lull after the roll stops.
-const IMAGE_DELAY_MS = 150;
+const SPIN_MS = 1800;
+const SPIN_EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
+// Token beat so the photo's class lands on a separate frame from the settle;
+// short enough to be imperceptible.
+const IMAGE_DELAY_MS = 60;
 
 /* ---------- Shuffle bags ---------- */
 function makeBag(items) {
