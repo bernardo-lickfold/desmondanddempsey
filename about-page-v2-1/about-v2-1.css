@@ -183,42 +183,52 @@
 }
 
 /* ============================================================
-   Mobile (≤768px) — single column. The two desktop columns stack: the
-   full-width image sits on top with the chapters overlaid near its bottom
-   (light), and the description flows below on the cream. Tapping a chapter
-   swaps both (the JS click handler already covers touch). Values are fixed
-   px/vh/% here (not --w-scaled, which is pinned to 1440).
+   Mobile (≤768px) — single column, exactly one viewport tall. A CSS grid
+   splits the section into: an image row (1fr) that fills whatever's left,
+   and an auto row for the description. So the image + overlaid chapters +
+   description all fit within 100vh — the description is visible and the
+   footer stays just below the fold. 10px side gutters throughout, matching
+   the nav. Tapping a chapter swaps both (JS click handler covers touch).
    ============================================================ */
 @media (max-width: 768px) {
-  /* Section flows naturally instead of pinning to 100vh. */
-  .story {
-    height: auto;
+  /* Nav side gutter matches the other pages' shared mobile navbar. */
+  .header--v21 .navbar {
+    padding: calc(20px - 8px * var(--nav-p)) 10px;
   }
 
-  /* Image is a full-screen hero (100vh), so the footer stays below the fold. */
+  .story {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr; /* single column — everything stacks */
+    grid-template-rows: 1fr auto; /* image fills the rest; description auto */
+  }
+
+  /* Image fills the top row. */
   .story__media {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
     position: relative;
     left: auto;
     top: auto;
     bottom: auto;
     width: 100%;
-    height: 100vh;
+    height: auto;
+    min-height: 0;
   }
 
-  /* The absolute menu row dissolves: filters overlay the image near its
-     bottom, the description becomes a normal block below it (off-screen
-     until you scroll). */
+  /* Menu dissolves; chapters overlay the image's bottom, description drops to
+     the bottom row. */
   .story__menu {
-    position: static;
     display: contents;
   }
   .story__filters {
-    position: absolute;
-    left: 24px;
-    right: 24px;
-    top: 100vh; /* the image's bottom edge */
-    transform: translateY(calc(-100% - 24px)); /* sit 24px above it */
+    grid-column: 1 / 2;
+    grid-row: 1 / 2; /* same cell as the image */
+    align-self: end; /* sit at the image's bottom */
+    position: static;
+    transform: none;
     width: auto;
+    margin: 0 10px 24px; /* 10px sides, 24px above the image bottom */
     padding-top: 16px;
     z-index: 3;
   }
@@ -226,12 +236,14 @@
     font-size: 18px;
   }
 
-  /* Description below the image, on the cream. */
+  /* Description in the bottom row, on the cream — visible above the fold. */
   .story__right {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
     position: static;
     align-self: auto;
     width: auto;
-    padding: 36px 24px 48px;
+    padding: 28px 10px 32px; /* 10px sides */
     border-top: none;
   }
   .filters__desc {
