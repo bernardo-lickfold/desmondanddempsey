@@ -81,7 +81,7 @@
   position: absolute;
   left: calc(var(--w) * 0.027778); /* 40 */
   right: calc(var(--w) * 0.027778); /* 40 */
-  bottom: calc(var(--w) * 0.069444); /* 100 */
+  bottom: 100px; /* fixed — the margin below stays 100px on any screen size */
   z-index: 3;
   display: flex;
   gap: 2px;
