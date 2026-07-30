@@ -13,27 +13,30 @@
    ignored mid-spin; the reel always finishes its roll.
    ============================================================ */
 
+// Verbatim from the live page's `reasons` array (desmondanddempsey.com/pages/
+// reasons-to-stay-in) — same wording, same order, so V2 reads exactly as the
+// site does today.
 const EXCUSES = [
+  // Live copy mixes a straight apostrophe here with a curly one in "dog’s";
+  // normalised to curly, since a straight quote reads as a typo at 64px serif.
+  "Cat’s got a therapy appointment",
   "Eating everything in the freezer",
-  "The cat has a therapy appointment",
-  "Had a sudden urge to write my memoir",
+  "Had an urge to write my memoir",
   "Trying to seduce the plumber",
-  "Deep in the First Dates back catalogue",
+  "Watching the First Dates back catalogue",
+  "Eaten too much",
   "So close to completing Tetris",
-  "Getting my parallel-park practice in",
-  "Practising walking in clogs",
-  "Clueless is on iPlayer",
+  "Got parallel park practice",
+  "Practicing walking in clogs",
+  "Clueless is on iplayer",
   "Halfway through a crochet tea cosy",
-  "The dog is having a tantrum",
-  "A tin of stroopwafels to finish",
-  "Currently rebranding myself",
-  "Locked in the larder, sadly",
-  "Cutting myself a new fringe",
-  "Developing a signature cocktail",
-  "Pickling this year's cucumbers",
-  "Waiting for the bread to prove",
-  "The bed simply will not release me",
-  "It is, technically, still Sunday",
+  "The dog’s having a tantrum",
+  "Got a tin of Stroopwafels to finish",
+  "Currently rebranding",
+  "Locked in the larder",
+  "Cutting a new fringe",
+  "Developing a new cocktail",
+  "Pickling my cucumbers",
 ];
 
 // Full-bleed landing photos (lifestyle shots shared with the homepage).
@@ -126,11 +129,41 @@ function buildTrack(from, target) {
   seq.forEach((t) => track.appendChild(makeItem(t)));
 }
 
-// Track offset that puts `item` dead-centre in the reel viewport. Items hug
-// their text (a two-line excuse is shorter than a three-line one), so every
-// position is measured rather than derived from a fixed slot height.
+// Track offset that puts `item` dead-centre in the reel viewport. Measured
+// rather than derived from a slot constant, so it also holds on mobile where
+// excuses wrap to different line counts.
 function centerOffset(item) {
   return -(item.offsetTop + item.offsetHeight / 2 - reel.clientHeight / 2);
+}
+
+/* ---------- One-line fit ----------
+   Every excuse sits on a single line on desktop, so the type is sized to the
+   LONGEST one: measure them all at a reference size, then scale down from the
+   64px cap until the widest fits the reel. Phones opt out (see the mobile
+   query) — 38 characters on one line at 375px would shrink the display type
+   to a caption, so they wrap instead, as the live site does. */
+const REEL_MAX_PX = 64;
+const REEL_WRAP_BREAKPOINT = 760;
+
+function fitReelType() {
+  if (window.innerWidth <= REEL_WRAP_BREAKPOINT) {
+    reel.style.fontSize = ""; // let the mobile rule take over
+    return;
+  }
+  const probe = document.createElement("span");
+  probe.className = "excuse-reel__text";
+  probe.style.cssText =
+    "position:absolute;visibility:hidden;white-space:nowrap;font-size:100px;";
+  reel.appendChild(probe);
+  let widest = 0;
+  for (const t of EXCUSES) {
+    probe.textContent = t;
+    widest = Math.max(widest, probe.getBoundingClientRect().width);
+  }
+  probe.remove();
+  const avail = reel.clientWidth;
+  if (!widest || !avail) return;
+  reel.style.fontSize = Math.floor(Math.min(REEL_MAX_PX, (avail / widest) * 100)) + "px";
 }
 
 // Park the resting excuse in the centre, no transition.
@@ -232,7 +265,9 @@ function init() {
   const reveal = () => {
     if (revealed) return;
     revealed = true;
-    // Centre the seeded excuse once the real font is measuring, then show.
+    // Size the type to the longest excuse, then centre the seeded one — both
+    // need the real font loaded to measure correctly.
+    fitReelType();
     centerAtRest();
     stage.classList.add("is-ready");
   };
@@ -248,7 +283,10 @@ function init() {
   window.addEventListener("resize", () => {
     if (state === "spinning") return;
     window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(centerAtRest, 120);
+    resizeTimer = window.setTimeout(() => {
+      fitReelType();
+      centerAtRest();
+    }, 120);
   });
 
   btn.addEventListener("click", advance);

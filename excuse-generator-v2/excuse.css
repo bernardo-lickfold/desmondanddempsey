@@ -107,29 +107,26 @@
 }
 
 /* ---------- The reel ----------
-   A masked viewport exactly one slot tall; the track holds a column of
-   equal-height slots and is translated up through them per spin (transform
-   set by excuse.js). Slots are taller than two display lines so any excuse
-   fits; text is centred within its slot. */
+   A viewport exactly one slot tall with a HARD edge (no fade) — excuses are
+   cut cleanly by the window as they roll past, matching the live site. The
+   track holds equal-height slots and is translated through them per spin
+   (transform set by excuse.js). Each excuse sits on one line, centred in its
+   slot, so consecutive excuses roll past evenly spaced. */
 .excuse-reel {
   width: 100%;
   margin: 18px auto 32px;
   font-family: var(--font-serif);
   font-weight: 300;
+  /* Desktop size is fitted by excuse.js so the longest excuse stays on one
+     line; this is the cap it fits down from. */
   font-size: 64px;
   line-height: 1; /* 100% */
   letter-spacing: -0.01em;
   color: var(--color-nav);
-  /* One slot tall (3.1 display lines) — the mask for the rolling track. */
-  height: 3.1em;
+  height: 2.2em; /* one slot */
   overflow: hidden;
   opacity: 0;
-  /* --reel-fade drives the soft top/bottom edges (see below). It's a
-     registered property, so it interpolates: the edges ease open as the roll
-     starts and ease shut as it lands, instead of snapping. */
-  --reel-fade: 0%;
-  transition: opacity 1s var(--ease-natural) 0.1s, color 0.7s var(--ease-natural),
-              --reel-fade 0.6s var(--ease-natural);
+  transition: opacity 1s var(--ease-natural) 0.1s, color 0.7s var(--ease-natural);
 }
 .excuse.is-ready .excuse-reel {
   opacity: 1;
@@ -138,55 +135,17 @@
   will-change: transform;
   /* Spin transition is applied inline per roll by excuse.js. */
 }
-/* Items hug their text — no fixed slot. Consecutive excuses therefore stack on
-   the type's own line rhythm, so a roll reads as one continuous column rather
-   than blocks separated by empty bands. Because heights now vary with the
-   line count, excuse.js positions the track by measuring each item and
-   centring it in the viewport (it can't assume a uniform slot). */
+/* Fixed slots give the even spacing between excuses that the live site has —
+   continuous, gap-less stacking read as messy once excuses ran to two lines. */
 .excuse-reel__item {
-  text-align: center;
+  height: 2.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .excuse-reel__text {
   display: block;
-  max-width: 15ch;
-  margin: 0 auto;
-  text-align: center;
-  text-wrap: balance;
-}
-/* ---------- Soft reel edges ----------
-   While rolling, the slot's top and bottom fade out so excuses melt through it
-   instead of being sliced by a hard edge. The fade depth is --reel-fade, a
-   REGISTERED property (below) so it can be transitioned: it eases open when the
-   roll starts and eases shut as the excuse lands. Animating it — rather than
-   toggling mask-image on and off — is what keeps the landing smooth; a straight
-   toggle snapped the edges of a two- or three-line excuse back to full opacity.
-   At --reel-fade: 0% the ramp collapses to nothing, so the landed excuse ends
-   up perfectly crisp (a permanent fade would clip a three-line excuse, which
-   nearly fills its slot). */
-@property --reel-fade {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 0%;
-}
-
-.excuse-reel {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 var(--reel-fade),
-    #000 calc(100% - var(--reel-fade)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 var(--reel-fade),
-    #000 calc(100% - var(--reel-fade)),
-    transparent 100%
-  );
-}
-.excuse.is-spinning .excuse-reel {
-  --reel-fade: 30%;
+  white-space: nowrap; /* one line per excuse (mobile re-wraps, see below) */
 }
 
 /* ---------- Foot: CTA ---------- */
@@ -283,10 +242,6 @@
     opacity: 1;
     transition: none;
   }
-  /* No roll happens, so the edges never need to fade. */
-  .excuse.is-spinning .excuse-reel {
-    --reel-fade: 0%;
-  }
   .excuse-fullbleed {
     transition: opacity 0.2s linear;
   }
@@ -304,13 +259,23 @@
   .excuse {
     padding: 40px 20px;
   }
+  /* Phones can't hold 38 characters on one line at display size without
+     shrinking the type to a caption, so excuses wrap here — the live site
+     does the same. Taller slots keep the spacing between them even. */
   .excuse-reel {
     margin: 16px auto 28px;
     font-size: 44px;
-    height: 3.3em; /* viewport only — items still hug their text */
+    height: 3.4em;
+  }
+  .excuse-reel__item {
+    height: 3.4em;
   }
   .excuse-reel__text {
+    white-space: normal;
     max-width: 12ch;
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: balance;
   }
   .excuse__foot-note {
     bottom: 28px;
