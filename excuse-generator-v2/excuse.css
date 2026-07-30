@@ -107,12 +107,14 @@
 }
 
 /* ---------- The reel ----------
-   A viewport exactly one slot tall with a HARD edge (no fade) — excuses are
-   cut cleanly by the window as they roll past, matching the live site. The
-   track holds equal-height slots and is translated through them per spin
-   (transform set by excuse.js). Each excuse sits on one line, centred in its
-   slot, so consecutive excuses roll past evenly spaced. */
+   A viewport with a HARD edge (no fade) — excuses are cut cleanly by the
+   window as they roll past, matching the live site. The track is translated
+   through the excuses per spin (transform set by excuse.js). */
 .excuse-reel {
+  /* The one number governing the space between excuses, shared by both
+     breakpoints so the rhythm is identical on mobile and desktop. */
+  --reel-gap: 24px;
+
   width: 100%;
   margin: 18px auto 32px;
   font-family: var(--font-serif);
@@ -125,7 +127,10 @@
   line-height: 1; /* 100% */
   letter-spacing: -0.01em;
   color: var(--color-nav);
-  height: 2.2em; /* one slot */
+  /* Comfortably taller than one line so glyphs are never clipped. Only one
+     excuse exists at rest (the track collapses on landing), so this only has
+     to frame a single excuse. */
+  height: 1.6em;
   overflow: hidden;
   opacity: 0;
   transition: opacity 1s var(--ease-natural) 0.1s, color 0.7s var(--ease-natural);
@@ -133,17 +138,19 @@
 .excuse.is-ready .excuse-reel {
   opacity: 1;
 }
+/* Items hug their text and the gap is explicit, so the space between excuses
+   is exactly --reel-gap whatever the line count. (A fixed slot height can't do
+   this: the leftover space — and so the gap — would change with every wrap.) */
 .excuse-reel__track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--reel-gap);
   will-change: transform;
   /* Spin transition is applied inline per roll by excuse.js. */
 }
-/* Fixed slots give the even spacing between excuses that the live site has —
-   continuous, gap-less stacking read as messy once excuses ran to two lines. */
 .excuse-reel__item {
-  height: 2.2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: none;
+  text-align: center;
 }
 .excuse-reel__text {
   display: block;
@@ -263,14 +270,13 @@
   }
   /* Phones can't hold 38 characters on one line at display size without
      shrinking the type to a caption, so excuses wrap here — the live site
-     does the same. Taller slots keep the spacing between them even. */
+     does the same. --reel-gap is inherited unchanged, so the space between
+     excuses stays 24px exactly as on desktop; only the window has to grow, to
+     frame the tallest (three-line) excuse. */
   .excuse-reel {
     margin: 16px auto 28px;
     font-size: 44px; /* overrides the fitted --reel-size; excuses wrap here */
-    height: 3.4em;
-  }
-  .excuse-reel__item {
-    height: 3.4em;
+    height: 3.5em;
   }
   .excuse-reel__text {
     white-space: normal;
