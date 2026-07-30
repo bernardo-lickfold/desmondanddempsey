@@ -141,12 +141,29 @@
   text-align: center;
   text-wrap: balance;
 }
-/* Motion blur while the reel spins; sharpens as it lands (focus pull). */
-.excuse-reel__item {
-  transition: filter 0.45s var(--ease-natural);
-}
-.excuse.is-spinning .excuse-reel__item {
-  filter: blur(6px);
+/* Soft top/bottom edges while the reel rolls — excuses melt in and out of the
+   slot instead of being sliced by the viewport's hard edge. Applied only while
+   spinning, so the landed excuse stays perfectly crisp (a permanent mask would
+   also dim the resting text, since a three-line excuse nearly fills its slot). */
+.excuse.is-spinning .excuse-reel {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 0.35) 12%,
+    #000 34%,
+    #000 66%,
+    rgba(0, 0, 0, 0.35) 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 0.35) 12%,
+    #000 34%,
+    #000 66%,
+    rgba(0, 0, 0, 0.35) 88%,
+    transparent 100%
+  );
 }
 
 /* ---------- Foot: CTA ---------- */
@@ -243,10 +260,10 @@
     opacity: 1;
     transition: none;
   }
-  .excuse-reel__item,
-  .excuse.is-spinning .excuse-reel__item {
-    filter: none;
-    transition: none;
+  /* No roll happens, so the edge fade never applies. */
+  .excuse.is-spinning .excuse-reel {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
   .excuse-fullbleed {
     transition: opacity 0.2s linear;

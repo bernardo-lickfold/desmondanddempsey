@@ -2,10 +2,11 @@
    Excuse Generator V2 — "Reasons to Stay In…" (jackpot reel)
 
    Click → the reel of excuses spins vertically and decelerates
-   onto one, slot-machine style (motion-blurred while moving,
-   sharpening as it lands). A beat after landing, a full-bleed
-   photo fades up behind the text, which flips to paper. The
-   next click clears the photo and rolls again.
+   onto one, slot-machine style (its top and bottom edges fade
+   softly while rolling, so excuses melt through the slot rather
+   than being sliced). A beat after landing, a full-bleed photo
+   fades up behind the text, which flips to paper. The next click
+   clears the photo and rolls again.
 
    Shuffle bags drive both the excuses and the photos, so
    nothing repeats until its pool is exhausted. Clicks are
@@ -61,8 +62,9 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SPIN_SLOTS = 11;
 const SPIN_MS = 2400;
 const SPIN_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-const SHARPEN_MS = 450; // matches the blur transition in excuse.css
-const IMAGE_DELAY_MS = 350; // beat between the reel settling and the photo
+// Beat between the reel settling and the photo blooming, so the landing reads
+// as "…and here's why" rather than everything arriving at once.
+const IMAGE_DELAY_MS = 800;
 
 /* ---------- Shuffle bags ---------- */
 function makeBag(items) {
@@ -168,8 +170,8 @@ function startSpin() {
     track.style.transform = "none";
     track.textContent = "";
     track.appendChild(makeItem(target));
-    stage.classList.remove("is-spinning"); // sharpen (focus pull)
-    landTimer = window.setTimeout(land, SHARPEN_MS + IMAGE_DELAY_MS);
+    stage.classList.remove("is-spinning"); // drop the rolling edge fade
+    landTimer = window.setTimeout(land, IMAGE_DELAY_MS);
   };
   track.addEventListener("transitionend", settle);
   window.setTimeout(settle, SPIN_MS + 200); // fallback if the event is missed
