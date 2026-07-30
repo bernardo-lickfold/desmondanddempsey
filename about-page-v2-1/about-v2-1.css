@@ -181,3 +181,63 @@
     animation: none;
   }
 }
+
+/* ============================================================
+   Mobile (≤768px) — single column. The two desktop columns stack: the
+   full-width image sits on top with the chapters overlaid near its bottom
+   (light), and the description flows below on the cream. Tapping a chapter
+   swaps both (the JS click handler already covers touch). Values are fixed
+   px/vh/% here (not --w-scaled, which is pinned to 1440).
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Section flows naturally instead of pinning to 100vh. */
+  .story {
+    height: auto;
+  }
+
+  /* Image on top, full width, portrait-ish. */
+  .story__media {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    height: 56vh;
+  }
+
+  /* The absolute menu row dissolves: filters overlay the image, the
+     description becomes a normal block below it. */
+  .story__menu {
+    position: static;
+    display: contents;
+  }
+  .story__filters {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 56vh; /* the image's bottom edge */
+    transform: translateY(calc(-100% - 24px)); /* sit 24px above it */
+    width: auto;
+    padding-top: 16px;
+    z-index: 3;
+  }
+  .filters__item {
+    font-size: 22px;
+  }
+
+  /* Description below the image, on the cream. */
+  .story__right {
+    position: static;
+    align-self: auto;
+    width: auto;
+    padding: 36px 24px 48px;
+    border-top: none;
+  }
+  .filters__desc {
+    width: 100%;
+  }
+  .filters__panel {
+    width: 100%;
+    text-align: left; /* justified text gets gappy at phone widths */
+  }
+}
