@@ -113,8 +113,8 @@ function currentText() {
 
 // Rebuild the track as [current, …fillers…, target] so the spin starts from
 // the visible excuse and travels down to the new one. Fillers are drawn from
-// the pool with no adjacent duplicates, so every frame of the blur-by reads
-// as a different excuse.
+// the pool with no adjacent duplicates, so every excuse rolling past reads as
+// a different one.
 function buildTrack(from, target) {
   track.textContent = "";
   const seq = [from];
@@ -124,6 +124,21 @@ function buildTrack(from, target) {
   }
   seq.push(target);
   seq.forEach((t) => track.appendChild(makeItem(t)));
+}
+
+// Track offset that puts `item` dead-centre in the reel viewport. Items hug
+// their text (a two-line excuse is shorter than a three-line one), so every
+// position is measured rather than derived from a fixed slot height.
+function centerOffset(item) {
+  return -(item.offsetTop + item.offsetHeight / 2 - reel.clientHeight / 2);
+}
+
+// Park the resting excuse in the centre, no transition.
+function centerAtRest() {
+  const item = track.firstElementChild;
+  if (!item) return;
+  track.style.transition = "none";
+  track.style.transform = `translate3d(0, ${centerOffset(item)}px, 0)`;
 }
 
 /* ---------- State machine: idle → spinning → landed → spinning… ---------- */
@@ -142,40 +157,39 @@ function startSpin() {
     // Reduced motion: no roll — swap the excuse, then show the photo.
     track.textContent = "";
     track.appendChild(makeItem(target));
-    track.style.transition = "none";
-    track.style.transform = "none";
+    centerAtRest();
     land();
     return;
   }
 
   buildTrack(currentText(), target);
-  const slotH = track.firstElementChild.getBoundingClientRect().height;
-  const travel = (SPIN_SLOTS - 1) * slotH;
 
-  // Start from the current excuse (no transition), then roll to the target.
+  // Roll from the current excuse centred to the target centred. Both ends are
+  // measured, since items hug their text and so vary in height.
+  const from = centerOffset(track.firstElementChild);
+  const to = centerOffset(track.lastElementChild);
+
   track.style.transition = "none";
-  track.style.transform = "translate3d(0, 0, 0)";
+  track.style.transform = `translate3d(0, ${from}px, 0)`;
   void track.offsetHeight;
   stage.classList.add("is-spinning");
   track.style.transition = `transform ${SPIN_MS}ms ${SPIN_EASE}`;
-  track.style.transform = `translate3d(0, ${-travel}px, 0)`;
+  track.style.transform = `translate3d(0, ${to}px, 0)`;
 
   let landed = false;
   const settle = (e) => {
-    // Only the track's own transform finishing counts. transitionend BUBBLES,
-    // and every .excuse-reel__item runs a 450ms `filter` transition (the motion
-    // blur), so without this guard a child's event would settle the reel ~450ms
-    // in and cut the spin short.
+    // Only the track's own transform finishing counts — transitionend BUBBLES,
+    // so any transition on a descendant would otherwise settle the reel early
+    // and cut the spin short.
     if (e && (e.target !== track || e.propertyName !== "transform")) return;
     if (landed) return;
     landed = true;
     track.removeEventListener("transitionend", settle);
-    // Collapse the track to just the landed excuse at rest, so the next
-    // spin starts from a clean single-slot state.
-    track.style.transition = "none";
-    track.style.transform = "none";
+    // Collapse the track to just the landed excuse, re-centred, so the next
+    // spin starts from a clean single-item state.
     track.textContent = "";
     track.appendChild(makeItem(target));
+    centerAtRest();
     stage.classList.remove("is-spinning"); // drop the rolling edge fade
     landTimer = window.setTimeout(land, IMAGE_DELAY_MS);
   };
@@ -218,12 +232,24 @@ function init() {
   const reveal = () => {
     if (revealed) return;
     revealed = true;
+    // Centre the seeded excuse once the real font is measuring, then show.
+    centerAtRest();
     stage.classList.add("is-ready");
   };
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(reveal);
   }
   window.setTimeout(reveal, 1500);
+
+  // Re-centre when the reel's metrics change (font-size and wrapping both
+  // shift with viewport width). Only while idle — mid-spin the transition owns
+  // the transform.
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    if (state === "spinning") return;
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(centerAtRest, 120);
+  });
 
   btn.addEventListener("click", advance);
 

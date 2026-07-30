@@ -138,15 +138,18 @@
   will-change: transform;
   /* Spin transition is applied inline per roll by excuse.js. */
 }
+/* Items hug their text — no fixed slot. Consecutive excuses therefore stack on
+   the type's own line rhythm, so a roll reads as one continuous column rather
+   than blocks separated by empty bands. Because heights now vary with the
+   line count, excuse.js positions the track by measuring each item and
+   centring it in the viewport (it can't assume a uniform slot). */
 .excuse-reel__item {
-  height: 3.1em; /* = the viewport, so translate math is exact */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
 }
 .excuse-reel__text {
   display: block;
   max-width: 15ch;
+  margin: 0 auto;
   text-align: center;
   text-wrap: balance;
 }
@@ -304,10 +307,7 @@
   .excuse-reel {
     margin: 16px auto 28px;
     font-size: 44px;
-    height: 3.3em;
-  }
-  .excuse-reel__item {
-    height: 3.3em;
+    height: 3.3em; /* viewport only — items still hug their text */
   }
   .excuse-reel__text {
     max-width: 12ch;
