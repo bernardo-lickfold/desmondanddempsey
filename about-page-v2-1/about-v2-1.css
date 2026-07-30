@@ -1,40 +1,37 @@
 /* ============================================================
    Our Story — V2.1 (editorial layered layout, Figma 402:2).
-   The chapter image bleeds off the LEFT edge with the chapters
-   overlaid on it in light type; the description sits top-right on
-   the cream; a warm lifestyle accent image is layered lower-right.
-   Same hover crossfade + appear as V2. Geometry scales off --w
-   above 1440; type stays a fixed size. V1 and V2 stay untouched.
+   The chapter image bleeds off the LEFT edge (full-height, up behind the
+   transparent nav) with the chapters overlaid on it in light type; the
+   description sits top-right on the cream with a warm accent image at the
+   bottom of that column. A rule runs across the top: light over the image,
+   dark over the cream. No shadows. Section is 100vh. Same hover crossfade +
+   appear as V2. Geometry scales off --w; type stays fixed. V1/V2 untouched.
    ============================================================ */
 
 .page--v21 {
   --w: max(1440px, 100vw);
-  padding-top: 54px; /* clear the fixed nav */
   overflow-x: clip;
+  /* No padding-top: the section bleeds up behind the transparent nav. */
 }
 
-/* Solid navbar. */
+/* Transparent navbar over the image (dark text, no fill, no stroke). */
 .header--v21 {
-  --nav-p: 1;
-  background: var(--color-bg);
-  border-bottom: 0.5px solid transparent;
-  transition: border-color 0.3s var(--ease-expo);
-}
-.header--v21.is-scrolled {
-  border-bottom-color: rgba(20, 8, 3, 0.12);
+  --nav-p: 1; /* keeps the wordmark + links dark */
+  background: transparent;
+  border-bottom: none;
 }
 .header--v21 .navbar {
   padding: 20px 40px;
 }
 
-/* ---------- The layered story section ---------- */
+/* ---------- The layered story section (100vh) ---------- */
 .story {
   position: relative;
-  height: calc(var(--w) * 0.520833); /* 750 at 1440 */
+  height: 100vh;
   background: var(--color-bg);
 }
 
-/* Big image — bleeds off the left edge, full section height. */
+/* Big image — bleeds off the left edge, full viewport height. */
 .story__media {
   position: absolute;
   left: 0;
@@ -67,28 +64,23 @@
     transform: scale(1);
   }
 }
-/* Scrim: a soft overall warm-dark tint for mood, plus a stronger top-left
-   gradient so the light chapters stay legible over any image. */
+/* A soft, even tint over the image (Figma's 20% overlay) — enough for the
+   light chapters and dark nav to read, no gradient/shadow. */
 .story__scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(
-      to bottom right,
-      rgba(20, 8, 3, 0.5),
-      rgba(20, 8, 3, 0) 42%
-    ),
-    rgba(20, 8, 3, 0.12);
+  background: rgba(20, 8, 3, 0.2);
 }
 
-/* Chapters overlaid on the image, top-left, in light type. */
+/* Chapters overlaid on the image, top-left. The rule spans the whole left
+   column (to the image's right edge), light over the photo. */
 .story__filters {
   position: absolute;
   left: calc(var(--w) * 0.027778); /* 40 */
-  top: calc(var(--w) * 0.083333); /* 120 */
+  top: calc(54px + var(--w) * 0.083333); /* nav 54 + 120 */
   z-index: 3;
-  width: calc(var(--w) * 0.221528); /* 319 */
+  width: calc(var(--w) * 0.554861); /* 799 — full left column */
   padding-top: calc(var(--w) * 0.013889); /* 20 */
   border-top: 0.5px solid rgba(245, 245, 242, 0.4);
 }
@@ -96,6 +88,7 @@
   display: flex;
   flex-direction: column;
   gap: calc(var(--w) * 0.005556); /* 8 */
+  align-items: flex-start;
 }
 .filters__item {
   appearance: none;
@@ -105,33 +98,38 @@
   margin: 0;
   padding: 0;
   cursor: pointer;
-  width: 100%;
   font-family: var(--font-base);
-  font-size: 14px; /* fixed — layout scales, type does not */
+  font-size: 14px; /* fixed */
   line-height: 1;
   text-align: left;
   text-transform: uppercase;
   color: rgba(245, 245, 242, 0.5); /* light, dimmed at rest */
   text-box: trim-both cap alphabetic;
-  text-shadow: 0 1px 6px rgba(20, 8, 3, 0.35); /* legibility over the photo */
   transition: color 0.4s var(--ease-expo);
 }
 .filters__item.is-active {
   color: #f5f5f2;
 }
 
-/* Description — top-right, on the cream. */
-.story__desc {
+/* Right column: description (top) + accent (bottom), on the cream. The rule
+   spans the full column (dark over cream); the content is indented under it. */
+.story__right {
   position: absolute;
-  left: calc(var(--w) * 0.666667); /* 960 */
-  top: calc(var(--w) * 0.083333); /* 120 — aligned with the chapters */
+  left: calc(var(--w) * 0.584028); /* 841 = image 839 + 2 gap */
+  top: calc(54px + var(--w) * 0.083333); /* aligned with the left rule */
+  bottom: calc(var(--w) * 0.041667); /* 60 */
   z-index: 2;
-  width: calc(var(--w) * 0.248611); /* 358 */
+  width: calc(var(--w) * 0.332639); /* 479 — full right column */
   padding-top: calc(var(--w) * 0.013889); /* 20 */
+  padding-left: calc(var(--w) * 0.083333); /* 120 — indents the content */
   border-top: 0.5px solid rgba(20, 8, 3, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .filters__desc {
   position: relative;
+  width: calc(var(--w) * 0.248611); /* 358 */
   min-height: calc(var(--w) * 0.14); /* room for the tallest 2-paragraph panel */
 }
 .filters__panel {
@@ -170,18 +168,13 @@
   }
 }
 
-/* Warm lifestyle accent, layered lower-right. */
+/* Warm lifestyle accent, bottom of the right column. No shadow. */
 .story__accent {
-  position: absolute;
   margin: 0;
-  left: calc(var(--w) * 0.666667); /* 960 — aligned under the description */
-  bottom: calc(var(--w) * 0.041667); /* 60 */
   width: calc(var(--w) * 0.166); /* 239 */
   height: calc(var(--w) * 0.232); /* 334 */
   overflow: hidden;
-  z-index: 2;
-  box-shadow: 0 calc(var(--w) * 0.009) calc(var(--w) * 0.025)
-    rgba(20, 8, 3, 0.12);
+  flex: 0 0 auto;
 }
 .story__accent img {
   width: 100%;
