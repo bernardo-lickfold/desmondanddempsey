@@ -19,6 +19,7 @@ syncScrolled();
 const items = [...document.querySelectorAll(".filters__item")];
 const panels = [...document.querySelectorAll(".filters__panel")];
 const imgs = [...document.querySelectorAll(".filters__img")];
+const accimgs = [...document.querySelectorAll(".filters__accimg")];
 
 let active = 0;
 function activate(i) {
@@ -31,6 +32,7 @@ function activate(i) {
   });
   panels.forEach((el, n) => el.classList.toggle("is-active", n === i));
   imgs.forEach((el, n) => el.classList.toggle("is-active", n === i));
+  accimgs.forEach((el, n) => el.classList.toggle("is-active", n === i));
 }
 
 items.forEach((item, i) => {
