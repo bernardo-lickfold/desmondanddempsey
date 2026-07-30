@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&amp;D — Reasons to Stay In (V2)</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <!-- Shared design system: tokens, navbar, footer, type. -->
+  <link rel="stylesheet" href="v1.2.css?v=2" />
+  <!-- Solid navbar (locked cream bar, dark ink) reused from the collection page. -->
+  <link rel="stylesheet" href="collection.css" />
+  <!-- V2-specific: the jackpot reel, the full-bleed landing image, the CTA. -->
+  <link rel="stylesheet" href="excuse.css?v=2" />
+</head>
+<body>
+  <main class="page page--excuse">
+    <header class="header header--collection">
+      <nav class="navbar" aria-label="Primary">
+        <a class="nav-link nav-link--menu" href="#">Menu</a>
+        <a class="nav-link nav-link--shop nav-link--start" href="#">Shop</a>
+        <a class="nav-link nav-link--rest" href="../homepage/">Rest</a>
+        <a class="nav-logo" href="../homepage/" aria-label="Desmond &amp; Dempsey home"></a>
+        <a class="nav-link nav-link--search" href="#">Search</a>
+        <a class="nav-link nav-link--cart nav-link--end" href="#">Cart (0)</a>
+      </nav>
+    </header>
+
+    <!-- V2 mechanic ("jackpot"): clicking the CTA spins a vertical reel of
+         excuses that decelerates onto one, like a slot machine. Once landed,
+         a full-bleed photo fades up behind the text (which flips to paper);
+         the next click clears the photo and rolls again. excuse.js drives
+         the reel, the image pool and the state machine. -->
+    <section class="excuse" data-excuse aria-label="Reasons to stay in">
+      <!-- Full-bleed landing image — behind the text, shown via .is-landed. -->
+      <div class="excuse-fullbleed" aria-hidden="true">
+        <img class="excuse-fullbleed__img" data-fullbleed-img alt="" />
+        <span class="excuse-fullbleed__scrim"></span>
+      </div>
+
+      <p class="excuse__eyebrow">Reasons to Stay In&hellip;</p>
+
+      <!-- The reel: a masked viewport one slot tall; the track is rebuilt per
+           spin and translated up through the slots. aria-live announces the
+           final excuse once landed. -->
+      <div class="excuse-reel" data-reel aria-live="polite">
+        <div class="excuse-reel__track" data-reel-track>
+          <div class="excuse-reel__item"><span class="excuse-reel__text">Eating everything in the freezer</span></div>
+        </div>
+      </div>
+
+      <div class="excuse__foot">
+        <button class="excuse__btn" type="button" data-excuse-next>Give me another</button>
+      </div>
+
+      <p class="excuse__foot-note">
+        Or, if you must&hellip;
+        <a class="excuse__link" href="../collections/">get dressed and shop the new arrivals</a>
+      </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p class="site-footer__headline">And on the seventh day<br />there was rest.</p>
+
+      <div class="site-footer__body">
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="footer-col__title">Our World</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Our story</a></li>
+              <li><a href="#">The loyalty lounge</a></li>
+              <li><a href="#">Sustainability</a></li>
+              <li><a href="#">Work with us</a></li>
+              <li><a href="#">Refer a friend</a></li>
+              <li><a href="#">Pre-loved marketplace</a></li>
+              <li><a href="#">T&amp;Cs</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Information</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">Sizing</a></li>
+              <li><a href="#">Personalisation</a></li>
+              <li><a href="#">How D&amp;Ds are made</a></li>
+              <li><a href="#">Wholesale</a></li>
+              <li><a href="#">Bespoke</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Customer Care</h4>
+            <ul class="footer-col__links">
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">Delivery &amp; returns</a></li>
+              <li><a href="#">Customer reviews</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Cookie Consent</a></li>
+              <li><a href="#">SMS</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="footer-col__title">Get £15/$20 Off when you sign up for our Sunday Club</h4>
+            <form class="footer-newsletter" action="#" method="post">
+              <input class="footer-newsletter__input" type="email" placeholder="Enter your email" aria-label="Enter your email" />
+              <button class="footer-newsletter__submit" type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span class="footer-bottom__copy">©2026 Desmond &amp; Dempsey. All Rights Reserved.</span>
+          <nav class="footer-social" aria-label="Social">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Pinterest</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="excuse.js?v=2"></script>
+</body>
+</html>

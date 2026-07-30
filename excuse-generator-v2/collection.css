@@ -1,0 +1,695 @@
+/* ============================================================
+   Collection page — loaded after v1.2.css, so it reuses the shared
+   tokens, navbar, footer, card hover crossfade and loader, and only
+   adds what's unique to the collection view:
+     · a solid (non-hero) navbar
+     · the centred page header
+     · the filter / sort toolbar
+     · the 4-up product grid with info BELOW the image
+   Built from Figma "collections" (node 222:1167), 1440 reference.
+   ============================================================ */
+
+:root {
+  /* Smooth iOS/sheet-style easing for the Filter & Sort drawer glide. */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ---------- Solid navbar ----------
+   The homepage nav is transparent over the hero and solidifies on scroll via
+   --nav-p. The collection page has no hero, so we lock it to the solid look
+   (cream bar, dark ink) from the top. --nav-p:1 drives the colours; we override
+   the navbar padding back to the roomy 20px (the comp's 54px bar) since p=1
+   would otherwise collapse it. No JS touches the nav here. */
+.header--collection {
+  --nav-p: 1;
+  background: var(--color-bg);
+  /* No stroke at the top of the page; it returns once the toolbar pins under
+     the nav (.is-pinned, toggled in collection.js). */
+  border-bottom: 0.5px solid transparent;
+  transition: border-color 0.3s var(--ease-expo);
+}
+.header--collection.is-pinned {
+  border-bottom-color: rgba(20, 8, 3, 0.12);
+}
+.header--collection .navbar {
+  padding: 20px 40px;
+}
+
+/* The fixed header overlaps the page; push the content down to clear it
+   (≈54px bar). */
+.page--collection {
+  padding-top: 54px;
+}
+
+/* ---------- Filter / sort toolbar ---------- */
+.toolbar {
+  /* Full-bleed grid aligned to the product grid below: the categories span the
+     first three columns, the controls occupy the fourth — so "Grid Size / View"
+     lines up with the last column and "Filter & Sort" sits at the far right. */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gutter);
+  width: 100%;
+  padding: 20px 0;
+  margin-top: 80px;
+  /* Sticks under the fixed 54px navbar; opaque so cards scroll beneath it. */
+  position: sticky;
+  top: 54px;
+  z-index: 90;
+  background: var(--color-bg);
+}
+/* Left: category links — first three columns, 40px inset on the far left */
+.toolbar__cats {
+  grid-column: 1 / 4;
+  padding-left: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+.toolbar__cat {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.4);
+  white-space: nowrap;
+  transition: color 0.3s var(--ease-expo);
+}
+.toolbar__cat:hover,
+.toolbar__cat.is-active {
+  color: var(--color-nav);
+}
+/* Right: grid-size / view group at the column's left, filter & sort at its right */
+.toolbar__controls {
+  grid-column: 4 / 5;
+  padding-right: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+.toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.toolbar__btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  white-space: nowrap;
+  transition: opacity 0.3s var(--ease-expo);
+}
+.toolbar__btn:hover {
+  opacity: 0.6;
+}
+
+/* ---------- Filter & Sort drawer ----------
+   Slide-in right drawer opened by the toolbar's "Filter & Sort" (desktop +
+   mobile). Fixed header + scrollable body (accordion sections) + fixed footer
+   (in-stock toggle, reset/apply). Figma: node 911:5704. */
+.filter-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  width: 358px;
+  max-width: 86vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.6s var(--ease-drawer), visibility 0.6s linear;
+}
+.filter-panel.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+.filter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(20, 8, 3, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s var(--ease-drawer), visibility 0.6s linear;
+}
+.filter-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Header / footer (fixed); body scrolls between them */
+.filter-panel__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 0.5px solid rgba(20, 8, 3, 0.1);
+}
+.filter-panel__title,
+.filter-panel__close {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.filter-panel__close {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.3s var(--ease-expo);
+}
+.filter-panel__close:hover {
+  opacity: 0.6;
+}
+.filter-panel__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 20px;
+}
+.filter-panel__footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-top: 0.5px solid rgba(20, 8, 3, 0.1);
+}
+
+/* Accordion sections */
+.filter-acc {
+  width: 100%;
+}
+.filter-acc__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+.filter-acc__title {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.4);
+}
+.filter-acc__body {
+  display: none;
+  padding-bottom: 20px;
+}
+.filter-acc.is-open > .filter-acc__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 10px;
+}
+/* +/- icon: horizontal bar always; vertical bar only when collapsed (= plus) */
+.filter-acc__icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.filter-acc__icon::before,
+.filter-acc__icon::after {
+  content: "";
+  position: absolute;
+  background: var(--color-nav);
+}
+.filter-acc__icon::before {
+  left: 2px;
+  right: 2px;
+  top: 50%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+.filter-acc__icon::after {
+  top: 2px;
+  bottom: 2px;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  transition: opacity 0.2s var(--ease-expo);
+}
+.filter-acc.is-open .filter-acc__icon::after {
+  opacity: 0;
+}
+
+/* Prints / colours swatch grids */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.filter-group__label {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.filter-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.filter-swatch {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.3s var(--ease-expo);
+}
+/* Linked prints/colours: a selected print dims everything it doesn't include. */
+.filter-swatch.is-dimmed {
+  opacity: 0.2;
+}
+.filter-swatch--color.is-dimmed {
+  pointer-events: none;
+}
+.filter-swatch--print {
+  background-size: cover;
+  background-position: center;
+}
+.filter-swatch--color {
+  /* keeps white / pale swatches visible */
+  box-shadow: inset 0 0 0 0.5px rgba(20, 8, 3, 0.12);
+}
+/* Colours are multi-select (outline ring). Prints are single-select and shown
+   by dimming the rest, so they don't take an outline. */
+.filter-swatch--color.is-selected {
+  outline: 1px solid var(--color-nav);
+  outline-offset: 2px;
+}
+
+/* Checkbox rows (fabric list + in-stock) */
+.filter-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.fcheck {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  cursor: pointer;
+}
+.fcheck__label {
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.fcheck__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+/* 16px container (aligns with the 16px accordion icons) holding the 10px box
+   inset at (3,3) — matches the Figma checkbox. */
+.fcheck__box {
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+.fcheck__box::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  border: 0.5px solid var(--color-nav);
+  background: transparent;
+  transition: background 0.2s var(--ease-expo);
+}
+.fcheck__input:checked ~ .fcheck__box::before {
+  background: var(--color-nav);
+}
+.fcheck__input:focus-visible ~ .fcheck__box::before {
+  outline: 1px solid var(--color-nav);
+  outline-offset: 2px;
+}
+
+/* Category section — mobile only (desktop keeps the inline category bar) */
+.filter-acc--category {
+  display: none;
+}
+.filter-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.filter-cat {
+  padding: 8px 0;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(20, 8, 3, 0.5);
+  transition: color 0.3s var(--ease-expo);
+}
+.filter-cat.is-active,
+.filter-cat:hover {
+  color: var(--color-nav);
+}
+
+/* Footer actions */
+.filter-actions {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+.filter-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 26px;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-expo);
+}
+.filter-btn--reset {
+  border: 0.5px solid var(--color-nav);
+  background: transparent;
+  color: var(--color-nav);
+}
+.filter-btn--apply {
+  border: 1px solid var(--color-nav);
+  background: var(--color-nav);
+  color: var(--color-bg);
+}
+.filter-btn:hover {
+  opacity: 0.82;
+}
+
+/* ---------- Product grid (4-up) ---------- */
+.col-grid {
+  display: grid;
+  /* Column count is driven by one variable (Niksen's clean pattern); the
+     "Grid Size" control just flips --grid-cols, so the change is an instant
+     crisp snap. minmax(0, 1fr) (not a bare 1fr, whose implicit auto-minimum
+     lets a long nowrap name blow its column wider) keeps the columns strictly
+     equal and lets the card content truncate within its track. */
+  --grid-cols: 4;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  gap: var(--gutter);
+  width: 100%;
+  /* align cards to the top so a hovered card (taller, with swatches) doesn't
+     stretch its row-mates. */
+  align-items: start;
+}
+
+/* Product card — image with name/price BELOW it (always visible); hover swaps
+   to the detail photo and reveals the swatch row. */
+.pcard {
+  position: relative;
+  background: var(--color-bg);
+}
+.pcard__link {
+  display: flex;
+  flex-direction: column;
+}
+.pcard__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 357 / 501;
+  overflow: hidden;
+}
+.pcard__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.pcard:hover .pcard__media img {
+  transform: scale(1.018); /* subtle zoom, matches the homepage cards */
+}
+/* Detail photo crossfades in over the resting photo on hover */
+.pcard__media-hover {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-expo),
+              transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.pcard:hover .pcard__media-hover,
+.pcard:focus-within .pcard__media-hover {
+  opacity: 1;
+}
+
+/* "New in" tag — top-left, always visible (per the comp) */
+.pcard__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  height: 22px;
+  padding: 6px 8px;
+  background: var(--color-nav);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  color: var(--color-bg);
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Info block below the image */
+.pcard__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+.pcard__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-nav);
+}
+.pcard__name,
+.pcard__price {
+  white-space: nowrap;
+}
+/* Swatches: hidden until hover, then a simple smooth fade in below the name */
+.pcard__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-expo);
+}
+.pcard:hover .pcard__swatches,
+.pcard:focus-within .pcard__swatches {
+  opacity: 1;
+}
+.pcard__swatch {
+  width: 11px;
+  height: 11px;
+  display: block;
+  object-fit: cover;
+}
+
+/* ---------- Dense 8-up grid (toggled by the "Grid Size" control) ----------
+   The same cards reflow into 8 columns as image-only tiles: the info block is
+   hidden, and the "new in" tag is hidden until hover. On hover the card swaps
+   to the detail photo and the tag fades in — nothing else (the swatches and
+   info stay hidden). The image-swap crossfade is inherited from .pcard above. */
+.col-grid--8 {
+  --grid-cols: 8;
+}
+.col-grid--8 .pcard__info {
+  display: none;
+}
+.col-grid--8 .pcard__tag {
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-expo);
+}
+.col-grid--8 .pcard:hover .pcard__tag,
+.col-grid--8 .pcard:focus-within .pcard__tag {
+  opacity: 1;
+}
+
+/* On a grid-size snap, collection.js adds .is-swapping for a single reflow to
+   freeze the per-card transitions. Otherwise the tag's resting opacity differs
+   between layouts (always-on at 4-up, hover-only at 8-up) and would animate
+   over its 0.4s hover transition instead of flipping instantly with the
+   columns. Hover fades are restored the moment .is-swapping is removed. */
+.col-grid.is-swapping .pcard__tag,
+.col-grid.is-swapping .pcard__swatches,
+.col-grid.is-swapping .pcard__media img,
+.col-grid.is-swapping .pcard__media-hover {
+  transition: none;
+}
+
+/* ---------- "View" toggle: product-only photography ----------
+   Swaps every card's on-model photo for the clean product shot (no person).
+   The product image is uniform (matching the Figma comp, which repeats the
+   chambray flat-lay), so it's driven entirely from CSS — no per-card markup:
+   the on-model <img>s are hidden and the product rest/hover shots are painted
+   as background layers that crossfade on hover, mirroring the model behaviour.
+   Composes with the 8-up dense view. */
+.col-grid--product .pcard__media img {
+  visibility: hidden;
+}
+.col-grid--product .pcard__media::before,
+.col-grid--product .pcard__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  /* The flat-lay sits smaller and centred with cream margins (per the comp),
+     not filling the card. Sized by width so it scales with the card in both
+     the 4-up and 8-up views. */
+  background-size: 64% auto;
+  background-repeat: no-repeat;
+  transition: transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.col-grid--product .pcard__media::before {
+  background-image: url("assets/images/collection/product-rest.png");
+}
+.col-grid--product .pcard__media::after {
+  background-image: url("assets/images/collection/product-hover.png");
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-expo),
+              transform 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.col-grid--product .pcard:hover .pcard__media::after,
+.col-grid--product .pcard:focus-within .pcard__media::after {
+  opacity: 1;
+}
+.col-grid--product .pcard:hover .pcard__media::before,
+.col-grid--product .pcard:hover .pcard__media::after {
+  transform: scale(1.018);
+}
+
+/* ============================================================
+   Mobile (≤768px)
+   The desktop comp is the only collection reference so far; this is a sensible
+   default that mirrors the homepage's mobile language (2-up grid, info always
+   visible). Revisit once a mobile collection comp exists.
+   ============================================================ */
+@media (max-width: 768px) {
+  .header--collection .navbar {
+    padding: 20px 10px;
+  }
+  /* The mobile nav is shorter (~52.5px) than desktop's 54px. Pin the sticky
+     toolbar a couple px higher so it tucks firmly behind the higher-z nav —
+     the overlap is hidden under the nav and guarantees no content peeks through
+     the seam when scrolling, even with sub-pixel/font-metric rounding. */
+  .page--collection {
+    padding-top: 52px;
+  }
+  .toolbar {
+    top: 50px;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 10px;
+    margin-top: 40px;
+  }
+  /* Categories move into the Filter & Sort panel on mobile (see .filter-panel). */
+  .toolbar__cats {
+    display: none;
+  }
+  /* ...and the panel's category section appears (hidden on desktop). */
+  .filter-acc--category {
+    display: block;
+  }
+  /* Full-width drawer on mobile. */
+  .filter-panel {
+    width: 100%;
+    max-width: none;
+  }
+  .toolbar__controls {
+    grid-column: auto;
+    padding-right: 0;
+    width: 100%;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  /* Mobile defaults to a clean 2-up grid; "Grid Size" expands to one large
+     column. (Toggle is 2 ↔ 1 — the inverse density of desktop's 4 ↔ 8.) */
+  .col-grid {
+    --grid-cols: 2;
+  }
+  .col-grid--8 {
+    --grid-cols: 1;
+  }
+  /* Both mobile views are full product cards (names/prices/tag/swatches shown) —
+     there's no hover on touch, so the desktop image-only dense treatment, and
+     the hover reveals, don't apply. */
+  .col-grid--8 .pcard__info {
+    display: flex;
+  }
+  .col-grid--8 .pcard__tag {
+    opacity: 1;
+  }
+  .pcard__swatches {
+    opacity: 1;
+  }
+  /* Truncate long product names to a single line in the narrow cards; the price
+     stays pinned to the right. (Name keeps the base white-space: nowrap.) */
+  .pcard__meta {
+    gap: 8px;
+  }
+  .pcard__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pcard__price {
+    flex-shrink: 0;
+  }
+}

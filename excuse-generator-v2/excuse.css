@@ -1,0 +1,283 @@
+/* ============================================================
+   Excuse Generator V2 — "Reasons to Stay In…" (jackpot reel)
+   Loaded after v1.2.css + collection.css (tokens, solid navbar,
+   footer). One full-height stage: eyebrow · a slot-machine reel
+   of excuses · CTA. Clicking spins the reel, which decelerates
+   onto an excuse; a full-bleed photo then fades up behind the
+   text (flipped to paper). The next click clears the photo and
+   rolls again. V1 (word-reveal + scattered collage) lives at
+   /excuse-generator/ for comparison.
+   ============================================================ */
+
+:root {
+  /* Soft ease-out for settles (shared with the quiz-entry intro). */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.page--excuse {
+  /* Clear the fixed 54px solid navbar (same clearance as collection/quiz). */
+  padding-top: 54px;
+}
+.page--excuse .header--collection {
+  border-bottom-color: rgba(20, 8, 3, 0.12);
+}
+
+/* ---------- Stage ----------
+   Exactly one viewport: the fixed 54px nav + this section = 100vh. */
+.excuse {
+  position: relative;
+  height: calc(100vh - 54px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  overflow: hidden;
+}
+/* Text/CTA sit above the full-bleed layer. */
+.excuse__eyebrow,
+.excuse-reel,
+.excuse__foot,
+.excuse__foot-note {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Full-bleed landing image ----------
+   Absolute behind the content; fades up once the reel lands (.is-landed) and
+   back out when the next roll starts. The scrim keeps paper text legible
+   (same ink wash as the hero/promo bands). */
+.excuse-fullbleed {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s var(--ease-natural);
+}
+.excuse-fullbleed__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* A slow settle-scale while the image is up (Ken Burns whisper). */
+  transform: scale(1.06);
+  transition: transform 6s var(--ease-settle);
+}
+.excuse-fullbleed__scrim {
+  position: absolute;
+  inset: 0;
+  /* Ink wash (same treatment as the hero/promo bands). Slightly stronger than
+     those, plus a gentle top/bottom gradient, because the photo pool includes
+     bright bedroom shots and the eyebrow/footnote sit at the extremes. */
+  background: linear-gradient(
+    rgba(20, 8, 3, 0.5),
+    rgba(20, 8, 3, 0.34) 32%,
+    rgba(20, 8, 3, 0.34) 68%,
+    rgba(20, 8, 3, 0.5)
+  );
+}
+.excuse.is-landed .excuse-fullbleed {
+  opacity: 1;
+}
+.excuse.is-landed .excuse-fullbleed__img {
+  transform: scale(1);
+}
+
+/* ---------- Type ---------- */
+.excuse__eyebrow {
+  margin: 0;
+  font-family: var(--font-base); /* Gerstner Programm FSL */
+  font-size: 14px;
+  line-height: 1; /* 100% */
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-nav);
+  opacity: 0;
+  transition: opacity 1s var(--ease-natural), color 0.7s var(--ease-natural);
+}
+.excuse.is-ready .excuse__eyebrow {
+  opacity: 1;
+}
+
+/* ---------- The reel ----------
+   A masked viewport exactly one slot tall; the track holds a column of
+   equal-height slots and is translated up through them per spin (transform
+   set by excuse.js). Slots are taller than two display lines so any excuse
+   fits; text is centred within its slot. */
+.excuse-reel {
+  width: 100%;
+  margin: 18px auto 32px;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 64px;
+  line-height: 1; /* 100% */
+  letter-spacing: -0.01em;
+  color: var(--color-nav);
+  /* One slot tall (3.1 display lines) — the mask for the rolling track. */
+  height: 3.1em;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1s var(--ease-natural) 0.1s, color 0.7s var(--ease-natural);
+}
+.excuse.is-ready .excuse-reel {
+  opacity: 1;
+}
+.excuse-reel__track {
+  will-change: transform;
+  /* Spin transition is applied inline per roll by excuse.js. */
+}
+.excuse-reel__item {
+  height: 3.1em; /* = the viewport, so translate math is exact */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.excuse-reel__text {
+  display: block;
+  max-width: 15ch;
+  text-align: center;
+  text-wrap: balance;
+}
+/* Motion blur while the reel spins; sharpens as it lands (focus pull). */
+.excuse-reel__item {
+  transition: filter 0.45s var(--ease-natural);
+}
+.excuse.is-spinning .excuse-reel__item {
+  filter: blur(6px);
+}
+
+/* ---------- Foot: CTA ---------- */
+.excuse__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 1s var(--ease-natural) 0.15s;
+}
+.excuse.is-ready .excuse__foot {
+  opacity: 1;
+}
+
+/* CTA — the site's standard button (26px, square, ink fill, 11px uppercase);
+   flips to the paper variant while the full-bleed image is up. */
+.excuse__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 4px 16px;
+  border: 0;
+  background: var(--color-nav);
+  color: var(--color-bg);
+  font-family: var(--font-base);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-expo), background 0.7s var(--ease-natural),
+              color 0.7s var(--ease-natural);
+}
+.excuse__btn:hover,
+.excuse__btn:focus-visible {
+  opacity: 0.85;
+  outline: none;
+}
+.excuse__btn.is-busy {
+  opacity: 0.85;
+}
+
+/* Footnote / secondary exit — pinned to the bottom of the stage. */
+.excuse__foot-note {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  margin: 0;
+  padding: 0 40px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: rgba(20, 8, 3, 0.5);
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-natural) 0.35s, color 0.7s var(--ease-natural);
+}
+.excuse.is-ready .excuse__foot-note {
+  opacity: 1;
+}
+.excuse__link {
+  color: var(--color-nav);
+  transition: opacity 0.3s var(--ease-expo), color 0.7s var(--ease-natural);
+}
+.excuse__link:hover {
+  opacity: 0.6;
+}
+
+/* ---------- Landed state: text flips to paper over the photo ---------- */
+.excuse.is-landed .excuse__eyebrow,
+.excuse.is-landed .excuse-reel {
+  color: var(--color-bg);
+}
+.excuse.is-landed .excuse__foot-note {
+  color: rgba(245, 245, 242, 0.88);
+}
+.excuse.is-landed .excuse__link {
+  color: var(--color-bg);
+}
+.excuse.is-landed .excuse__btn {
+  background: var(--color-bg);
+  color: var(--color-nav);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .excuse__eyebrow,
+  .excuse-reel,
+  .excuse__foot,
+  .excuse__foot-note {
+    opacity: 1;
+    transition: none;
+  }
+  .excuse-reel__item,
+  .excuse.is-spinning .excuse-reel__item {
+    filter: none;
+    transition: none;
+  }
+  .excuse-fullbleed {
+    transition: opacity 0.2s linear;
+  }
+  .excuse-fullbleed__img {
+    transform: none;
+    transition: none;
+  }
+  .excuse__btn {
+    transition: none;
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 760px) {
+  .excuse {
+    padding: 40px 20px;
+  }
+  .excuse-reel {
+    margin: 16px auto 28px;
+    font-size: 44px;
+    height: 3.3em;
+  }
+  .excuse-reel__item {
+    height: 3.3em;
+  }
+  .excuse-reel__text {
+    max-width: 12ch;
+  }
+  .excuse__foot-note {
+    bottom: 28px;
+    padding: 0 20px;
+  }
+}
