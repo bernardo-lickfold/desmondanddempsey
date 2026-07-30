@@ -133,15 +133,15 @@
   border-top: 0.5px solid rgba(20, 8, 3, 0.1);
 }
 .filters__desc {
-  position: relative;
+  /* Stack the panels in one grid cell so the box auto-sizes to the content
+     (no scaled min-height dead space). Panels bottom-align, so the last line
+     always sits the same 100px above the section bottom, on any screen. */
+  display: grid;
   width: calc(var(--w) * 0.248611); /* 358 */
-  min-height: calc(var(--w) * 0.152); /* room for the tallest 2-paragraph panel */
 }
 .filters__panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  grid-area: 1 / 1;
+  align-self: end;
   display: flex;
   flex-direction: column;
   gap: calc(var(--w) * 0.013889); /* 20 */
