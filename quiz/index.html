@@ -10,7 +10,7 @@
   <!-- Solid navbar + .pcard product cards (reused on the results step). -->
   <link rel="stylesheet" href="collection.css" />
   <!-- Quiz-specific: step stage, option tiles, progress, email gate, results. -->
-  <link rel="stylesheet" href="quiz.css?v=22" />
+  <link rel="stylesheet" href="quiz.css?v=23" />
 </head>
 <body>
   <main class="page page--quiz">
@@ -39,12 +39,9 @@
         <span class="quiz-progress__track"><span class="quiz-progress__fill" data-quiz-progress></span></span>
       </div>
 
-      <!-- 00 · Entry — centered copy inside a photo collage -->
+      <!-- 00 · Entry — centered copy over a full-bleed image (40% ink scrim) -->
       <section class="quiz-step quiz-step--entry is-active" data-step="entry">
-        <figure class="quiz-collage quiz-collage--1"><img src="assets/images/quiz/entry-1.png" alt="" /></figure>
-        <figure class="quiz-collage quiz-collage--2"><img src="assets/images/quiz/entry-2.png" alt="" /></figure>
-        <figure class="quiz-collage quiz-collage--3"><img src="assets/images/quiz/entry-3.png" alt="" /></figure>
-        <figure class="quiz-collage quiz-collage--4"><img src="assets/images/quiz/entry-4.png" alt="" /></figure>
+        <figure class="quiz-entry__bg"><img src="assets/images/quiz/entry-bg.jpg" alt="" /></figure>
         <div class="quiz-entry__copy">
           <h1 class="quiz-entry__title">Let&rsquo;s find your perfect pyjama.</h1>
           <p class="quiz-body">
@@ -52,25 +49,25 @@
             how you lounge and what you love, and we&rsquo;ll match you to the
             pyjamas made for exactly that.
           </p>
-          <button class="quiz-btn quiz-btn--start" type="button" data-quiz-start>start the quiz</button>
+          <button class="quiz-btn quiz-btn--paper quiz-btn--start" type="button" data-quiz-start>start the quiz</button>
           <p class="quiz-micro">Takes about 30 seconds.</p>
         </div>
       </section>
 
       <!-- 01 · Sleep temperature -->
       <section class="quiz-step" data-step="q-sleep" data-question="sleep">
-        <h2 class="quiz-question">First things first: How do you sleep?</h2>
+        <div class="quiz-qhead"><h2 class="quiz-question">First things first: How do you sleep?</h2></div>
         <div class="quiz-options">
           <button class="quiz-option" type="button" data-value="hot" data-label="Hot sleeper">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q1-hot.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t1-hot.jpg" alt="" />
             <span class="quiz-option__label">Hot sleeper</span>
           </button>
           <button class="quiz-option" type="button" data-value="cold" data-label="Cold sleeper">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q1-cold.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t1-cold.jpg" alt="" />
             <span class="quiz-option__label">Cold sleeper</span>
           </button>
           <button class="quiz-option" type="button" data-value="between" data-label="Somewhere in between">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q1-between.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t1-between.jpg" alt="" />
             <span class="quiz-option__label">In between</span>
           </button>
         </div>
@@ -78,18 +75,18 @@
 
       <!-- 02 · When they go on -->
       <section class="quiz-step" data-step="q-wear" data-question="wear">
-        <h2 class="quiz-question">And when do your pyjamas go on?</h2>
+        <div class="quiz-qhead"><h2 class="quiz-question">And when do your pyjamas go on?</h2></div>
         <div class="quiz-options">
           <button class="quiz-option" type="button" data-value="sleep" data-label="Strictly a sleeper">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q2-sleep.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t2-sleep.jpg" alt="" />
             <span class="quiz-option__label">Just for sleep</span>
           </button>
           <button class="quiz-option" type="button" data-value="lounge" data-label="All-day lounger">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q2-lounge.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t2-lounge.jpg" alt="" />
             <span class="quiz-option__label">All-day lounging</span>
           </button>
           <button class="quiz-option" type="button" data-value="both" data-label="Sofa-to-sleep">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q2-both.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t2-both.jpg" alt="" />
             <span class="quiz-option__label">A bit of both</span>
           </button>
         </div>
@@ -97,20 +94,20 @@
 
       <!-- 03 · Fabric -->
       <section class="quiz-step" data-step="q-fabric" data-question="fabric">
-        <h2 class="quiz-question">How should they feel?</h2>
+        <div class="quiz-qhead"><h2 class="quiz-question">How should they feel?</h2></div>
         <div class="quiz-options">
           <button class="quiz-option" type="button" data-value="crisp" data-label="Crisp cotton">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q3-crisp.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t3-crisp.jpg" alt="" />
             <span class="quiz-option__label">Crisp cotton</span>
             <span class="quiz-option__sub">Cool and clean, the hotel-sheet feeling</span>
           </button>
           <button class="quiz-option" type="button" data-value="brushed" data-label="Brushed cotton">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q3-brushed.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t3-brushed.jpg" alt="" />
             <span class="quiz-option__label">Brushed cotton</span>
             <span class="quiz-option__sub">Soft and warm, the winter-Sunday feeling</span>
           </button>
           <button class="quiz-option" type="button" data-value="linen" data-label="Light linen">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q3-linen.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t3-linen.jpg" alt="" />
             <span class="quiz-option__label">Light linen</span>
             <span class="quiz-option__sub">Breezy and relaxed, the holiday feeling</span>
           </button>
@@ -119,18 +116,18 @@
 
       <!-- 04 · The look -->
       <section class="quiz-step" data-step="q-look" data-question="look">
-        <h2 class="quiz-question">Last one: what&rsquo;s your look?</h2>
+        <div class="quiz-qhead"><h2 class="quiz-question">Last one: what&rsquo;s your look?</h2></div>
         <div class="quiz-options">
           <button class="quiz-option" type="button" data-value="bold" data-label="Bold prints">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q4-bold.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t4-bold.jpg" alt="" />
             <span class="quiz-option__label">Bold prints</span>
           </button>
           <button class="quiz-option" type="button" data-value="quiet" data-label="Quietly classic">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q4-quiet.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t4-quiet.jpg" alt="" />
             <span class="quiz-option__label">Quiet classics</span>
           </button>
           <button class="quiz-option" type="button" data-value="middle" data-label="A little of both">
-            <span class="quiz-option__media"><img src="assets/images/quiz/q4-middle.png" alt="" /></span>
+            <img class="quiz-option__img" src="assets/images/quiz/t4-middle.jpg" alt="" />
             <span class="quiz-option__label">In the middle</span>
           </button>
         </div>
