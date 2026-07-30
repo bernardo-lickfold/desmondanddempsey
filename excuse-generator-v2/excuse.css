@@ -275,7 +275,7 @@
      frame the tallest (three-line) excuse. */
   .excuse-reel {
     margin: 16px auto 28px;
-    font-size: 44px; /* overrides the fitted --reel-size; excuses wrap here */
+    font-size: 32px; /* overrides the fitted --reel-size; excuses wrap here */
     height: 3.5em;
   }
   .excuse-reel__text {
