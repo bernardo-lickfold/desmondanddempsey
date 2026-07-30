@@ -122,7 +122,12 @@
   height: 3.1em;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 1s var(--ease-natural) 0.1s, color 0.7s var(--ease-natural);
+  /* --reel-fade drives the soft top/bottom edges (see below). It's a
+     registered property, so it interpolates: the edges ease open as the roll
+     starts and ease shut as it lands, instead of snapping. */
+  --reel-fade: 0%;
+  transition: opacity 1s var(--ease-natural) 0.1s, color 0.7s var(--ease-natural),
+              --reel-fade 0.6s var(--ease-natural);
 }
 .excuse.is-ready .excuse-reel {
   opacity: 1;
@@ -143,29 +148,40 @@
   text-align: center;
   text-wrap: balance;
 }
-/* Soft top/bottom edges while the reel rolls — excuses melt in and out of the
-   slot instead of being sliced by the viewport's hard edge. Applied only while
-   spinning, so the landed excuse stays perfectly crisp (a permanent mask would
-   also dim the resting text, since a three-line excuse nearly fills its slot). */
-.excuse.is-spinning .excuse-reel {
+/* ---------- Soft reel edges ----------
+   While rolling, the slot's top and bottom fade out so excuses melt through it
+   instead of being sliced by a hard edge. The fade depth is --reel-fade, a
+   REGISTERED property (below) so it can be transitioned: it eases open when the
+   roll starts and eases shut as the excuse lands. Animating it — rather than
+   toggling mask-image on and off — is what keeps the landing smooth; a straight
+   toggle snapped the edges of a two- or three-line excuse back to full opacity.
+   At --reel-fade: 0% the ramp collapses to nothing, so the landed excuse ends
+   up perfectly crisp (a permanent fade would clip a three-line excuse, which
+   nearly fills its slot). */
+@property --reel-fade {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.excuse-reel {
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    rgba(0, 0, 0, 0.35) 12%,
-    #000 34%,
-    #000 66%,
-    rgba(0, 0, 0, 0.35) 88%,
+    #000 var(--reel-fade),
+    #000 calc(100% - var(--reel-fade)),
     transparent 100%
   );
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    rgba(0, 0, 0, 0.35) 12%,
-    #000 34%,
-    #000 66%,
-    rgba(0, 0, 0, 0.35) 88%,
+    #000 var(--reel-fade),
+    #000 calc(100% - var(--reel-fade)),
     transparent 100%
   );
+}
+.excuse.is-spinning .excuse-reel {
+  --reel-fade: 30%;
 }
 
 /* ---------- Foot: CTA ---------- */
@@ -262,10 +278,9 @@
     opacity: 1;
     transition: none;
   }
-  /* No roll happens, so the edge fade never applies. */
+  /* No roll happens, so the edges never need to fade. */
   .excuse.is-spinning .excuse-reel {
-    -webkit-mask-image: none;
-    mask-image: none;
+    --reel-fade: 0%;
   }
   .excuse-fullbleed {
     transition: opacity 0.2s linear;
